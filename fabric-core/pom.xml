@@ -30,7 +30,7 @@
     </parent>
 
     <!-- Project ID & Version -->
-    <artifactId>fabric-data-store</artifactId>
+    <artifactId>fabric-core</artifactId>
 
     <!-- Project Packaging -->
     <packaging>jar</packaging>
@@ -54,15 +54,16 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
     </dependencies>
+
 
     <dependencyManagement>
         <dependencies>
@@ -98,7 +99,8 @@
                     <prefix>git</prefix>
                     <verbose>false</verbose>
                     <generateGitPropertiesFile>true</generateGitPropertiesFile>
-                    <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
+                    <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties
+                    </generateGitPropertiesFilename>
                     <format>json</format>
                     <gitDescribe>
                         <skip>false</skip>

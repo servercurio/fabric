@@ -30,6 +30,8 @@
 
     <!-- Project Sub-Modules -->
     <modules>
+        <module>fabric-bom</module>
+        <module>fabric-core</module>
         <module>fabric-data-store</module>
     </modules>
 
@@ -39,7 +41,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>12</maven.compiler.source>
         <maven.compiler.target>12</maven.compiler.target>
-
 
         <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
         <maven.jar.plugin.version>3.1.2</maven.jar.plugin.version>
@@ -54,33 +55,8 @@
         <git.commitid.plugin.version>3.0.1</git.commitid.plugin.version>
 
         <ow2.asm.version>7.1</ow2.asm.version>
-
-        <junit.jupiter.version>5.5.1</junit.jupiter.version>
-        <junit.platform.version>1.5.1</junit.platform.version>
     </properties>
 
-    <!-- Project Dependencies -->
-    <dependencies>
-
-    </dependencies>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-api</artifactId>
-                <version>${junit.jupiter.version}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.junit.platform</groupId>
-                <artifactId>junit-platform-engine</artifactId>
-                <version>${junit.platform.version}</version>
-                <scope>test</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <build>
         <pluginManagement>
@@ -149,10 +125,6 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-        <plugins>
-
-        </plugins>
     </build>
-
 
 </project>
