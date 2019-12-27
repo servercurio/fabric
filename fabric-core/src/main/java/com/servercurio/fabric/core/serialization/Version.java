@@ -19,15 +19,14 @@ package com.servercurio.fabric.core.serialization;
 import org.apache.commons.lang3.builder.*;
 
 public class Version implements Comparable<Version> {
+
     private int major;
     private int minor;
-    private int build;
     private int revision;
 
-    public Version(final int major, final int minor, final int build, final int revision) {
+    public Version(final int major, final int minor, final int revision) {
         this.major = major;
         this.minor = minor;
-        this.build = build;
         this.revision = revision;
     }
 
@@ -37,10 +36,6 @@ public class Version implements Comparable<Version> {
 
     public int getMinor() {
         return minor;
-    }
-
-    public int getBuild() {
-        return build;
     }
 
     public int getRevision() {
@@ -58,7 +53,6 @@ public class Version implements Comparable<Version> {
         return new EqualsBuilder()
                 .append(major, version.major)
                 .append(minor, version.minor)
-                .append(build, version.build)
                 .append(revision, version.revision)
                 .isEquals();
     }
@@ -68,7 +62,6 @@ public class Version implements Comparable<Version> {
         return new HashCodeBuilder(17, 37)
                 .append(major)
                 .append(minor)
-                .append(build)
                 .append(revision)
                 .toHashCode();
     }
@@ -78,7 +71,6 @@ public class Version implements Comparable<Version> {
         return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
                 .append("major", major)
                 .append("minor", minor)
-                .append("build", build)
                 .append("revision", revision)
                 .toString();
     }
@@ -92,7 +84,6 @@ public class Version implements Comparable<Version> {
         return new CompareToBuilder()
                 .append(major, other.major)
                 .append(minor, other.minor)
-                .append(build, other.build)
                 .append(revision, other.revision)
                 .toComparison();
     }

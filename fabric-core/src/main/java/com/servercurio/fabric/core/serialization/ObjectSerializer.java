@@ -22,8 +22,8 @@ public class ObjectSerializer {
             throw new IllegalArgumentException("inStream");
         }
 
-        final long namespace = inStream.readLong();
-        final long id = inStream.readLong();
+        final int namespace = inStream.readInt();
+        final int id = inStream.readInt();
 
         final int major = inStream.readInt();
         final int minor = inStream.readInt();
@@ -52,11 +52,11 @@ public class ObjectSerializer {
 
         final SerializationProvider provider = provider(object);
 
-        final Version version = object.getObjectVersion();
+        final Version version = object.getVersion();
         final ObjectId oid = object.getObjectId();
 
-        outStream.writeLong(oid.getNamespace());
-        outStream.writeLong(oid.getIdentifier());
+        outStream.writeInt(oid.getNamespace());
+        outStream.writeInt(oid.getIdentifier());
 
         outStream.writeInt(version.getMajor());
         outStream.writeInt(version.getMinor());

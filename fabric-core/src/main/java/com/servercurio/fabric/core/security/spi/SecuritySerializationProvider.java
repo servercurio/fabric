@@ -78,7 +78,7 @@ public final class SecuritySerializationProvider implements SerializationProvide
     @Override
     public <T extends SerializationAware> void serialize(final ObjectSerializer objectSerializer, final DataOutputStream outStream, final T object) throws IOException {
 
-        if (Hash.OBJECT_ID.equals(object.getObjectId()) && Hash.VERSIONS.contains(object.getObjectVersion())) {
+        if (Hash.OBJECT_ID.equals(object.getObjectId()) && Hash.VERSIONS.contains(object.getVersion())) {
             final Hash hash = (Hash) object;
             outStream.writeInt(hash.getAlgorithm().id());
 

@@ -17,9 +17,9 @@
 package com.servercurio.fabric.core.serialization.spi;
 
 import com.servercurio.fabric.core.serialization.ObjectId;
-import com.servercurio.fabric.core.serialization.Version;
 import com.servercurio.fabric.core.serialization.ObjectSerializer;
 import com.servercurio.fabric.core.serialization.SerializationAware;
+import com.servercurio.fabric.core.serialization.Version;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

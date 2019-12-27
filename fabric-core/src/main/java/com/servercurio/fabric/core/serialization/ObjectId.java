@@ -20,19 +20,19 @@ import org.apache.commons.lang3.builder.*;
 
 public class ObjectId implements Comparable<ObjectId> {
 
-    private long namespace;
-    private long identifier;
+    private int namespace;
+    private int identifier;
 
-    public ObjectId(final long namespace, final long identifier) {
+    public ObjectId(final int namespace, final int identifier) {
         this.namespace = namespace;
         this.identifier = identifier;
     }
 
-    public long getNamespace() {
+    public int getNamespace() {
         return namespace;
     }
 
-    public long getIdentifier() {
+    public int getIdentifier() {
         return identifier;
     }
 

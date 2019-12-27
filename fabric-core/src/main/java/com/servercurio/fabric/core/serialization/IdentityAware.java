@@ -16,8 +16,6 @@
 
 package com.servercurio.fabric.core.serialization;
 
-import com.servercurio.fabric.core.serialization.ObjectId;
-
 public interface IdentityAware {
 
     ObjectId getObjectId();

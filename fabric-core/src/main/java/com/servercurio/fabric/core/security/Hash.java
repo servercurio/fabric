@@ -30,18 +30,20 @@ import java.util.TreeSet;
 
 public final class Hash implements SerializationAware, Comparable<Hash> {
 
-    public static final ObjectId OBJECT_ID = new ObjectId(1L, 27186L);
+    public static final ObjectId OBJECT_ID = new ObjectId(1, 27186);
+
     public static SortedSet<Version> VERSIONS;
 
     static {
         final TreeSet<Version> versionSet = new TreeSet<>();
-        versionSet.add(new Version(1, 0, 0, 0));
+        versionSet.add(new Version(1, 0, 0));
 
         VERSIONS = Collections.unmodifiableSortedSet(versionSet);
     }
 
 
     private HashAlgorithm algorithm;
+
     private byte[] value;
 
     public Hash() {
@@ -110,18 +112,8 @@ public final class Hash implements SerializationAware, Comparable<Hash> {
     }
 
     @Override
-    public ObjectId getObjectId() {
-        return OBJECT_ID;
-    }
-
-    @Override
-    public SortedSet<Version> getObjectVersions() {
+    public SortedSet<Version> getVersionHistory() {
         return VERSIONS;
-    }
-
-    @Override
-    public Version getObjectVersion() {
-        return VERSIONS.last();
     }
 
     @Override
@@ -136,6 +128,15 @@ public final class Hash implements SerializationAware, Comparable<Hash> {
                 .build();
     }
 
+    @Override
+    public ObjectId getObjectId() {
+        return OBJECT_ID;
+    }
+
+    @Override
+    public Version getVersion() {
+        return VERSIONS.last();
+    }
 
     @Override
     public int hashCode() {
