@@ -38,6 +38,10 @@ public enum HashAlgorithm {
 
     static {
         for (HashAlgorithm algorithm : HashAlgorithm.values()) {
+            if (NONE.equals(algorithm)) {
+                continue;
+            }
+
             idMap.put(algorithm.id(), algorithm);
         }
     }

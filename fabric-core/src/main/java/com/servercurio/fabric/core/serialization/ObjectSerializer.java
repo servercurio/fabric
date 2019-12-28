@@ -27,11 +27,10 @@ public class ObjectSerializer {
 
         final int major = inStream.readInt();
         final int minor = inStream.readInt();
-        final int build = inStream.readInt();
         final int revision = inStream.readInt();
 
         final ObjectId objectId = new ObjectId(namespace, id);
-        final Version version = new Version(major, minor, build, revision);
+        final Version version = new Version(major, minor, revision);
 
         final SerializationProvider provider = provider(objectId, version);
 
@@ -60,7 +59,6 @@ public class ObjectSerializer {
 
         outStream.writeInt(version.getMajor());
         outStream.writeInt(version.getMinor());
-        outStream.writeInt(version.getBuild());
         outStream.writeInt(version.getRevision());
 
         provider.serialize(this, outStream, object);
@@ -75,7 +73,7 @@ public class ObjectSerializer {
 
     }
 
-    private <T extends SerializationAware> SerializationProvider provider(final T object) throws ObjectNotSerializableException {
+    protected <T extends SerializationAware> SerializationProvider provider(final T object) throws ObjectNotSerializableException {
 
         final Iterator<SerializationProvider> iter = serviceLoader.iterator();
 
@@ -91,7 +89,7 @@ public class ObjectSerializer {
 
     }
 
-    private SerializationProvider provider(final ObjectId objectId, final Version version) throws UnknownObjectIdentifierException {
+    protected SerializationProvider provider(final ObjectId objectId, final Version version) throws UnknownObjectIdentifierException {
 
         final Iterator<SerializationProvider> iter = serviceLoader.iterator();
 
