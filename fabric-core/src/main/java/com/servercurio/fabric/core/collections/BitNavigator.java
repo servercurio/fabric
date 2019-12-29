@@ -114,6 +114,17 @@ class BitNavigator {
         return this;
     }
 
+    public BitNavigator rightMostLeaf() {
+        long delta = treeSize - (treeSize / 2);
+        long odd = ((delta & 1L) == 1L) ? 1 : 0;
+        delta = ((delta & 1L) == 1L) ? 0 : 1;
+
+        currentMask = msb(treeSize + delta) - 1;
+        targetNode = currentMask;
+
+        return this;
+    }
+
     public NavigationStep nextStep() {
         currentMask = currentMask >>> 1;
 

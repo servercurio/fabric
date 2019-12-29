@@ -87,6 +87,22 @@ public class BitNavigatorTests {
         assertEquals(NavigationStep.COMPLETE, navigator.nextStep());
     }
 
+    @Test
+    @Order(302)
+    @DisplayName("Navigate :: Small -> Right Most Leaf")
+    public void testNavigateSmallRightMostLeaf() {
+        final BitNavigator navigator = new BitNavigator(5);
+
+        assertEquals(5, navigator.getTreeSize());
+        assertEquals(0, navigator.getTargetNode());
+
+        navigator.rightMostLeaf();
+        assertEquals(3, navigator.getTargetNode());
+
+        assertEquals(NavigationStep.RIGHT, navigator.nextStep());
+        assertEquals(NavigationStep.COMPLETE, navigator.nextStep());
+    }
+
 
     @Test
     @Order(400)
@@ -112,6 +128,23 @@ public class BitNavigatorTests {
         final BitNavigator navigator = new BitNavigator(7, 7);
 
         assertEquals(7, navigator.getTreeSize());
+        assertEquals(7, navigator.getTargetNode());
+
+        assertEquals(NavigationStep.RIGHT, navigator.nextStep());
+        assertEquals(NavigationStep.RIGHT, navigator.nextStep());
+        assertEquals(NavigationStep.COMPLETE, navigator.nextStep());
+    }
+
+    @Test
+    @Order(402)
+    @DisplayName("Navigate :: Medium -> Right Most Leaf")
+    public void testNavigateMediumRightMostLeaf() {
+        final BitNavigator navigator = new BitNavigator(7);
+
+        assertEquals(7, navigator.getTreeSize());
+        assertEquals(0, navigator.getTargetNode());
+
+        navigator.rightMostLeaf();
         assertEquals(7, navigator.getTargetNode());
 
         assertEquals(NavigationStep.RIGHT, navigator.nextStep());
@@ -152,6 +185,23 @@ public class BitNavigatorTests {
     }
 
     @Test
+    @Order(502)
+    @DisplayName("Navigate :: Medium Large -> Right Most Leaf")
+    public void testNavigateMediumLargeRightMostLeaf() {
+        final BitNavigator navigator = new BitNavigator(9);
+
+        assertEquals(9, navigator.getTreeSize());
+        assertEquals(0, navigator.getTargetNode());
+
+        navigator.rightMostLeaf();
+        assertEquals(7, navigator.getTargetNode());
+
+        assertEquals(NavigationStep.RIGHT, navigator.nextStep());
+        assertEquals(NavigationStep.RIGHT, navigator.nextStep());
+        assertEquals(NavigationStep.COMPLETE, navigator.nextStep());
+    }
+
+    @Test
     @Order(600)
     @DisplayName("Navigate :: Large -> Insertion Point")
     public void testNavigateLargeInsertionPoint() {
@@ -178,6 +228,23 @@ public class BitNavigatorTests {
         assertEquals(11, navigator.getTargetNode());
 
         assertEquals(NavigationStep.LEFT, navigator.nextStep());
+        assertEquals(NavigationStep.RIGHT, navigator.nextStep());
+        assertEquals(NavigationStep.RIGHT, navigator.nextStep());
+        assertEquals(NavigationStep.COMPLETE, navigator.nextStep());
+    }
+
+    @Test
+    @Order(602)
+    @DisplayName("Navigate :: Large -> Right Most Leaf")
+    public void testNavigateLargeRightMostLeaf() {
+        final BitNavigator navigator = new BitNavigator(11);
+
+        assertEquals(11, navigator.getTreeSize());
+        assertEquals(0, navigator.getTargetNode());
+
+        navigator.rightMostLeaf();
+        assertEquals(7, navigator.getTargetNode());
+
         assertEquals(NavigationStep.RIGHT, navigator.nextStep());
         assertEquals(NavigationStep.RIGHT, navigator.nextStep());
         assertEquals(NavigationStep.COMPLETE, navigator.nextStep());
