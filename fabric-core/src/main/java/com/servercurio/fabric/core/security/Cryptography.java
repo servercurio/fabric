@@ -17,6 +17,7 @@
 package com.servercurio.fabric.core.security;
 
 import com.servercurio.fabric.core.security.impl.DefaultCryptographyImpl;
+import com.servercurio.fabric.core.serialization.SerializationAware;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,5 +45,9 @@ public interface Cryptography {
     Hash digestSync(final ByteBuffer buffer) throws NoSuchAlgorithmException;
 
     Hash digestSync(final HashAlgorithm algorithm, final ByteBuffer buffer) throws NoSuchAlgorithmException;
+
+    Hash digestSync(final SerializationAware serialObject) throws NoSuchAlgorithmException, IOException;
+
+    Hash digestSync(final HashAlgorithm algorithm, final SerializationAware serialObject) throws NoSuchAlgorithmException, IOException;
 
 }

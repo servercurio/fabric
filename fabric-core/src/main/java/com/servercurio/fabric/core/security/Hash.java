@@ -19,7 +19,10 @@ package com.servercurio.fabric.core.security;
 import com.servercurio.fabric.core.serialization.ObjectId;
 import com.servercurio.fabric.core.serialization.SerializationAware;
 import com.servercurio.fabric.core.serialization.Version;
-import org.apache.commons.lang3.builder.*;
+import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.*;
 
@@ -29,7 +32,7 @@ public class Hash implements SerializationAware, Comparable<Hash> {
 
     public static final ObjectId OBJECT_ID = new ObjectId(1, 27186);
 
-    public static SortedSet<Version> VERSIONS;
+    public static final SortedSet<Version> VERSIONS;
 
     public static final Hash EMPTY = new Hash();
 
@@ -46,7 +49,7 @@ public class Hash implements SerializationAware, Comparable<Hash> {
     private byte[] value;
 
     public Hash() {
-        this(HashAlgorithm.NONE, new byte[0], false);
+        this(HashAlgorithm.NONE, new byte[1], false);
     }
 
     public Hash(final HashAlgorithm algorithm, final byte[] value) {
@@ -58,7 +61,7 @@ public class Hash implements SerializationAware, Comparable<Hash> {
             throw new IllegalArgumentException("algorithm");
         }
 
-        if (value == null || value.length != algorithm.bytes()) {
+        if (value == null || (!HashAlgorithm.NONE.equals(algorithm) && value.length != algorithm.bytes())) {
             throw new IllegalArgumentException("value");
         }
 
