@@ -37,4 +37,8 @@ jobs:
           paths:
             - ~/.m2
           key: v1-dependencies-{{ checksum "pom.xml" }}
-
+workflows:
+  version: 2
+  build_on_commit:
+    jobs:
+      - build
