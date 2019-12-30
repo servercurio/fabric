@@ -28,67 +28,67 @@ import java.io.IOException;
 
 public final class SecuritySerializationProvider implements SerializationProvider {
 
-      public SecuritySerializationProvider() {
-      }
+    public SecuritySerializationProvider() {
+    }
 
-      @Override
-      @SuppressWarnings("unchecked")
-      public <T extends SerializationAware> T deserialize(final ObjectSerializer objectSerializer, final DataInputStream inStream, final ObjectId objectId, final Version version) throws IOException {
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T extends SerializationAware> T deserialize(final ObjectSerializer objectSerializer, final DataInputStream inStream, final ObjectId objectId, final Version version) throws IOException {
 
-            if (Hash.OBJECT_ID.equals(objectId) && Hash.VERSIONS.contains(version)) {
-                  final int hashType = inStream.readInt();
-                  final HashAlgorithm algorithm = HashAlgorithm.valueOf(hashType);
+        if (Hash.OBJECT_ID.equals(objectId) && Hash.VERSIONS.contains(version)) {
+            final int hashType = inStream.readInt();
+            final HashAlgorithm algorithm = HashAlgorithm.valueOf(hashType);
 
-                  if (algorithm == null) {
-                        throw new BadIOException();
-                  }
-
-                  final byte[] hashValue = new byte[algorithm.bytes()];
-
-                  if (!HashAlgorithm.NONE.equals(algorithm)) {
-                        inStream.readFully(hashValue);
-                  }
-
-                  return (T) new Hash(algorithm, hashValue, false);
+            if (algorithm == null) {
+                throw new BadIOException();
             }
 
-            return null;
-      }
+            final byte[] hashValue = new byte[algorithm.bytes()];
 
-      @Override
-      public <T extends SerializationAware> boolean isSupported(final T object) {
-            return (object instanceof Hash);
-      }
-
-      @Override
-      public boolean isSupported(final ObjectId objectId, final Version version) {
-            return Hash.OBJECT_ID.equals(objectId) && Hash.VERSIONS.contains(version);
-      }
-
-      @Override
-      @SuppressWarnings("unchecked")
-      public <T extends SerializationAware> T newInstance(final ObjectId objectId, final Version version) {
-            if (Hash.OBJECT_ID.equals(objectId) && Hash.VERSIONS.last().equals(version)) {
-                  return (T) new Hash();
+            if (!HashAlgorithm.NONE.equals(algorithm)) {
+                inStream.readFully(hashValue);
             }
 
-            return null;
-      }
+            return (T) new Hash(algorithm, hashValue, false);
+        }
 
-      @Override
-      public <T extends SerializationAware> void serialize(final ObjectSerializer objectSerializer, final DataOutputStream outStream, final T object) throws IOException {
+        return null;
+    }
 
-            if (Hash.OBJECT_ID.equals(object.getObjectId()) && Hash.VERSIONS.contains(object.getVersion())) {
-                  final Hash hash = (Hash) object;
-                  outStream.writeInt(hash.getAlgorithm().id());
+    @Override
+    public <T extends SerializationAware> boolean isSupported(final T object) {
+        return (object instanceof Hash);
+    }
 
-                  if (!HashAlgorithm.NONE.equals(hash.getAlgorithm())) {
-                        outStream.write(hash.getValue());
-                  }
-            } else {
-                  throw new ObjectNotSerializableException(object.getClass().getName());
+    @Override
+    public boolean isSupported(final ObjectId objectId, final Version version) {
+        return Hash.OBJECT_ID.equals(objectId) && Hash.VERSIONS.contains(version);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T extends SerializationAware> T newInstance(final ObjectId objectId, final Version version) {
+        if (Hash.OBJECT_ID.equals(objectId) && Hash.VERSIONS.last().equals(version)) {
+            return (T) new Hash();
+        }
+
+        return null;
+    }
+
+    @Override
+    public <T extends SerializationAware> void serialize(final ObjectSerializer objectSerializer, final DataOutputStream outStream, final T object) throws IOException {
+
+        if (Hash.OBJECT_ID.equals(object.getObjectId()) && Hash.VERSIONS.contains(object.getVersion())) {
+            final Hash hash = (Hash) object;
+            outStream.writeInt(hash.getAlgorithm().id());
+
+            if (!HashAlgorithm.NONE.equals(hash.getAlgorithm())) {
+                outStream.write(hash.getValue());
             }
+        } else {
+            throw new ObjectNotSerializableException(object.getClass().getName());
+        }
 
-      }
+    }
 
 }

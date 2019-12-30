@@ -22,66 +22,66 @@ import com.servercurio.fabric.core.serialization.SerializationAware;
 
 abstract class MerkleNode<T extends SerializationAware> implements SerializationAware, Hashable {
 
-      private MerkleTree<T> tree;
-      private Hash hash;
+    private MerkleTree<T> tree;
+    private Hash hash;
 
-      private MerkleInternalNode<T> parent;
+    private MerkleInternalNode<T> parent;
 
-      protected MerkleNode(final MerkleTree<T> tree) {
-            this.tree = tree;
-            this.hash = null;
-      }
+    protected MerkleNode(final MerkleTree<T> tree) {
+        this.tree = tree;
+        this.hash = null;
+    }
 
-      protected MerkleNode(final MerkleTree<T> tree, final MerkleInternalNode<T> parent) {
-            this(tree);
+    protected MerkleNode(final MerkleTree<T> tree, final MerkleInternalNode<T> parent) {
+        this(tree);
 
-            setParent(parent);
-      }
+        setParent(parent);
+    }
 
-      @Override
-      public Hash getHash() {
-            return hash;
-      }
+    @Override
+    public Hash getHash() {
+        return hash;
+    }
 
-      @Override
-      public void setHash(final Hash hash) {
-            if (this.hash == hash) {
-                  return;
-            }
+    @Override
+    public void setHash(final Hash hash) {
+        if (this.hash == hash) {
+            return;
+        }
 
-            if (parent != null && parent.hasHash()) {
-                  parent.setHash(null);
-            }
+        if (parent != null && parent.hasHash()) {
+            parent.setHash(null);
+        }
 
-            this.hash = hash;
-      }
+        this.hash = hash;
+    }
 
-      @Override
-      public boolean hasHash() {
-            return hash != null;
-      }
+    @Override
+    public boolean hasHash() {
+        return hash != null;
+    }
 
-      public MerkleInternalNode<T> getParent() {
-            return parent;
-      }
+    public MerkleInternalNode<T> getParent() {
+        return parent;
+    }
 
-      public void setParent(final MerkleInternalNode<T> parent) {
-            if (this.parent == parent) {
-                  return;
-            }
+    public void setParent(final MerkleInternalNode<T> parent) {
+        if (this.parent == parent) {
+            return;
+        }
 
-            setHash(null);
+        setHash(null);
 
-            if (parent != null && parent.hasHash()) {
-                  parent.setHash(null);
-            }
+        if (parent != null && parent.hasHash()) {
+            parent.setHash(null);
+        }
 
-            this.parent = parent;
-      }
+        this.parent = parent;
+    }
 
-      public MerkleTree<T> getTree() {
-            return tree;
-      }
+    public MerkleTree<T> getTree() {
+        return tree;
+    }
 
 
 }

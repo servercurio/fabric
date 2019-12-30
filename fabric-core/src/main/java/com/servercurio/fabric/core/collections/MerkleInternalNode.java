@@ -30,127 +30,127 @@ import java.util.TreeSet;
 
 class MerkleInternalNode<T extends SerializationAware> extends MerkleNode<T> {
 
-      public static final ObjectId OBJECT_ID = new ObjectId(1, 39145);
-      public static final SortedSet<Version> VERSIONS;
+    public static final ObjectId OBJECT_ID = new ObjectId(1, 39145);
+    public static final SortedSet<Version> VERSIONS;
 
-      private MerkleNode<T> leftChild;
-      private MerkleNode<T> rightChild;
+    private MerkleNode<T> leftChild;
+    private MerkleNode<T> rightChild;
 
-      static {
-            final TreeSet<Version> versionSet = new TreeSet<>();
-            versionSet.add(new Version(1, 0, 0));
+    static {
+        final TreeSet<Version> versionSet = new TreeSet<>();
+        versionSet.add(new Version(1, 0, 0));
 
-            VERSIONS = Collections.unmodifiableSortedSet(versionSet);
-      }
+        VERSIONS = Collections.unmodifiableSortedSet(versionSet);
+    }
 
-      public MerkleInternalNode(final MerkleTree<T> tree) {
-            super(tree);
-      }
+    public MerkleInternalNode(final MerkleTree<T> tree) {
+        super(tree);
+    }
 
-      public MerkleInternalNode(final MerkleTree<T> tree, final MerkleInternalNode<T> parent) {
-            super(tree, parent);
-      }
+    public MerkleInternalNode(final MerkleTree<T> tree, final MerkleInternalNode<T> parent) {
+        super(tree, parent);
+    }
 
-      public MerkleInternalNode(final MerkleTree<T> tree, final MerkleNode<T> leftChild, final MerkleNode<T> rightChild) {
-            super(tree);
+    public MerkleInternalNode(final MerkleTree<T> tree, final MerkleNode<T> leftChild, final MerkleNode<T> rightChild) {
+        super(tree);
 
-            setLeftChild(leftChild);
-            setRightChild(rightChild);
-      }
+        setLeftChild(leftChild);
+        setRightChild(rightChild);
+    }
 
-      public MerkleInternalNode(final MerkleTree<T> tree, final MerkleInternalNode<T> parent, final MerkleNode<T> leftChild, final MerkleNode<T> rightChild) {
-            super(tree, parent);
+    public MerkleInternalNode(final MerkleTree<T> tree, final MerkleInternalNode<T> parent, final MerkleNode<T> leftChild, final MerkleNode<T> rightChild) {
+        super(tree, parent);
 
-            setLeftChild(leftChild);
-            setRightChild(rightChild);
-      }
+        setLeftChild(leftChild);
+        setRightChild(rightChild);
+    }
 
-      @Override
-      public ObjectId getObjectId() {
-            return OBJECT_ID;
-      }
+    @Override
+    public ObjectId getObjectId() {
+        return OBJECT_ID;
+    }
 
-      @Override
-      public SortedSet<Version> getVersionHistory() {
-            return VERSIONS;
-      }
+    @Override
+    public SortedSet<Version> getVersionHistory() {
+        return VERSIONS;
+    }
 
-      @Override
-      public Version getVersion() {
-            return VERSIONS.last();
-      }
+    @Override
+    public Version getVersion() {
+        return VERSIONS.last();
+    }
 
-      @Override
-      public Hash getHash() {
-            if (super.getHash() != null) {
-                  return super.getHash();
-            }
+    @Override
+    public Hash getHash() {
+        if (super.getHash() != null) {
+            return super.getHash();
+        }
 
-            if (leftChild == null && rightChild == null) {
-                  return null;
-            }
+        if (leftChild == null && rightChild == null) {
+            return null;
+        }
 
-            final Cryptography cryptography = getTree().getCryptography();
-            final HashAlgorithm algorithm = getTree().getHashAlgorithm();
-            final Hash leftHash = (leftChild != null) ? leftChild.getHash() : null;
-            final Hash rightHash = (rightChild != null) ? rightChild.getHash() : null;
+        final Cryptography cryptography = getTree().getCryptography();
+        final HashAlgorithm algorithm = getTree().getHashAlgorithm();
+        final Hash leftHash = (leftChild != null) ? leftChild.getHash() : null;
+        final Hash rightHash = (rightChild != null) ? rightChild.getHash() : null;
 
-            try {
-                  final Hash nodeHash = cryptography.digestSync(algorithm, leftHash, rightHash);
-                  setHash(nodeHash);
+        try {
+            final Hash nodeHash = cryptography.digestSync(algorithm, leftHash, rightHash);
+            setHash(nodeHash);
 
-                  return nodeHash;
-            } catch (NoSuchAlgorithmException ex) {
-                  throw new MerkleTreeException(ex);
-            }
-      }
+            return nodeHash;
+        } catch (NoSuchAlgorithmException ex) {
+            throw new MerkleTreeException(ex);
+        }
+    }
 
-      public MerkleNode<T> getLeftChild() {
-            return leftChild;
-      }
+    public MerkleNode<T> getLeftChild() {
+        return leftChild;
+    }
 
-      public void setLeftChild(final MerkleNode<T> leftChild) {
-            if (this.leftChild == leftChild) {
-                  return;
-            }
+    public void setLeftChild(final MerkleNode<T> leftChild) {
+        if (this.leftChild == leftChild) {
+            return;
+        }
 
-            this.leftChild = leftChild;
+        this.leftChild = leftChild;
 
-            if (leftChild == null) {
-                  setHash(null);
-            } else {
-                  this.leftChild.setParent(this);
-            }
+        if (leftChild == null) {
+            setHash(null);
+        } else {
+            this.leftChild.setParent(this);
+        }
 
-      }
+    }
 
-      public MerkleNode<T> getRightChild() {
-            return rightChild;
-      }
+    public MerkleNode<T> getRightChild() {
+        return rightChild;
+    }
 
-      public void setRightChild(final MerkleNode<T> rightChild) {
-            if (this.rightChild == rightChild) {
-                  return;
-            }
+    public void setRightChild(final MerkleNode<T> rightChild) {
+        if (this.rightChild == rightChild) {
+            return;
+        }
 
-            this.rightChild = rightChild;
+        this.rightChild = rightChild;
 
-            if (rightChild == null) {
-                  setHash(null);
-            } else {
-                  this.rightChild.setParent(this);
-            }
-      }
+        if (rightChild == null) {
+            setHash(null);
+        } else {
+            this.rightChild.setParent(this);
+        }
+    }
 
-      public boolean isPartial() {
-            return !isFull() && !isEmpty();
-      }
+    public boolean isPartial() {
+        return !isFull() && !isEmpty();
+    }
 
-      public boolean isEmpty() {
-            return leftChild == null && rightChild == null;
-      }
+    public boolean isEmpty() {
+        return leftChild == null && rightChild == null;
+    }
 
-      public boolean isFull() {
-            return leftChild != null && rightChild != null;
-      }
+    public boolean isFull() {
+        return leftChild != null && rightChild != null;
+    }
 }

@@ -17,7 +17,7 @@
 package com.servercurio.fabric.core.collections;
 
 enum NavigationStep {
-      LEFT,
-      RIGHT,
-      COMPLETE
+    LEFT,
+    RIGHT,
+    COMPLETE
 }

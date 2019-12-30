@@ -20,8 +20,8 @@ import java.util.SortedSet;
 
 public interface VersionAware {
 
-      SortedSet<Version> getVersionHistory();
+    SortedSet<Version> getVersionHistory();
 
-      Version getVersion();
+    Version getVersion();
 
 }

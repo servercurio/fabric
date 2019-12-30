@@ -31,82 +31,82 @@ import java.util.TreeSet;
 
 public class MerkleLeafNode<T extends SerializationAware> extends MerkleNode<T> {
 
-      public static final ObjectId OBJECT_ID = new ObjectId(1, 39146);
-      public static final SortedSet<Version> VERSIONS;
+    public static final ObjectId OBJECT_ID = new ObjectId(1, 39146);
+    public static final SortedSet<Version> VERSIONS;
 
-      private T value;
+    private T value;
 
-      static {
-            final TreeSet<Version> versionSet = new TreeSet<>();
-            versionSet.add(new Version(1, 0, 0));
+    static {
+        final TreeSet<Version> versionSet = new TreeSet<>();
+        versionSet.add(new Version(1, 0, 0));
 
-            VERSIONS = Collections.unmodifiableSortedSet(versionSet);
-      }
+        VERSIONS = Collections.unmodifiableSortedSet(versionSet);
+    }
 
-      public MerkleLeafNode(final MerkleTree<T> tree) {
-            super(tree);
-      }
+    public MerkleLeafNode(final MerkleTree<T> tree) {
+        super(tree);
+    }
 
-      public MerkleLeafNode(final MerkleTree<T> tree, final MerkleInternalNode<T> parent) {
-            super(tree, parent);
-      }
+    public MerkleLeafNode(final MerkleTree<T> tree, final MerkleInternalNode<T> parent) {
+        super(tree, parent);
+    }
 
-      public MerkleLeafNode(final MerkleTree<T> tree, final T value) {
-            super(tree);
+    public MerkleLeafNode(final MerkleTree<T> tree, final T value) {
+        super(tree);
 
-            setValue(value);
-      }
+        setValue(value);
+    }
 
-      public MerkleLeafNode(final MerkleTree<T> tree, final MerkleInternalNode<T> parent, final T value) {
-            super(tree, parent);
+    public MerkleLeafNode(final MerkleTree<T> tree, final MerkleInternalNode<T> parent, final T value) {
+        super(tree, parent);
 
-            setValue(value);
-      }
+        setValue(value);
+    }
 
-      @Override
-      public ObjectId getObjectId() {
-            return OBJECT_ID;
-      }
+    @Override
+    public ObjectId getObjectId() {
+        return OBJECT_ID;
+    }
 
-      @Override
-      public SortedSet<Version> getVersionHistory() {
-            return VERSIONS;
-      }
+    @Override
+    public SortedSet<Version> getVersionHistory() {
+        return VERSIONS;
+    }
 
-      @Override
-      public Version getVersion() {
-            return VERSIONS.last();
-      }
+    @Override
+    public Version getVersion() {
+        return VERSIONS.last();
+    }
 
-      @Override
-      public Hash getHash() {
-            if (super.getHash() != null) {
-                  return super.getHash();
-            }
+    @Override
+    public Hash getHash() {
+        if (super.getHash() != null) {
+            return super.getHash();
+        }
 
-            final Cryptography cryptography = getTree().getCryptography();
-            final HashAlgorithm algorithm = getTree().getHashAlgorithm();
+        final Cryptography cryptography = getTree().getCryptography();
+        final HashAlgorithm algorithm = getTree().getHashAlgorithm();
 
-            try {
-                  final Hash valueHash = cryptography.digestSync(algorithm, value);
+        try {
+            final Hash valueHash = cryptography.digestSync(algorithm, value);
 
-                  setHash(valueHash);
-                  return valueHash;
-            } catch (NoSuchAlgorithmException | IOException ex) {
-                  throw new MerkleTreeException(ex);
-            }
-      }
+            setHash(valueHash);
+            return valueHash;
+        } catch (NoSuchAlgorithmException | IOException ex) {
+            throw new MerkleTreeException(ex);
+        }
+    }
 
-      public T getValue() {
-            return value;
-      }
+    public T getValue() {
+        return value;
+    }
 
-      public void setValue(final T value) {
-            if (this.value == value) {
-                  return;
-            }
+    public void setValue(final T value) {
+        if (this.value == value) {
+            return;
+        }
 
-            this.value = value;
-            setHash(null);
-      }
+        this.value = value;
+        setHash(null);
+    }
 }

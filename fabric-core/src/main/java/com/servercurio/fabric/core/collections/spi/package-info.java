@@ -14,14 +14,4 @@
  * limitations under the License.
  */
 
-package com.servercurio.fabric.core.security;
-
-public interface Hashable {
-
-    Hash getHash();
-
-    void setHash(final Hash hash);
-
-    boolean hasHash();
-
-}
+package com.servercurio.fabric.core.collections.spi;

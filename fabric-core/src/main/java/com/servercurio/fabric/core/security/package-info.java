@@ -15,13 +15,3 @@
  */
 
 package com.servercurio.fabric.core.security;
-
-public interface Hashable {
-
-    Hash getHash();
-
-    void setHash(final Hash hash);
-
-    boolean hasHash();
-
-}

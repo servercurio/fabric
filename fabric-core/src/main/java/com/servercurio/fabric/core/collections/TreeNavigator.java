@@ -20,52 +20,52 @@ import com.servercurio.fabric.core.serialization.SerializationAware;
 
 class TreeNavigator<T extends SerializationAware> extends BitNavigator {
 
-      private MerkleTree<T> tree;
+    private MerkleTree<T> tree;
 
-      public TreeNavigator(final MerkleTree<T> tree) {
-            super(tree.getNodeCount());
-            this.tree = tree;
-      }
+    public TreeNavigator(final MerkleTree<T> tree) {
+        super(tree.getNodeCount());
+        this.tree = tree;
+    }
 
-      public MerkleTree<T> getTree() {
-            return tree;
-      }
+    public MerkleTree<T> getTree() {
+        return tree;
+    }
 
-      public MerkleNode<T> nodeAt(final long nodePosition) {
-            navigateTo(nodePosition);
-            return fetch();
-      }
+    public MerkleNode<T> nodeAt(final long nodePosition) {
+        navigateTo(nodePosition);
+        return fetch();
+    }
 
-      public MerkleNode<T> insertAt() {
-            insertion();
-            return fetch();
-      }
+    public MerkleNode<T> insertAt() {
+        insertion();
+        return fetch();
+    }
 
-      public MerkleNode<T> rightMostNode() {
-            rightMostLeaf();
-            return fetch();
-      }
+    public MerkleNode<T> rightMostNode() {
+        rightMostLeaf();
+        return fetch();
+    }
 
-      private MerkleNode<T> fetch() {
-            NavigationStep step = nextStep();
-            MerkleNode<T> current = tree.getRoot();
+    private MerkleNode<T> fetch() {
+        NavigationStep step = nextStep();
+        MerkleNode<T> current = tree.getRoot();
 
-            while (!NavigationStep.COMPLETE.equals(step) && current != null) {
-                  if (current instanceof MerkleInternalNode) {
-                        MerkleInternalNode<T> internalNode = (MerkleInternalNode<T>) current;
+        while (!NavigationStep.COMPLETE.equals(step) && current != null) {
+            if (current instanceof MerkleInternalNode) {
+                MerkleInternalNode<T> internalNode = (MerkleInternalNode<T>) current;
 
-                        if (NavigationStep.RIGHT.equals(step)) {
-                              current = internalNode.getRightChild();
-                        } else {
-                              current = internalNode.getLeftChild();
-                        }
+                if (NavigationStep.RIGHT.equals(step)) {
+                    current = internalNode.getRightChild();
+                } else {
+                    current = internalNode.getLeftChild();
+                }
 
-                        step = nextStep();
-                  } else {
-                        break;
-                  }
+                step = nextStep();
+            } else {
+                break;
             }
+        }
 
-            return current;
-      }
+        return current;
+    }
 }
