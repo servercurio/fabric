@@ -18,10 +18,10 @@ package com.servercurio.fabric.core.security;
 
 public interface Hashable {
 
-    Hash getHash();
+      Hash getHash();
 
-    void setHash(final Hash hash);
+      void setHash(final Hash hash);
 
-    boolean hasHash();
+      boolean hasHash();
 
 }

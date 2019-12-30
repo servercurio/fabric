@@ -27,14 +27,14 @@ import java.io.IOException;
 
 public interface SerializationProvider {
 
-    <T extends SerializationAware> T deserialize(final ObjectSerializer objectSerializer, final DataInputStream inStream, final ObjectId objectId, final Version version) throws IOException;
+      <T extends SerializationAware> T deserialize(final ObjectSerializer objectSerializer, final DataInputStream inStream, final ObjectId objectId, final Version version) throws IOException;
 
-    <T extends SerializationAware> boolean isSupported(final T object);
+      <T extends SerializationAware> boolean isSupported(final T object);
 
-    boolean isSupported(final ObjectId objectId, final Version version);
+      boolean isSupported(final ObjectId objectId, final Version version);
 
-    <T extends SerializationAware> T newInstance(final ObjectId objectId, final Version version);
+      <T extends SerializationAware> T newInstance(final ObjectId objectId, final Version version);
 
-    <T extends SerializationAware> void serialize(final ObjectSerializer objectSerializer, final DataOutputStream outStream, final T object) throws IOException;
+      <T extends SerializationAware> void serialize(final ObjectSerializer objectSerializer, final DataOutputStream outStream, final T object) throws IOException;
 
 }

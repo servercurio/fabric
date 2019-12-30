@@ -20,61 +20,69 @@ import org.apache.commons.lang3.builder.*;
 
 public class ObjectId implements Comparable<ObjectId> {
 
-    private int namespace;
-    private int identifier;
+      private int namespace;
+      private int identifier;
 
-    public ObjectId(final int namespace, final int identifier) {
-        this.namespace = namespace;
-        this.identifier = identifier;
-    }
+      public ObjectId(final int namespace, final int identifier) {
+            this.namespace = namespace;
+            this.identifier = identifier;
+      }
 
-    public int getNamespace() {
-        return namespace;
-    }
+      public int getNamespace() {
+            return namespace;
+      }
 
-    public int getIdentifier() {
-        return identifier;
-    }
+      public int getIdentifier() {
+            return identifier;
+      }
 
-    @Override
-    public int compareTo(final ObjectId other) {
-        if (this == other) return 0;
+      @Override
+      public int compareTo(final ObjectId other) {
+            if (this == other) {
+                  return 0;
+            }
 
-        if (other == null) return -1;
+            if (other == null) {
+                  return -1;
+            }
 
-        return new CompareToBuilder()
-                .append(namespace, other.namespace)
-                .append(identifier, other.identifier)
-                .toComparison();
-    }
+            return new CompareToBuilder()
+                    .append(namespace, other.namespace)
+                    .append(identifier, other.identifier)
+                    .toComparison();
+      }
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 37)
-                .append(namespace)
-                .append(identifier)
-                .toHashCode();
-    }
+      @Override
+      public int hashCode() {
+            return new HashCodeBuilder(17, 37)
+                    .append(namespace)
+                    .append(identifier)
+                    .toHashCode();
+      }
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
+      @Override
+      public boolean equals(final Object o) {
+            if (this == o) {
+                  return true;
+            }
 
-        if (!(o instanceof ObjectId)) return false;
+            if (!(o instanceof ObjectId)) {
+                  return false;
+            }
 
-        final ObjectId other = (ObjectId) o;
+            final ObjectId other = (ObjectId) o;
 
-        return new EqualsBuilder()
-                .append(namespace, other.namespace)
-                .append(identifier, other.identifier)
-                .isEquals();
-    }
+            return new EqualsBuilder()
+                    .append(namespace, other.namespace)
+                    .append(identifier, other.identifier)
+                    .isEquals();
+      }
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
-                .append("namespace", namespace)
-                .append("identifier", identifier)
-                .toString();
-    }
+      @Override
+      public String toString() {
+            return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
+                    .append("namespace", namespace)
+                    .append("identifier", identifier)
+                    .toString();
+      }
 }
