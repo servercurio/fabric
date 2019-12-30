@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - checkout
-      - run: mvn clean compile test
+      - run: mvn clean compile install test sonar:sonar
 
       - run:
           command: |
