@@ -55,6 +55,8 @@
         <git.commitid.plugin.version>3.0.1</git.commitid.plugin.version>
 
         <ow2.asm.version>7.1</ow2.asm.version>
+
+        <jacoco.version>0.8.4</jacoco.version>
     </properties>
 
 
@@ -122,6 +124,11 @@
                     <groupId>pl.project13.maven</groupId>
                     <artifactId>git-commit-id-plugin</artifactId>
                     <version>${git.commitid.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
