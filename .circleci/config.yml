@@ -31,7 +31,7 @@ jobs:
             mkdir -p ~/repo/junit/fabric-core
             mkdir -p ~/repo/jacoco/fabric-core
             cp -R fabric-core/target/surefire-reports/* ~/repo/junit/fabric-core
-            cp -R fabric-core/target/site/jacoco ~/repo/jacoco/fabric-core
+            cp -R fabric-core/target/site/jacoco/* ~/repo/jacoco/fabric-core
       # Download and cache dependencies
       - restore_cache:
           keys:
@@ -48,8 +48,10 @@ jobs:
       - store_test_results: # uploads the test metadata from the `target/surefire-reports` directory so that it can show up in the CircleCI dashboard.
           # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
           path: junit
+      - store_artificats:
+          -
       - codecov/upload:
-          file: ~/repo/jacoco/fabric-core/jacoco.xml
+          file: ~/repo/jacoco/fabric-core/*.xml
 workflows:
   version: 2
   build_on_commit:
