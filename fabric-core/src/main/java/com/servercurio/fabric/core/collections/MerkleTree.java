@@ -36,6 +36,7 @@ public class MerkleTree<T extends SerializationAware> extends AbstractCollection
     private MerkleInternalNode<T> root;
     private MerkleLeafNode<T> rightMostLeafNode;
 
+    private int nodeCount;
     private int leafCount;
 
 
@@ -54,6 +55,7 @@ public class MerkleTree<T extends SerializationAware> extends AbstractCollection
         this.root = new MerkleInternalNode<>(this);
         this.rightMostLeafNode = null;
         this.leafCount = 0;
+        this.nodeCount = 1;
     }
 
     public MerkleTree(final HashAlgorithm hashAlgorithm) {
@@ -126,6 +128,10 @@ public class MerkleTree<T extends SerializationAware> extends AbstractCollection
         return (root != null) ? root.getHash() : null;
     }
 
+    protected int getNodeCount() {
+        return nodeCount;
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -138,7 +144,45 @@ public class MerkleTree<T extends SerializationAware> extends AbstractCollection
      */
     @Override
     public boolean add(final T t) {
-        return super.add(t);
+        final MerkleLeafNode<T> newLeafNode = new MerkleLeafNode<>(this, t);
+
+        if (size() < 2) {
+            if (size() == 0) {
+                this.root.setLeftChild(newLeafNode);
+            } else {
+                this.root.setRightChild(newLeafNode);
+            }
+
+            leafCount++;
+            nodeCount++;
+            rightMostLeafNode = newLeafNode;
+            return true;
+        }
+
+        final TreeNavigator<T> navigator = new TreeNavigator<>(this);
+        final MerkleNode<T> insertAtNode = navigator.insertAt();
+
+        if (insertAtNode instanceof MerkleInternalNode) {
+            throw new MerkleTreeException("Illegal node insertion was attempted at an internal node");
+        }
+
+        final MerkleInternalNode<T> interimNode = new MerkleInternalNode<>(this);
+        final MerkleInternalNode<T> insertAtParent = insertAtNode.getParent();
+        final boolean insertAtOnLeft = insertAtParent.getLeftChild() == insertAtNode;
+
+        interimNode.setLeftChild(insertAtNode);
+        interimNode.setRightChild(newLeafNode);
+
+        if (insertAtOnLeft) {
+            insertAtParent.setLeftChild(interimNode);
+        } else {
+            insertAtParent.setRightChild(interimNode);
+        }
+
+        leafCount++;
+        nodeCount += 2;
+        rightMostLeafNode = newLeafNode;
+        return true;
     }
 
 
@@ -149,7 +193,7 @@ public class MerkleTree<T extends SerializationAware> extends AbstractCollection
      */
     @Override
     public Iterator<T> iterator() {
-        return new MerkleIterator(this);
+        return new MerkleIterator();
     }
 
     @Override
@@ -159,10 +203,16 @@ public class MerkleTree<T extends SerializationAware> extends AbstractCollection
 
     private class MerkleIterator implements Iterator<T> {
 
-        private MerkleTree<T> parent;
+        private LinkedList<MerkleNode<T>> dfsStack;
+        private Set<MerkleNode<T>> visitedSet;
 
-        public MerkleIterator(final MerkleTree<T> parent) {
-            this.parent = parent;
+        private MerkleLeafNode<T> lastReturned;
+
+        public MerkleIterator() {
+            this.dfsStack = new LinkedList<>();
+            this.visitedSet = new HashSet<>(nodeCount);
+
+            this.dfsStack.addFirst(root);
         }
 
         /**
@@ -173,7 +223,7 @@ public class MerkleTree<T extends SerializationAware> extends AbstractCollection
          */
         @Override
         public boolean hasNext() {
-            return false;
+            return !isEmpty() && !dfsStack.isEmpty();
         }
 
         /**
@@ -184,7 +234,41 @@ public class MerkleTree<T extends SerializationAware> extends AbstractCollection
          */
         @Override
         public T next() {
-            return null;
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+
+            MerkleNode<T> current = dfsStack.pop();
+
+            while (current instanceof MerkleInternalNode) {
+
+                if (visitedSet.contains(current)) {
+                    current = dfsStack.pollFirst();
+                    continue;
+                }
+
+                final MerkleInternalNode<T> currentInternal = (MerkleInternalNode<T>) current;
+                visitedSet.add(current);
+
+                if (currentInternal.getRightChild() != null && !visitedSet.contains(currentInternal.getRightChild())) {
+                    dfsStack.addFirst(currentInternal.getRightChild());
+                }
+
+                if (currentInternal.getLeftChild() != null && !visitedSet.contains(currentInternal.getLeftChild())) {
+                    dfsStack.addFirst(currentInternal.getLeftChild());
+                }
+
+                current = dfsStack.pollFirst();
+            }
+
+            if (!(current instanceof MerkleLeafNode)) {
+                throw new NoSuchElementException();
+            }
+
+            visitedSet.add(current);
+            lastReturned = ((MerkleLeafNode<T>) current);
+
+            return lastReturned.getValue();
         }
 
         /**
@@ -207,7 +291,70 @@ public class MerkleTree<T extends SerializationAware> extends AbstractCollection
          */
         @Override
         public void remove() {
+            if (lastReturned == null) {
+                throw new IllegalStateException();
+            }
 
+            final MerkleInternalNode<T> rightMostParent = rightMostLeafNode.getParent();
+            final MerkleInternalNode<T> lastReturnedParent = lastReturned.getParent();
+            final boolean rightMostOnLeft = (rightMostParent.getLeftChild() == rightMostLeafNode);
+
+            boolean internalNodeRemoved = false;
+
+            if (rightMostParent == root) {
+                if (rightMostOnLeft) {
+                    root.setLeftChild(null);
+                } else {
+                    root.setRightChild(null);
+                }
+            } else {
+                final MerkleNode<T> rightMostLeftChild = rightMostParent.getLeftChild();
+
+                rightMostParent.setLeftChild(null);
+                rightMostParent.setRightChild(null);
+
+                if (rightMostLeftChild != rightMostLeafNode) {
+                    if (rightMostParent.getParent().getLeftChild() == rightMostParent) {
+                        rightMostParent.getParent().setLeftChild(rightMostLeftChild);
+                    } else {
+                        rightMostParent.getParent().setRightChild(rightMostLeftChild);
+                    }
+                }
+
+                rightMostParent.setParent(null);
+                internalNodeRemoved = true;
+            }
+
+            rightMostLeafNode.setParent(null);
+
+            if (lastReturned != rightMostLeafNode) {
+                final boolean lastReturnedOnLeft = lastReturnedParent.getLeftChild() == lastReturned;
+
+                if (lastReturnedOnLeft) {
+                    lastReturnedParent.setLeftChild(rightMostLeafNode);
+                } else {
+                    lastReturnedParent.setRightChild(rightMostLeafNode);
+                }
+
+                lastReturned.setParent(null);
+            }
+
+            leafCount--;
+            nodeCount -= (internalNodeRemoved) ? 2 : 1;
+            lastReturned = null;
+
+            if (leafCount > 2) {
+                final MerkleNode<T> newRightNode = new TreeNavigator<>(root.getTree()).nodeAt(nodeCount);
+
+                if (newRightNode instanceof MerkleInternalNode) {
+                    throw new MerkleTreeException("Illegal internal node returned when leaf node expected");
+                }
+
+                rightMostLeafNode = (MerkleLeafNode<T>) newRightNode;
+            } else {
+                rightMostLeafNode = (leafCount == 2) ? (MerkleLeafNode<T>) root
+                        .getRightChild() : (MerkleLeafNode<T>) root.getLeftChild();
+            }
         }
     }
 }

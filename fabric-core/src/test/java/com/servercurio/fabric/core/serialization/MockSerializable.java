@@ -16,21 +16,42 @@
 
 package com.servercurio.fabric.core.serialization;
 
+import com.servercurio.fabric.core.security.Cryptography;
+import com.servercurio.fabric.core.security.Hash;
+import com.servercurio.fabric.core.security.Hashable;
+
+import java.nio.ByteBuffer;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-public class MockSerializable implements SerializationAware {
+public class MockSerializable implements SerializationAware, Hashable {
 
     public static final ObjectId OBJECT_ID = new ObjectId(0, 1);
 
     public static SortedSet<Version> VERSIONS;
+
+    private byte[] integerValue;
+    private Hash hash;
 
     static {
         final TreeSet<Version> versionSet = new TreeSet<>();
         versionSet.add(new Version(1, 0, 0));
 
         VERSIONS = Collections.unmodifiableSortedSet(versionSet);
+    }
+
+    public MockSerializable() {
+        this(0);
+    }
+
+    public MockSerializable(final int integerValue) {
+        this.integerValue = ByteBuffer.allocate(Integer.BYTES).putInt(integerValue).array();
+    }
+
+    public int getIntegerValue() {
+        return ByteBuffer.wrap(integerValue).getInt();
     }
 
     @Override
@@ -48,4 +69,27 @@ public class MockSerializable implements SerializationAware {
         return VERSIONS.last();
     }
 
+    @Override
+    public Hash getHash() {
+        if (hash != null) {
+            return hash;
+        }
+
+        try {
+            hash = Cryptography.getDefaultInstance().digestSync(integerValue);
+            return hash;
+        } catch (NoSuchAlgorithmException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    @Override
+    public void setHash(final Hash hash) {
+        this.hash = hash;
+    }
+
+    @Override
+    public boolean hasHash() {
+        return hash != null;
+    }
 }

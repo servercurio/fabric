@@ -47,7 +47,7 @@ public class MerkleLeafNode<T extends SerializationAware> extends MerkleNode<T> 
         super(tree);
     }
 
-    public MerkleLeafNode(final MerkleTree<T> tree, final MerkleNode<T> parent) {
+    public MerkleLeafNode(final MerkleTree<T> tree, final MerkleInternalNode<T> parent) {
         super(tree, parent);
     }
 
@@ -57,7 +57,7 @@ public class MerkleLeafNode<T extends SerializationAware> extends MerkleNode<T> 
         setValue(value);
     }
 
-    public MerkleLeafNode(final MerkleTree<T> tree, final MerkleNode<T> parent, final T value) {
+    public MerkleLeafNode(final MerkleTree<T> tree, final MerkleInternalNode<T> parent, final T value) {
         super(tree, parent);
 
         setValue(value);

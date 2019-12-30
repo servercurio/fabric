@@ -25,14 +25,14 @@ abstract class MerkleNode<T extends SerializationAware> implements Serialization
     private MerkleTree<T> tree;
     private Hash hash;
 
-    private MerkleNode<T> parent;
+    private MerkleInternalNode<T> parent;
 
     protected MerkleNode(final MerkleTree<T> tree) {
         this.tree = tree;
         this.hash = null;
     }
 
-    protected MerkleNode(final MerkleTree<T> tree, final MerkleNode<T> parent) {
+    protected MerkleNode(final MerkleTree<T> tree, final MerkleInternalNode<T> parent) {
         this(tree);
 
         setParent(parent);
@@ -49,25 +49,30 @@ abstract class MerkleNode<T extends SerializationAware> implements Serialization
             return;
         }
 
-        if (parent != null && parent.getHash() != null) {
+        if (parent != null && parent.hasHash()) {
             parent.setHash(null);
         }
 
         this.hash = hash;
     }
 
-    public MerkleNode<T> getParent() {
+    @Override
+    public boolean hasHash() {
+        return hash != null;
+    }
+
+    public MerkleInternalNode<T> getParent() {
         return parent;
     }
 
-    public void setParent(final MerkleNode<T> parent) {
+    public void setParent(final MerkleInternalNode<T> parent) {
         if (this.parent == parent) {
             return;
         }
 
         setHash(null);
 
-        if (parent != null && parent.getHash() != null) {
+        if (parent != null && parent.hasHash()) {
             parent.setHash(null);
         }
 

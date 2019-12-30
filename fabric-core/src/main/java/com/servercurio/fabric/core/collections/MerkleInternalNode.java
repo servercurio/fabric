@@ -47,7 +47,7 @@ class MerkleInternalNode<T extends SerializationAware> extends MerkleNode<T> {
         super(tree);
     }
 
-    public MerkleInternalNode(final MerkleTree<T> tree, final MerkleNode<T> parent) {
+    public MerkleInternalNode(final MerkleTree<T> tree, final MerkleInternalNode<T> parent) {
         super(tree, parent);
     }
 
@@ -58,7 +58,7 @@ class MerkleInternalNode<T extends SerializationAware> extends MerkleNode<T> {
         setRightChild(rightChild);
     }
 
-    public MerkleInternalNode(final MerkleTree<T> tree, final MerkleNode<T> parent, final MerkleNode<T> leftChild, final MerkleNode<T> rightChild) {
+    public MerkleInternalNode(final MerkleTree<T> tree, final MerkleInternalNode<T> parent, final MerkleNode<T> leftChild, final MerkleNode<T> rightChild) {
         super(tree, parent);
 
         setLeftChild(leftChild);
@@ -119,8 +119,9 @@ class MerkleInternalNode<T extends SerializationAware> extends MerkleNode<T> {
         if (leftChild == null) {
             setHash(null);
         } else {
-            leftChild.setParent(this);
+            this.leftChild.setParent(this);
         }
+
     }
 
     public MerkleNode<T> getRightChild() {
@@ -137,7 +138,7 @@ class MerkleInternalNode<T extends SerializationAware> extends MerkleNode<T> {
         if (rightChild == null) {
             setHash(null);
         } else {
-            rightChild.setParent(this);
+            this.rightChild.setParent(this);
         }
     }
 

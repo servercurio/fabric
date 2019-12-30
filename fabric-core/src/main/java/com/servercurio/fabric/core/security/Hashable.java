@@ -22,4 +22,6 @@ public interface Hashable {
 
     void setHash(final Hash hash);
 
+    boolean hasHash();
+
 }
