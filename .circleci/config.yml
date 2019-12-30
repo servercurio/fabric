@@ -49,7 +49,7 @@ jobs:
           # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
           path: junit
       - codecov/upload:
-          file: jacoco/fabric-core/jacoco.xml
+          file: ~/repo/jacoco/fabric-core/jacoco.xml
 workflows:
   version: 2
   build_on_commit:
