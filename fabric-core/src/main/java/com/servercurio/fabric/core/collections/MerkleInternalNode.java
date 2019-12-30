@@ -58,7 +58,8 @@ class MerkleInternalNode<T extends SerializationAware> extends MerkleNode<T> {
         setRightChild(rightChild);
     }
 
-    public MerkleInternalNode(final MerkleTree<T> tree, final MerkleInternalNode<T> parent, final MerkleNode<T> leftChild, final MerkleNode<T> rightChild) {
+    public MerkleInternalNode(final MerkleTree<T> tree, final MerkleInternalNode<T> parent,
+                              final MerkleNode<T> leftChild, final MerkleNode<T> rightChild) {
         super(tree, parent);
 
         setLeftChild(leftChild);

@@ -61,7 +61,8 @@ public class DefaultCryptographyImpl implements Cryptography {
     }
 
     @Override
-    public Hash digestSync(final HashAlgorithm algorithm, final InputStream stream) throws NoSuchAlgorithmException, IOException {
+    public Hash digestSync(final HashAlgorithm algorithm,
+                           final InputStream stream) throws NoSuchAlgorithmException, IOException {
         final MessageDigest digest = acquireAlgorithm(algorithm);
         final byte[] buffer = new byte[STREAM_BUFFER_SIZE];
 
@@ -94,7 +95,8 @@ public class DefaultCryptographyImpl implements Cryptography {
     }
 
     @Override
-    public Hash digestSync(final HashAlgorithm algorithm, final Hash leftHash, final Hash rightHash) throws NoSuchAlgorithmException {
+    public Hash digestSync(final HashAlgorithm algorithm, final Hash leftHash,
+                           final Hash rightHash) throws NoSuchAlgorithmException {
         final MessageDigest digest = acquireAlgorithm(algorithm);
 
         if (leftHash != null) {
@@ -131,7 +133,8 @@ public class DefaultCryptographyImpl implements Cryptography {
     }
 
     @Override
-    public Hash digestSync(final HashAlgorithm algorithm, final SerializationAware serialObject) throws NoSuchAlgorithmException, IOException {
+    public Hash digestSync(final HashAlgorithm algorithm,
+                           final SerializationAware serialObject) throws NoSuchAlgorithmException, IOException {
         if (serialObject == null) {
             return digestSync(algorithm, Hash.EMPTY.getValue());
         }

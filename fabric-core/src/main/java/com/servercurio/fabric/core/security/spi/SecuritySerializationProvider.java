@@ -33,7 +33,9 @@ public final class SecuritySerializationProvider implements SerializationProvide
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends SerializationAware> T deserialize(final ObjectSerializer objectSerializer, final DataInputStream inStream, final ObjectId objectId, final Version version) throws IOException {
+    public <T extends SerializationAware> T deserialize(final ObjectSerializer objectSerializer,
+                                                        final DataInputStream inStream, final ObjectId objectId,
+                                                        final Version version) throws IOException {
 
         if (Hash.OBJECT_ID.equals(objectId) && Hash.VERSIONS.contains(version)) {
             final int hashType = inStream.readInt();
@@ -76,7 +78,9 @@ public final class SecuritySerializationProvider implements SerializationProvide
     }
 
     @Override
-    public <T extends SerializationAware> void serialize(final ObjectSerializer objectSerializer, final DataOutputStream outStream, final T object) throws IOException {
+    public <T extends SerializationAware> void serialize(final ObjectSerializer objectSerializer,
+                                                         final DataOutputStream outStream,
+                                                         final T object) throws IOException {
 
         if (Hash.OBJECT_ID.equals(object.getObjectId()) && Hash.VERSIONS.contains(object.getVersion())) {
             final Hash hash = (Hash) object;

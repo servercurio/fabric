@@ -34,7 +34,7 @@ public class UnknownObjectIdentifierException extends IOException {
      */
     public UnknownObjectIdentifierException(final ObjectId objectId) {
         super(String.format("Unknown Object Identifier [ namespace = %d, id = %d ]", objectId.getNamespace(),
-                objectId.getNamespace()));
+                            objectId.getNamespace()));
     }
 
     /**

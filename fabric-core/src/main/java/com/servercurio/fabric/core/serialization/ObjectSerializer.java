@@ -54,7 +54,8 @@ public class ObjectSerializer {
 
     }
 
-    public <T extends SerializationAware> void serialize(final DataOutputStream outStream, final T object) throws IOException {
+    public <T extends SerializationAware> void serialize(final DataOutputStream outStream,
+                                                         final T object) throws IOException {
 
         if (outStream == null) {
             throw new IllegalArgumentException("outStream");
@@ -89,7 +90,8 @@ public class ObjectSerializer {
 
     }
 
-    protected <T extends SerializationAware> SerializationProvider provider(final T object) throws ObjectNotSerializableException {
+    protected <T extends SerializationAware> SerializationProvider provider(
+            final T object) throws ObjectNotSerializableException {
 
         final Iterator<SerializationProvider> iter = serviceLoader.iterator();
 
@@ -105,7 +107,8 @@ public class ObjectSerializer {
 
     }
 
-    protected SerializationProvider provider(final ObjectId objectId, final Version version) throws UnknownObjectIdentifierException {
+    protected SerializationProvider provider(final ObjectId objectId,
+                                             final Version version) throws UnknownObjectIdentifierException {
 
         final Iterator<SerializationProvider> iter = serviceLoader.iterator();
 
