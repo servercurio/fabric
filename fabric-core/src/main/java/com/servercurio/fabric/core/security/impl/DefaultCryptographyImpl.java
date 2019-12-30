@@ -38,7 +38,8 @@ public class DefaultCryptographyImpl implements Cryptography {
 
     private static final int STREAM_BUFFER_SIZE = 8192;
 
-    private static final ThreadLocal<HashMap<HashAlgorithm, MessageDigest>> hashAlgorithmCache = ThreadLocal.withInitial(HashMap::new);;
+    private static final ThreadLocal<HashMap<HashAlgorithm, MessageDigest>> hashAlgorithmCache = ThreadLocal
+            .withInitial(HashMap::new);
 
     private static final ObjectSerializer objectSerializer = new ObjectSerializer();
 
@@ -132,13 +133,13 @@ public class DefaultCryptographyImpl implements Cryptography {
     @Override
     public Hash digestSync(final HashAlgorithm algorithm, final SerializationAware serialObject) throws NoSuchAlgorithmException, IOException {
         if (serialObject == null) {
-           return digestSync(algorithm, Hash.EMPTY.getValue());
+            return digestSync(algorithm, Hash.EMPTY.getValue());
         }
 
         Hash objectHash;
 
         if (serialObject instanceof Hashable) {
-             objectHash = ((Hashable) serialObject).getHash();
+            objectHash = ((Hashable) serialObject).getHash();
 
             if (objectHash != null) {
                 return objectHash;

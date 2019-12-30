@@ -58,7 +58,7 @@
 
         <jacoco.version>0.8.4</jacoco.version>
         <sonar.version>3.7.0.1746</sonar.version>
-        
+
         <sonar.organization>servercurio</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
