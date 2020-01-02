@@ -61,7 +61,7 @@ public class MerkleTree<T extends SerializationAware> extends AbstractCollection
     public MerkleTree(final HashAlgorithm hashAlgorithm) {
         this();
 
-        if (hashAlgorithm == null || HashAlgorithm.NONE.equals(hashAlgorithm)) {
+        if (hashAlgorithm == null || hashAlgorithm == HashAlgorithm.NONE) {
             throw new IllegalArgumentException("hashAlgorithm");
         }
 
@@ -132,6 +132,26 @@ public class MerkleTree<T extends SerializationAware> extends AbstractCollection
         return nodeCount;
     }
 
+    protected void setNodeCount(final int nodeCount) {
+        this.nodeCount = nodeCount;
+    }
+
+    protected MerkleLeafNode<T> getRightMostLeafNode() {
+        return rightMostLeafNode;
+    }
+
+    protected void setRightMostLeafNode(final MerkleLeafNode<T> rightMostLeafNode) {
+        this.rightMostLeafNode = rightMostLeafNode;
+    }
+
+    protected int getLeafCount() {
+        return leafCount;
+    }
+
+    protected void setLeafCount(final int leafCount) {
+        this.leafCount = leafCount;
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -193,7 +213,7 @@ public class MerkleTree<T extends SerializationAware> extends AbstractCollection
      */
     @Override
     public Iterator<T> iterator() {
-        return new MerkleIterator();
+        return new MerkleIterator<T>(this);
     }
 
     @Override
@@ -201,162 +221,4 @@ public class MerkleTree<T extends SerializationAware> extends AbstractCollection
         return leafCount;
     }
 
-    private class MerkleIterator implements Iterator<T> {
-
-        private LinkedList<MerkleNode<T>> dfsStack;
-        private Set<MerkleNode<T>> visitedSet;
-
-        private MerkleLeafNode<T> lastReturned;
-
-        public MerkleIterator() {
-            this.dfsStack = new LinkedList<>();
-            this.visitedSet = new HashSet<>(nodeCount);
-
-            this.dfsStack.addFirst(root);
-        }
-
-        /**
-         * Returns {@code true} if the iteration has more elements. (In other words, returns {@code true} if {@link
-         * #next} would return an element rather than throwing an exception.)
-         *
-         * @return {@code true} if the iteration has more elements
-         */
-        @Override
-        public boolean hasNext() {
-            return !isEmpty() && !dfsStack.isEmpty();
-        }
-
-        /**
-         * Returns the next element in the iteration.
-         *
-         * @return the next element in the iteration
-         * @throws NoSuchElementException if the iteration has no more elements
-         */
-        @Override
-        public T next() {
-            if (!hasNext()) {
-                throw new NoSuchElementException();
-            }
-
-            MerkleNode<T> current = dfsStack.pop();
-
-            while (current instanceof MerkleInternalNode) {
-
-                if (visitedSet.contains(current)) {
-                    current = dfsStack.pollFirst();
-                    continue;
-                }
-
-                final MerkleInternalNode<T> currentInternal = (MerkleInternalNode<T>) current;
-                visitedSet.add(current);
-
-                if (currentInternal.getRightChild() != null && !visitedSet
-                        .contains(currentInternal.getRightChild())) {
-                    dfsStack.addFirst(currentInternal.getRightChild());
-                }
-
-                if (currentInternal.getLeftChild() != null && !visitedSet
-                        .contains(currentInternal.getLeftChild())) {
-                    dfsStack.addFirst(currentInternal.getLeftChild());
-                }
-
-                current = dfsStack.pollFirst();
-            }
-
-            if (!(current instanceof MerkleLeafNode)) {
-                throw new NoSuchElementException();
-            }
-
-            visitedSet.add(current);
-            lastReturned = ((MerkleLeafNode<T>) current);
-
-            return lastReturned.getValue();
-        }
-
-        /**
-         * Removes from the underlying collection the last element returned by this iterator (optional operation). This
-         * method can be called only once per call to {@link #next}.
-         * <p>
-         * The behavior of an iterator is unspecified if the underlying collection is modified while the iteration is in
-         * progress in any way other than by calling this method, unless an overriding class has specified a concurrent
-         * modification policy.
-         * <p>
-         * The behavior of an iterator is unspecified if this method is called after a call to the {@link
-         * #forEachRemaining forEachRemaining} method.
-         *
-         * @throws UnsupportedOperationException if the {@code remove} operation is not supported by this iterator
-         * @throws IllegalStateException         if the {@code next} method has not yet been called, or the {@code
-         *                                       remove} method has already been called after the last call to the
-         *                                       {@code next} method
-         * @implSpec The default implementation throws an instance of {@link UnsupportedOperationException} and performs
-         * no other action.
-         */
-        @Override
-        public void remove() {
-            if (lastReturned == null) {
-                throw new IllegalStateException();
-            }
-
-            final MerkleInternalNode<T> rightMostParent = rightMostLeafNode.getParent();
-            final MerkleInternalNode<T> lastReturnedParent = lastReturned.getParent();
-            final boolean rightMostOnLeft = (rightMostParent.getLeftChild() == rightMostLeafNode);
-
-            boolean internalNodeRemoved = false;
-
-            if (rightMostParent == root) {
-                if (rightMostOnLeft) {
-                    root.setLeftChild(null);
-                } else {
-                    root.setRightChild(null);
-                }
-            } else {
-                final MerkleNode<T> rightMostLeftChild = rightMostParent.getLeftChild();
-
-                rightMostParent.setLeftChild(null);
-                rightMostParent.setRightChild(null);
-
-                if (rightMostLeftChild != rightMostLeafNode) {
-                    if (rightMostParent.getParent().getLeftChild() == rightMostParent) {
-                        rightMostParent.getParent().setLeftChild(rightMostLeftChild);
-                    } else {
-                        rightMostParent.getParent().setRightChild(rightMostLeftChild);
-                    }
-                }
-
-                rightMostParent.setParent(null);
-                internalNodeRemoved = true;
-            }
-
-            rightMostLeafNode.setParent(null);
-
-            if (lastReturned != rightMostLeafNode) {
-                final boolean lastReturnedOnLeft = lastReturnedParent.getLeftChild() == lastReturned;
-
-                if (lastReturnedOnLeft) {
-                    lastReturnedParent.setLeftChild(rightMostLeafNode);
-                } else {
-                    lastReturnedParent.setRightChild(rightMostLeafNode);
-                }
-
-                lastReturned.setParent(null);
-            }
-
-            leafCount--;
-            nodeCount -= (internalNodeRemoved) ? 2 : 1;
-            lastReturned = null;
-
-            if (leafCount > 2) {
-                final MerkleNode<T> newRightNode = new TreeNavigator<>(root.getTree()).nodeAt(nodeCount);
-
-                if (newRightNode instanceof MerkleInternalNode) {
-                    throw new MerkleTreeException("Illegal internal node returned when leaf node expected");
-                }
-
-                rightMostLeafNode = (MerkleLeafNode<T>) newRightNode;
-            } else {
-                rightMostLeafNode = (leafCount == 2) ? (MerkleLeafNode<T>) root
-                        .getRightChild() : (MerkleLeafNode<T>) root.getLeftChild();
-            }
-        }
-    }
 }

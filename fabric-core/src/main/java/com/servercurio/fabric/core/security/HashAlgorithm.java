@@ -38,7 +38,7 @@ public enum HashAlgorithm {
 
     static {
         for (HashAlgorithm algorithm : HashAlgorithm.values()) {
-            if (NONE.equals(algorithm)) {
+            if (algorithm == NONE) {
                 continue;
             }
 

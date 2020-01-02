@@ -21,6 +21,9 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 import static com.servercurio.fabric.core.collections.BitNavigator.msb;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -108,4 +111,31 @@ public class MerkleTreeTests {
         assertEquals(1, tree.getNodeCount());
     }
 
+    @Test
+    @Order(300)
+    @DisplayName("Correctness :: Iterator -> Empty Next")
+    public void testCorrectnessIteratorEmptyNext() {
+        final MerkleTree<MockSerializable> tree = new MerkleTree<>();
+
+        assertEquals(0, tree.size());
+        assertEquals(1, tree.getNodeCount());
+
+        final Iterator<MockSerializable> iterator = tree.iterator();
+
+        assertThrows(NoSuchElementException.class, iterator::next);
+    }
+
+    @Test
+    @Order(301)
+    @DisplayName("Correctness :: Iterator -> Empty Remove")
+    public void testCorrectnessIteratorEmptyRemove() {
+        final MerkleTree<MockSerializable> tree = new MerkleTree<>();
+
+        assertEquals(0, tree.size());
+        assertEquals(1, tree.getNodeCount());
+
+        final Iterator<MockSerializable> iterator = tree.iterator();
+
+        assertThrows(IllegalStateException.class, iterator::remove);
+    }
 }

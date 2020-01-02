@@ -29,6 +29,7 @@ import java.io.IOException;
 public final class SecuritySerializationProvider implements SerializationProvider {
 
     public SecuritySerializationProvider() {
+        // Method is currently empty because no initialization is required
     }
 
     @Override
@@ -47,7 +48,7 @@ public final class SecuritySerializationProvider implements SerializationProvide
 
             final byte[] hashValue = new byte[algorithm.bytes()];
 
-            if (!HashAlgorithm.NONE.equals(algorithm)) {
+            if (algorithm != HashAlgorithm.NONE) {
                 inStream.readFully(hashValue);
             }
 
@@ -86,7 +87,7 @@ public final class SecuritySerializationProvider implements SerializationProvide
             final Hash hash = (Hash) object;
             outStream.writeInt(hash.getAlgorithm().id());
 
-            if (!HashAlgorithm.NONE.equals(hash.getAlgorithm())) {
+            if (hash.getAlgorithm() != HashAlgorithm.NONE) {
                 outStream.write(hash.getValue());
             }
         } else {

@@ -36,6 +36,10 @@ public class Hash implements SerializationAware, Comparable<Hash> {
 
     public static final Hash EMPTY = new Hash();
 
+    private static final String ALGORITHM_FIELD = "algorithm";
+    private static final String VALUE_FIELD = "value";
+    private static final String OTHER_PARAM = "other";
+
     static {
         final TreeSet<Version> versionSet = new TreeSet<>();
         versionSet.add(new Version(1, 0, 0));
@@ -58,11 +62,11 @@ public class Hash implements SerializationAware, Comparable<Hash> {
 
     public Hash(final HashAlgorithm algorithm, final byte[] value, final boolean copyValue) {
         if (algorithm == null) {
-            throw new IllegalArgumentException("algorithm");
+            throw new IllegalArgumentException(ALGORITHM_FIELD);
         }
 
-        if (value == null || (!HashAlgorithm.NONE.equals(algorithm) && value.length != algorithm.bytes())) {
-            throw new IllegalArgumentException("value");
+        if (value == null || (algorithm != HashAlgorithm.NONE && value.length != algorithm.bytes())) {
+            throw new IllegalArgumentException(VALUE_FIELD);
         }
 
         this.algorithm = algorithm;
@@ -71,7 +75,7 @@ public class Hash implements SerializationAware, Comparable<Hash> {
 
     public Hash(final Hash other) {
         if (other == null) {
-            throw new IllegalArgumentException("other");
+            throw new IllegalArgumentException(OTHER_PARAM);
         }
 
         this.algorithm = other.getAlgorithm();
@@ -87,7 +91,7 @@ public class Hash implements SerializationAware, Comparable<Hash> {
 
     public void setAlgorithm(final HashAlgorithm algorithm) {
         if (algorithm == null) {
-            throw new IllegalArgumentException("algorithm");
+            throw new IllegalArgumentException(ALGORITHM_FIELD);
         }
 
         this.algorithm = algorithm;
@@ -100,14 +104,14 @@ public class Hash implements SerializationAware, Comparable<Hash> {
 
     public void setValue(final byte[] value) {
         if (value == null || value.length != getAlgorithm().bytes()) {
-            throw new IllegalArgumentException("value");
+            throw new IllegalArgumentException(VALUE_FIELD);
         }
 
         this.value = value;
     }
 
     public boolean isEmpty() {
-        if (HashAlgorithm.NONE.equals(getAlgorithm())) {
+        if (getAlgorithm() == HashAlgorithm.NONE) {
             return true;
         }
 
@@ -161,7 +165,11 @@ public class Hash implements SerializationAware, Comparable<Hash> {
             return true;
         }
 
-        if (!(o instanceof Hash)) {
+        if (o == null) {
+            return false;
+        }
+
+        if (getClass() != o.getClass() && !o.getClass().isAssignableFrom(getClass())) {
             return false;
         }
 
@@ -177,8 +185,8 @@ public class Hash implements SerializationAware, Comparable<Hash> {
     @Override
     public String toString() {
         return new ToStringBuilder(this, JSON_STYLE)
-                .append("algorithm", algorithm)
-                .append("value", Base64.getEncoder().encodeToString(value))
+                .append(ALGORITHM_FIELD, algorithm)
+                .append(VALUE_FIELD, Base64.getEncoder().encodeToString(value))
                 .build();
     }
 }

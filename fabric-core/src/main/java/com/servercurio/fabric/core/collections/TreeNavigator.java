@@ -50,11 +50,11 @@ class TreeNavigator<T extends SerializationAware> extends BitNavigator {
         NavigationStep step = nextStep();
         MerkleNode<T> current = tree.getRoot();
 
-        while (!NavigationStep.COMPLETE.equals(step) && current != null) {
+        while (step != NavigationStep.COMPLETE && current != null) {
             if (current instanceof MerkleInternalNode) {
                 MerkleInternalNode<T> internalNode = (MerkleInternalNode<T>) current;
 
-                if (NavigationStep.RIGHT.equals(step)) {
+                if (step == NavigationStep.RIGHT) {
                     current = internalNode.getRightChild();
                 } else {
                     current = internalNode.getLeftChild();
