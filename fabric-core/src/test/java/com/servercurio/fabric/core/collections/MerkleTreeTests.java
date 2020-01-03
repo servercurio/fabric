@@ -24,7 +24,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import static com.servercurio.fabric.core.collections.BitNavigator.msb;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Collections: MerkleTree")

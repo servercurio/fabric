@@ -19,7 +19,6 @@ package com.servercurio.fabric.core.security;
 import com.servercurio.fabric.core.security.impl.DefaultCryptographyImpl;
 import com.servercurio.fabric.core.serialization.SerializationAware;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;

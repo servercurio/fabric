@@ -199,7 +199,7 @@ public final class DefaultCryptographyImpl implements Cryptography, AutoCloseabl
         }
     }
 
-    protected MessageDigest acquireAlgorithm(final HashAlgorithm algorithm) {
+    private MessageDigest acquireAlgorithm(final HashAlgorithm algorithm) {
         final HashMap<HashAlgorithm, MessageDigest> cache = hashAlgorithmCache.get();
 
         if (!cache.containsKey(algorithm)) {
