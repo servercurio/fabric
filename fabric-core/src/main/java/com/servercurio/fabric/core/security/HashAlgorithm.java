@@ -82,15 +82,27 @@ public enum HashAlgorithm {
         return id;
     }
 
-    public MessageDigest instance() throws NoSuchAlgorithmException {
-        return MessageDigest.getInstance(algorithmName);
+    public MessageDigest instance() {
+        try {
+            return MessageDigest.getInstance(algorithmName);
+        } catch (NoSuchAlgorithmException ex) {
+            throw new CryptographyException(ex);
+        }
     }
 
-    public MessageDigest instance(final String provider) throws NoSuchProviderException, NoSuchAlgorithmException {
-        return MessageDigest.getInstance(algorithmName, provider);
+    public MessageDigest instance(final String provider) {
+        try {
+            return MessageDigest.getInstance(algorithmName, provider);
+        } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
+            throw new CryptographyException(ex);
+        }
     }
 
-    public MessageDigest instance(final Provider provider) throws NoSuchAlgorithmException {
-        return MessageDigest.getInstance(algorithmName, provider);
+    public MessageDigest instance(final Provider provider) {
+        try {
+            return MessageDigest.getInstance(algorithmName, provider);
+        } catch (NoSuchAlgorithmException ex) {
+            throw new CryptographyException(ex);
+        }
     }
 }
