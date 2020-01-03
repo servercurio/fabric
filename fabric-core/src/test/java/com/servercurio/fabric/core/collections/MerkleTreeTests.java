@@ -16,11 +16,17 @@
 
 package com.servercurio.fabric.core.collections;
 
+import com.servercurio.fabric.core.security.Hash;
+import com.servercurio.fabric.core.security.HashAlgorithm;
+import com.servercurio.fabric.core.security.MockHash;
+import com.servercurio.fabric.core.serialization.MockObjectSerializer;
 import com.servercurio.fabric.core.serialization.MockSerializable;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.io.*;
+import java.util.Base64;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -29,6 +35,21 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("Collections: MerkleTree")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class MerkleTreeTests {
+
+    private static final MockHash WELL_KNOWN_HASH;
+    private static final MockHash ALTERNATE_WELL_KNOWN_HASH;
+    private static MockObjectSerializer objectSerializer;
+
+
+    static {
+        WELL_KNOWN_HASH = new MockHash(HashAlgorithm.SHA_384,
+                                       Base64.getDecoder().decode("pKA/NF3xZhm+DOBne5MhXxq41eSYHyom/bAPvyCrrDNT8vt5eODhhtWG7LpQlHEE"));
+
+        ALTERNATE_WELL_KNOWN_HASH = new MockHash(HashAlgorithm.SHA_384,
+                                                 Base64.getDecoder().decode("RXzuRQUHOT5zssgipY+PLujP4FrmQJQzVAvni+s52GcwtzkAnq+nRwwmW7noRqvx"));
+
+        objectSerializer = new MockObjectSerializer();
+    }
 
     @BeforeAll
     public static void startup() {
@@ -136,5 +157,50 @@ public class MerkleTreeTests {
         final Iterator<MockSerializable> iterator = tree.iterator();
 
         assertThrows(IllegalStateException.class, iterator::remove);
+    }
+
+    @Test
+    @Order(400)
+    @DisplayName("Serialization :: Recover -> Small Tree")
+    public void testSerializationRecoverSmallTree() throws IOException {
+        final MerkleTree<Hash> tree = new MerkleTree<>();
+
+        assertEquals(0, tree.size());
+        assertEquals(1, tree.getNodeCount());
+
+        tree.add(WELL_KNOWN_HASH);
+        tree.add(ALTERNATE_WELL_KNOWN_HASH);
+
+        assertEquals(2, tree.size());
+        assertEquals(3, tree.getNodeCount());
+
+        byte[] serializedTree = null;
+
+        try (final ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+            try (final DataOutputStream dos = new DataOutputStream(bos)) {
+
+                objectSerializer.serialize(dos, tree);
+                dos.flush();
+                bos.flush();
+
+                serializedTree = bos.toByteArray();
+            }
+        }
+
+        assertNotNull(serializedTree);
+        assertTrue(serializedTree.length > 1);
+
+        MerkleTree<Hash> recoveredTree = null;
+
+        try (final ByteArrayInputStream bis = new ByteArrayInputStream(serializedTree)) {
+            try (final DataInputStream dis = new DataInputStream(bis)) {
+                recoveredTree = objectSerializer.deserialize(dis);
+            }
+        }
+
+        assertNotNull(recoveredTree);
+        assertEquals(2, recoveredTree.size());
+        assertEquals(3, recoveredTree.getNodeCount());
+        assertEquals(tree.getHash(), recoveredTree.getHash());
     }
 }

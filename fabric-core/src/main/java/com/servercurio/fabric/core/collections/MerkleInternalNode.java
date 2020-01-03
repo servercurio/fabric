@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-class MerkleInternalNode<T extends SerializationAware> extends AbstractMerkleNode<T> {
+public class MerkleInternalNode<T extends SerializationAware> extends AbstractMerkleNode<T> {
 
     public static final ObjectId OBJECT_ID = new ObjectId(1, 39145);
     public static final SortedSet<Version> VERSIONS;
@@ -103,7 +103,7 @@ class MerkleInternalNode<T extends SerializationAware> extends AbstractMerkleNod
             return nodeHash;
         } catch (CryptographyException ex) {
             throw new MerkleTreeException(ex);
-    }
+        }
     }
 
     public MerkleNode<T> getLeftChild() {
