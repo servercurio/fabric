@@ -16,7 +16,7 @@
 
 package com.servercurio.fabric.datastore;
 
-public class FabricStorage {
+public interface FabricStorage {
 
 
 }

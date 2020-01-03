@@ -17,6 +17,7 @@
 package com.servercurio.fabric.core.collections;
 
 import com.servercurio.fabric.core.security.Cryptography;
+import com.servercurio.fabric.core.security.CryptographyException;
 import com.servercurio.fabric.core.security.Hash;
 import com.servercurio.fabric.core.security.HashAlgorithm;
 import com.servercurio.fabric.core.serialization.ObjectId;
@@ -28,7 +29,7 @@ import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-class MerkleInternalNode<T extends SerializationAware> extends MerkleNode<T> {
+class MerkleInternalNode<T extends SerializationAware> extends AbstractMerkleNode<T> {
 
     public static final ObjectId OBJECT_ID = new ObjectId(1, 39145);
     public static final SortedSet<Version> VERSIONS;
@@ -101,9 +102,9 @@ class MerkleInternalNode<T extends SerializationAware> extends MerkleNode<T> {
             setHash(nodeHash);
 
             return nodeHash;
-        } catch (NoSuchAlgorithmException ex) {
+        } catch (CryptographyException ex) {
             throw new MerkleTreeException(ex);
-        }
+    }
     }
 
     public MerkleNode<T> getLeftChild() {

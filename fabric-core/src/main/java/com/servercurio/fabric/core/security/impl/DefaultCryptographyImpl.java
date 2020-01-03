@@ -16,10 +16,7 @@
 
 package com.servercurio.fabric.core.security.impl;
 
-import com.servercurio.fabric.core.security.Cryptography;
-import com.servercurio.fabric.core.security.Hash;
-import com.servercurio.fabric.core.security.HashAlgorithm;
-import com.servercurio.fabric.core.security.Hashable;
+import com.servercurio.fabric.core.security.*;
 import com.servercurio.fabric.core.serialization.ObjectSerializer;
 import com.servercurio.fabric.core.serialization.SerializationAware;
 
@@ -32,7 +29,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
-public class DefaultCryptographyImpl implements Cryptography {
+public final class DefaultCryptographyImpl implements Cryptography {
 
     private static final DefaultCryptographyImpl INSTANCE = new DefaultCryptographyImpl();
 
@@ -56,33 +53,36 @@ public class DefaultCryptographyImpl implements Cryptography {
     }
 
     @Override
-    public Hash digestSync(final InputStream stream) throws NoSuchAlgorithmException, IOException {
+    public Hash digestSync(final InputStream stream) {
         return digestSync(HashAlgorithm.SHA_384, stream);
     }
 
     @Override
-    public Hash digestSync(final HashAlgorithm algorithm,
-                           final InputStream stream) throws NoSuchAlgorithmException, IOException {
+    public Hash digestSync(final HashAlgorithm algorithm, final InputStream stream)  {
         final MessageDigest digest = acquireAlgorithm(algorithm);
         final byte[] buffer = new byte[STREAM_BUFFER_SIZE];
 
-        int bytesRead = stream.readNBytes(buffer, 0, buffer.length);
+        try {
+            int bytesRead = stream.readNBytes(buffer, 0, buffer.length);
 
-        while (bytesRead > 0) {
-            digest.update(buffer, 0, bytesRead);
-            bytesRead = stream.readNBytes(buffer, 0, buffer.length);
+            while (bytesRead > 0) {
+                digest.update(buffer, 0, bytesRead);
+                bytesRead = stream.readNBytes(buffer, 0, buffer.length);
+            }
+        } catch (IOException ex) {
+            throw new CryptographyException(ex);
         }
 
         return new Hash(algorithm, digest.digest());
     }
 
     @Override
-    public Hash digestSync(final byte[] data) throws NoSuchAlgorithmException {
+    public Hash digestSync(final byte[] data) {
         return digestSync(HashAlgorithm.SHA_384, data);
     }
 
     @Override
-    public Hash digestSync(final HashAlgorithm algorithm, final byte[] data) throws NoSuchAlgorithmException {
+    public Hash digestSync(final HashAlgorithm algorithm, final byte[] data)  {
         final MessageDigest digest = acquireAlgorithm(algorithm);
 
         digest.update(data);
@@ -90,13 +90,12 @@ public class DefaultCryptographyImpl implements Cryptography {
     }
 
     @Override
-    public Hash digestSync(final Hash leftHash, final Hash rightHash) throws NoSuchAlgorithmException {
+    public Hash digestSync(final Hash leftHash, final Hash rightHash)  {
         return digestSync(HashAlgorithm.SHA_384, leftHash, rightHash);
     }
 
     @Override
-    public Hash digestSync(final HashAlgorithm algorithm, final Hash leftHash,
-                           final Hash rightHash) throws NoSuchAlgorithmException {
+    public Hash digestSync(final HashAlgorithm algorithm, final Hash leftHash, final Hash rightHash) {
         final MessageDigest digest = acquireAlgorithm(algorithm);
 
         if (leftHash != null) {
@@ -115,12 +114,12 @@ public class DefaultCryptographyImpl implements Cryptography {
     }
 
     @Override
-    public Hash digestSync(final ByteBuffer buffer) throws NoSuchAlgorithmException {
+    public Hash digestSync(final ByteBuffer buffer) {
         return digestSync(HashAlgorithm.SHA_384, buffer);
     }
 
     @Override
-    public Hash digestSync(final HashAlgorithm algorithm, final ByteBuffer buffer) throws NoSuchAlgorithmException {
+    public Hash digestSync(final HashAlgorithm algorithm, final ByteBuffer buffer) {
         final MessageDigest digest = acquireAlgorithm(algorithm);
 
         digest.update(buffer);
@@ -128,13 +127,12 @@ public class DefaultCryptographyImpl implements Cryptography {
     }
 
     @Override
-    public Hash digestSync(final SerializationAware serialObject) throws NoSuchAlgorithmException, IOException {
+    public Hash digestSync(final SerializationAware serialObject) {
         return digestSync(HashAlgorithm.SHA_384, serialObject);
     }
 
     @Override
-    public Hash digestSync(final HashAlgorithm algorithm,
-                           final SerializationAware serialObject) throws NoSuchAlgorithmException, IOException {
+    public Hash digestSync(final HashAlgorithm algorithm, final SerializationAware serialObject)  {
         if (serialObject == null) {
             return digestSync(algorithm, Hash.EMPTY.getValue());
         }
@@ -164,14 +162,20 @@ public class DefaultCryptographyImpl implements Cryptography {
 
                 return objectHash;
             }
+        } catch (IOException ex) {
+            throw new CryptographyException(ex);
         }
     }
 
-    protected MessageDigest acquireAlgorithm(final HashAlgorithm algorithm) throws NoSuchAlgorithmException {
+    protected MessageDigest acquireAlgorithm(final HashAlgorithm algorithm) {
         final HashMap<HashAlgorithm, MessageDigest> cache = hashAlgorithmCache.get();
 
         if (!cache.containsKey(algorithm)) {
-            cache.put(algorithm, algorithm.instance());
+            try {
+                cache.put(algorithm, algorithm.instance());
+            } catch (NoSuchAlgorithmException ex) {
+                throw new CryptographyException(ex);
+            }
         }
 
         return cache.get(algorithm);

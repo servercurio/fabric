@@ -30,27 +30,24 @@ public interface Cryptography {
         return DefaultCryptographyImpl.getInstance();
     }
 
-    Hash digestSync(final InputStream stream) throws NoSuchAlgorithmException, IOException;
+    Hash digestSync(final InputStream stream);
 
-    Hash digestSync(final HashAlgorithm algorithm,
-                    final InputStream stream) throws NoSuchAlgorithmException, IOException;
+    Hash digestSync(final HashAlgorithm algorithm, final InputStream stream);
 
     Hash digestSync(final byte[] data) throws NoSuchAlgorithmException;
 
-    Hash digestSync(final HashAlgorithm algorithm, final byte[] data) throws NoSuchAlgorithmException;
+    Hash digestSync(final HashAlgorithm algorithm, final byte[] data);
 
-    Hash digestSync(final Hash leftHash, final Hash rightHash) throws NoSuchAlgorithmException;
+    Hash digestSync(final Hash leftHash, final Hash rightHash);
 
-    Hash digestSync(final HashAlgorithm algorithm, final Hash leftHash,
-                    final Hash rightHash) throws NoSuchAlgorithmException;
+    Hash digestSync(final HashAlgorithm algorithm, final Hash leftHash, final Hash rightHash);
 
     Hash digestSync(final ByteBuffer buffer) throws NoSuchAlgorithmException;
 
-    Hash digestSync(final HashAlgorithm algorithm, final ByteBuffer buffer) throws NoSuchAlgorithmException;
+    Hash digestSync(final HashAlgorithm algorithm, final ByteBuffer buffer);
 
-    Hash digestSync(final SerializationAware serialObject) throws NoSuchAlgorithmException, IOException;
+    Hash digestSync(final SerializationAware serialObject);
 
-    Hash digestSync(final HashAlgorithm algorithm,
-                    final SerializationAware serialObject) throws NoSuchAlgorithmException, IOException;
+    Hash digestSync(final HashAlgorithm algorithm, final SerializationAware serialObject);
 
 }

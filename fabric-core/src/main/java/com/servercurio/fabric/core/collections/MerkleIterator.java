@@ -192,8 +192,8 @@ class MerkleIterator<T extends SerializationAware> implements Iterator<T> {
 
             tree.setRightMostLeafNode((MerkleLeafNode<T>) newRightNode);
         } else {
-            final MerkleLeafNode<T> newRightNode = (tree.getLeafCount() == 2) ? (MerkleLeafNode<T>) tree.getRoot()
-                                                                                                        .getRightChild() :
+            final MerkleLeafNode<T> newRightNode = (tree.getLeafCount() == 2) ?
+                                                   (MerkleLeafNode<T>) tree.getRoot().getRightChild() :
                                                    (MerkleLeafNode<T>) tree.getRoot().getLeftChild();
 
             tree.setRightMostLeafNode(newRightNode);

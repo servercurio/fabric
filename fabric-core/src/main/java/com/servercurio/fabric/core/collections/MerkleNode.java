@@ -16,72 +16,15 @@
 
 package com.servercurio.fabric.core.collections;
 
-import com.servercurio.fabric.core.security.Hash;
 import com.servercurio.fabric.core.security.Hashable;
 import com.servercurio.fabric.core.serialization.SerializationAware;
 
-abstract class MerkleNode<T extends SerializationAware> implements SerializationAware, Hashable {
+interface MerkleNode<T extends SerializationAware> extends SerializationAware, Hashable {
 
-    private MerkleTree<T> tree;
-    private Hash hash;
+    MerkleInternalNode<T> getParent();
 
-    private MerkleInternalNode<T> parent;
+    void setParent(MerkleInternalNode<T> parent);
 
-    protected MerkleNode(final MerkleTree<T> tree) {
-        this.tree = tree;
-        this.hash = null;
-    }
-
-    protected MerkleNode(final MerkleTree<T> tree, final MerkleInternalNode<T> parent) {
-        this(tree);
-
-        setParent(parent);
-    }
-
-    @Override
-    public Hash getHash() {
-        return hash;
-    }
-
-    @Override
-    public void setHash(final Hash hash) {
-        if (this.hash == hash) {
-            return;
-        }
-
-        if (parent != null && parent.hasHash()) {
-            parent.setHash(null);
-        }
-
-        this.hash = hash;
-    }
-
-    @Override
-    public boolean hasHash() {
-        return hash != null;
-    }
-
-    public MerkleInternalNode<T> getParent() {
-        return parent;
-    }
-
-    public void setParent(final MerkleInternalNode<T> parent) {
-        if (this.parent == parent) {
-            return;
-        }
-
-        setHash(null);
-
-        if (parent != null && parent.hasHash()) {
-            parent.setHash(null);
-        }
-
-        this.parent = parent;
-    }
-
-    public MerkleTree<T> getTree() {
-        return tree;
-    }
-
+    MerkleTree<T> getTree();
 
 }

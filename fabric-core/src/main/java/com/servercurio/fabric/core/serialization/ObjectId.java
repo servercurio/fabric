@@ -66,11 +66,8 @@ public class ObjectId implements Comparable<ObjectId> {
             return true;
         }
 
-        if (o == null) {
-            return false;
-        }
 
-        if (getClass() != o.getClass() && !o.getClass().isAssignableFrom(getClass())) {
+        if (o == null || (getClass() != o.getClass() && !o.getClass().isAssignableFrom(getClass()))) {
             return false;
         }
 

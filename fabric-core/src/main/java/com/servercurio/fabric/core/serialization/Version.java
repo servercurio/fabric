@@ -48,11 +48,7 @@ public class Version implements Comparable<Version> {
             return true;
         }
 
-        if (o == null) {
-            return false;
-        }
-
-        if (getClass() != o.getClass() && !o.getClass().isAssignableFrom(getClass())) {
+        if (o == null || (getClass() != o.getClass() && !o.getClass().isAssignableFrom(getClass()))) {
             return false;
         }
 

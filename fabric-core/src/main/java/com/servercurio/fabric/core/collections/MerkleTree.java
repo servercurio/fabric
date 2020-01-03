@@ -213,7 +213,7 @@ public class MerkleTree<T extends SerializationAware> extends AbstractCollection
      */
     @Override
     public Iterator<T> iterator() {
-        return new MerkleIterator<T>(this);
+        return new MerkleIterator<>(this);
     }
 
     @Override
