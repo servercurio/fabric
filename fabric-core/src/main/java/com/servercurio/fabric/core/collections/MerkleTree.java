@@ -182,9 +182,9 @@ public class MerkleTree<T extends SerializationAware> extends AbstractCollection
         final TreeNavigator<T> navigator = new TreeNavigator<>(this);
         final MerkleNode<T> insertAtNode = navigator.insertAt();
 
-        if (insertAtNode instanceof MerkleInternalNode) {
-            throw new MerkleTreeException("Illegal node insertion was attempted at an internal node");
-        }
+//        if (insertAtNode instanceof MerkleInternalNode) {
+//            throw new MerkleTreeException("Illegal node insertion was attempted at an internal node");
+//        }
 
         final MerkleInternalNode<T> interimNode = new MerkleInternalNode<>(this);
         final MerkleInternalNode<T> insertAtParent = insertAtNode.getParent();

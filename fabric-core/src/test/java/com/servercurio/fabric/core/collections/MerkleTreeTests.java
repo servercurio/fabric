@@ -19,16 +19,16 @@ package com.servercurio.fabric.core.collections;
 import com.servercurio.fabric.core.security.Hash;
 import com.servercurio.fabric.core.security.HashAlgorithm;
 import com.servercurio.fabric.core.security.MockHash;
+import com.servercurio.fabric.core.security.impl.DefaultCryptographyImpl;
 import com.servercurio.fabric.core.serialization.MockObjectSerializer;
 import com.servercurio.fabric.core.serialization.MockSerializable;
+import com.servercurio.fabric.core.serialization.Version;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.*;
-import java.util.Base64;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,10 +43,12 @@ public class MerkleTreeTests {
 
     static {
         WELL_KNOWN_HASH = new MockHash(HashAlgorithm.SHA_384,
-                                       Base64.getDecoder().decode("pKA/NF3xZhm+DOBne5MhXxq41eSYHyom/bAPvyCrrDNT8vt5eODhhtWG7LpQlHEE"));
+                                       Base64.getDecoder()
+                                             .decode("pKA/NF3xZhm+DOBne5MhXxq41eSYHyom/bAPvyCrrDNT8vt5eODhhtWG7LpQlHEE"));
 
         ALTERNATE_WELL_KNOWN_HASH = new MockHash(HashAlgorithm.SHA_384,
-                                                 Base64.getDecoder().decode("RXzuRQUHOT5zssgipY+PLujP4FrmQJQzVAvni+s52GcwtzkAnq+nRwwmW7noRqvx"));
+                                                 Base64.getDecoder()
+                                                       .decode("RXzuRQUHOT5zssgipY+PLujP4FrmQJQzVAvni+s52GcwtzkAnq+nRwwmW7noRqvx"));
 
         objectSerializer = new MockObjectSerializer();
     }
@@ -64,7 +66,7 @@ public class MerkleTreeTests {
     @ParameterizedTest
     @Order(100)
     @DisplayName("Correctness :: Insert -> Validate Exists")
-    @ValueSource(ints = { 1, 2, 6, 10 })
+    @ValueSource(ints = {1, 2, 6, 10})
     public void testCorrectnessInsertValidateExists(int numberOfElements) {
         final MerkleTree<MockSerializable> tree = new MerkleTree<>();
         final MockSerializable[] elements = new MockSerializable[numberOfElements];
@@ -93,7 +95,7 @@ public class MerkleTreeTests {
     @ParameterizedTest
     @Order(200)
     @DisplayName("Correctness :: Remove -> Validate Forward")
-    @ValueSource(ints = { 1, 2, 6, 10 })
+    @ValueSource(ints = {1, 2, 6, 10})
     public void testCorrectnessRemoveValidateForward(int numberOfElements) {
         final MerkleTree<MockSerializable> tree = new MerkleTree<>();
         final MockSerializable[] elements = new MockSerializable[numberOfElements];
@@ -160,6 +162,29 @@ public class MerkleTreeTests {
     }
 
     @Test
+    @Order(301)
+    @DisplayName("Correctness :: Constructor -> Exceptions")
+    public void testCorrectnessConstructorExceptions() {
+        assertThrows(IllegalArgumentException.class, () -> new MerkleTree<MockSerializable>((HashAlgorithm) null));
+        assertThrows(IllegalArgumentException.class, () -> new MerkleTree<MockSerializable>(HashAlgorithm.NONE));
+
+        assertThrows(IllegalArgumentException.class,
+                     () -> new MerkleTree<MockSerializable>(HashAlgorithm.SHA_384, null));
+
+        assertThrows(IllegalArgumentException.class, () -> new MerkleTree<MockSerializable>(null, HashAlgorithm.SHA_384,
+                                                                                            DefaultCryptographyImpl
+                                                                                                    .getInstance()));
+
+        assertThrows(IllegalArgumentException.class, () -> new MerkleTree<>((Collection<MockSerializable>)null));
+        assertThrows(IllegalArgumentException.class, () -> new MerkleTree<>(new LinkedList<>(), HashAlgorithm.NONE));
+        assertThrows(IllegalArgumentException.class, () -> new MerkleTree<>(null, HashAlgorithm.SHA_384));
+
+        assertDoesNotThrow(() -> new MerkleTree<MockSerializable>(new LinkedList<>(), HashAlgorithm.SHA_384, DefaultCryptographyImpl.getInstance()));
+        assertDoesNotThrow(() -> new MerkleTree<MockSerializable>(new LinkedList<>(), HashAlgorithm.SHA_384));
+        assertDoesNotThrow(() -> new MerkleTree<MockSerializable>(new LinkedList<>()));
+    }
+
+    @Test
     @Order(400)
     @DisplayName("Serialization :: Recover -> Small Tree")
     public void testSerializationRecoverSmallTree() throws IOException {
@@ -202,5 +227,25 @@ public class MerkleTreeTests {
         assertEquals(2, recoveredTree.size());
         assertEquals(3, recoveredTree.getNodeCount());
         assertEquals(tree.getHash(), recoveredTree.getHash());
+    }
+
+    @Test
+    @Order(500)
+    @DisplayName("Serialization :: New Instance -> Throws")
+    public void testSerializationNewInstanceThrows() {
+        assertThrows(UnsupportedOperationException.class,
+                     () -> objectSerializer.newInstance(MerkleTree.OBJECT_ID, MerkleTree.VERSIONS.last()));
+    }
+
+    @Test
+    @Order(600)
+    @DisplayName("Serialization :: Version History -> Contains")
+    public void testSerializationVersionHistoryContains() {
+        final MerkleTree<MockSerializable> tree = new MerkleTree<>();
+        final SortedSet<Version> treeVersions = tree.getVersionHistory();
+
+        assertNotNull(treeVersions);
+        assertFalse(treeVersions.isEmpty());
+        assertEquals(1, treeVersions.size());
     }
 }

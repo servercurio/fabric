@@ -115,6 +115,8 @@ public class SerializationTests {
         assertEquals(initialVersion, sameVersion);
         assertNotEquals(initialVersion, nextVersion);
         assertNotEquals(sameVersion, nextVersion);
+        assertFalse(initialVersion.equals(null));
+
     }
 
     @Test
@@ -132,6 +134,23 @@ public class SerializationTests {
 
     @Test
     @Order(402)
+    @DisplayName("Version :: Object -> Comparable")
+    public void testVersionObjectComparable() {
+        final Version initialVersion = new Version(5, 9, 126);
+        final Version sameVersion = new Version(5, 9, 126);
+        final Version nextVersion = new Version(5, 9, 127);
+
+        assertEquals(0, initialVersion.compareTo(sameVersion));
+        assertEquals(0, sameVersion.compareTo(initialVersion));
+        assertNotEquals(0, initialVersion.compareTo(nextVersion));
+        assertNotEquals(0, sameVersion.compareTo(nextVersion));
+
+        assertEquals(-1, initialVersion.compareTo(null));
+        assertEquals(0, initialVersion.compareTo(initialVersion));
+    }
+
+    @Test
+    @Order(403)
     @DisplayName("Version :: Object -> To String")
     public void testVersionObjectToString() {
         final Version initialVersion = new Version(5, 9, 126);
@@ -158,6 +177,8 @@ public class SerializationTests {
         assertEquals(initialObjectId, sameObjectId);
         assertNotEquals(initialObjectId, nextObjectId);
         assertNotEquals(sameObjectId, nextObjectId);
+        assertFalse(initialObjectId.equals(null));
+
     }
 
     @Test
@@ -185,6 +206,9 @@ public class SerializationTests {
         assertEquals(0, sameObjectId.compareTo(initialObjectId));
         assertNotEquals(0, initialObjectId.compareTo(nextObjectId));
         assertNotEquals(0, sameObjectId.compareTo(nextObjectId));
+
+        assertEquals(-1, initialObjectId.compareTo(null));
+        assertEquals(0, initialObjectId.compareTo(initialObjectId));
     }
 
     @Test
