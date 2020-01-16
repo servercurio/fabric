@@ -19,7 +19,7 @@ package com.servercurio.fabric.core.collections;
 import com.servercurio.fabric.core.security.Hashable;
 import com.servercurio.fabric.core.serialization.SerializationAware;
 
-interface MerkleNode<T extends SerializationAware> extends SerializationAware, Hashable {
+interface MerkleNode<T extends SerializationAware> extends Hashable {
 
     MerkleInternalNode<T> getParent();
 

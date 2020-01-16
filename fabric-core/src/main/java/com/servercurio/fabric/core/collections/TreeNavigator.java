@@ -27,10 +27,6 @@ class TreeNavigator<T extends SerializationAware> extends BitNavigator {
         this.tree = tree;
     }
 
-    public MerkleTree<T> getTree() {
-        return tree;
-    }
-
     public MerkleNode<T> nodeAt(final long nodePosition) {
         navigateTo(nodePosition);
         return fetch();

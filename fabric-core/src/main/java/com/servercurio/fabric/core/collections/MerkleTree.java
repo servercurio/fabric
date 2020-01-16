@@ -39,6 +39,7 @@ public class MerkleTree<T extends SerializationAware> extends AbstractCollection
     private int nodeCount;
     private int leafCount;
 
+    private int modificationCount;
 
     static {
         final TreeSet<Version> versionSet = new TreeSet<>();
@@ -56,6 +57,7 @@ public class MerkleTree<T extends SerializationAware> extends AbstractCollection
         this.rightMostLeafNode = null;
         this.leafCount = 0;
         this.nodeCount = 1;
+        this.modificationCount = 0;
     }
 
     public MerkleTree(final HashAlgorithm hashAlgorithm) {
@@ -152,6 +154,14 @@ public class MerkleTree<T extends SerializationAware> extends AbstractCollection
         this.leafCount = leafCount;
     }
 
+    protected int getModificationCount() {
+        return modificationCount;
+    }
+
+    protected void setModificationCount(final int modificationCount) {
+        this.modificationCount = modificationCount;
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -176,6 +186,7 @@ public class MerkleTree<T extends SerializationAware> extends AbstractCollection
             leafCount++;
             nodeCount++;
             rightMostLeafNode = newLeafNode;
+            modificationCount++;
             return true;
         }
 
@@ -202,6 +213,7 @@ public class MerkleTree<T extends SerializationAware> extends AbstractCollection
         leafCount++;
         nodeCount += 2;
         rightMostLeafNode = newLeafNode;
+        modificationCount++;
         return true;
     }
 

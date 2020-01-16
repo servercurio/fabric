@@ -24,16 +24,18 @@ class MerkleIterator<T extends SerializationAware> implements Iterator<T> {
 
     private final MerkleTree<T> tree;
     private LinkedList<MerkleNode<T>> dfsStack;
-    private Set<MerkleNode<T>> visitedSet;
+//    private Set<MerkleNode<T>> visitedSet;
 
     private MerkleLeafNode<T> lastReturned;
+    private int expectedModificationCount;
 
     public MerkleIterator(final MerkleTree<T> tree) {
         this.tree = tree;
         this.dfsStack = new LinkedList<>();
-        this.visitedSet = new HashSet<>(tree.getNodeCount());
+//        this.visitedSet = new HashSet<>(tree.getNodeCount());
 
         this.dfsStack.addFirst(tree.getRoot());
+        this.expectedModificationCount = tree.getModificationCount();
     }
 
     /**
@@ -55,6 +57,8 @@ class MerkleIterator<T extends SerializationAware> implements Iterator<T> {
      */
     @Override
     public T next() {
+        checkForComodification();
+
         if (!hasNext()) {
             throw new NoSuchElementException();
         }
@@ -63,32 +67,32 @@ class MerkleIterator<T extends SerializationAware> implements Iterator<T> {
 
         while (current instanceof MerkleInternalNode) {
 
-            if (visitedSet.contains(current)) {
-                current = dfsStack.pollFirst();
-                continue;
-            }
+//            if (visitedSet.contains(current)) {
+//                current = dfsStack.pollFirst();
+//                continue;
+//            }
 
             final MerkleInternalNode<T> currentInternal = (MerkleInternalNode<T>) current;
-            visitedSet.add(current);
+//            visitedSet.add(current);
 
-            if (currentInternal.getRightChild() != null && !visitedSet
-                    .contains(currentInternal.getRightChild())) {
+            if (currentInternal.getRightChild() != null /* && !visitedSet
+                    .contains(currentInternal.getRightChild())*/ ) {
                 dfsStack.addFirst(currentInternal.getRightChild());
             }
 
-            if (currentInternal.getLeftChild() != null && !visitedSet
-                    .contains(currentInternal.getLeftChild())) {
+            if (currentInternal.getLeftChild() != null /* && !visitedSet
+                    .contains(currentInternal.getLeftChild()) */ ) {
                 dfsStack.addFirst(currentInternal.getLeftChild());
             }
 
             current = dfsStack.pollFirst();
         }
 
-        if (!(current instanceof MerkleLeafNode)) {
-            throw new NoSuchElementException();
-        }
+//        if (!(current instanceof MerkleLeafNode)) {
+//            throw new NoSuchElementException();
+//        }
 
-        visitedSet.add(current);
+//        visitedSet.add(current);
         lastReturned = ((MerkleLeafNode<T>) current);
 
         return lastReturned.getValue();
@@ -114,6 +118,8 @@ class MerkleIterator<T extends SerializationAware> implements Iterator<T> {
      */
     @Override
     public void remove() {
+        checkForComodification();
+
         if (lastReturned == null) {
             throw new IllegalStateException();
         }
@@ -133,6 +139,9 @@ class MerkleIterator<T extends SerializationAware> implements Iterator<T> {
         lastReturned = null;
 
         reassignRightMostNode();
+
+        expectedModificationCount++;
+        tree.setModificationCount(tree.getModificationCount() + 1);
     }
 
     private boolean collapseRightMostPath(final MerkleInternalNode<T> rightMostParent, final boolean rightMostOnLeft) {
@@ -186,9 +195,9 @@ class MerkleIterator<T extends SerializationAware> implements Iterator<T> {
             final MerkleNode<T> newRightNode =
                     new TreeNavigator<>(tree.getRoot().getTree()).nodeAt(tree.getNodeCount());
 
-            if (newRightNode instanceof MerkleInternalNode) {
-                throw new MerkleTreeException("Illegal internal node returned when leaf node expected");
-            }
+//            if (newRightNode instanceof MerkleInternalNode) {
+//                throw new MerkleTreeException("Illegal internal node returned when leaf node expected");
+//            }
 
             tree.setRightMostLeafNode((MerkleLeafNode<T>) newRightNode);
         } else {
@@ -197,6 +206,12 @@ class MerkleIterator<T extends SerializationAware> implements Iterator<T> {
                                                    (MerkleLeafNode<T>) tree.getRoot().getLeftChild();
 
             tree.setRightMostLeafNode(newRightNode);
+        }
+    }
+
+    private void checkForComodification() {
+        if (tree.getModificationCount() != expectedModificationCount) {
+            throw new ConcurrentModificationException();
         }
     }
 }

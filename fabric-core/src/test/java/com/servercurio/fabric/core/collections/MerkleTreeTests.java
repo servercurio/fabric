@@ -29,6 +29,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -161,8 +162,62 @@ public class MerkleTreeTests {
         assertThrows(IllegalStateException.class, iterator::remove);
     }
 
+    @ParameterizedTest
+    @Order(302)
+    @DisplayName("Correctness :: Iterator -> Comodification")
+    @ValueSource(ints = {3})
+    public void testCorrectnessIteratorComodification(int seedCount) throws InterruptedException {
+        final MerkleTree<MockSerializable> tree = new MerkleTree<>();
+
+        for (int i = 0; i < seedCount; i++) {
+            tree.add(new MockSerializable(i));
+        }
+
+        assertEquals(seedCount, tree.size());
+        assertEquals(((seedCount * 2) - 1), tree.getNodeCount());
+
+        final AtomicInteger exceptionCount = new AtomicInteger(0);
+        final Runnable runnable = () -> {
+            try {
+                for (int i = 0; i < seedCount * 2; i++) {
+                    final int startSize = tree.size();
+                    for (int j = 0; j < seedCount * 2; j++) {
+                        tree.add(new MockSerializable(startSize + j));
+                    }
+
+                    tree.remove(new MockSerializable(tree.size() - 1));
+                }
+            } catch (ConcurrentModificationException ex) {
+                exceptionCount.incrementAndGet();
+            }
+        };
+
+        final Thread adderThread = new Thread(runnable);
+        final Thread doubleAdderThread = new Thread(runnable);
+
+        adderThread.start();
+        doubleAdderThread.start();
+        Thread.sleep(1);
+        final Iterator<MockSerializable> iterator = tree.iterator();
+
+        for (int i = 0; i < seedCount * 2; i++) {
+            try {
+                while (iterator.hasNext()) {
+                    iterator.next();
+                }
+            } catch (ConcurrentModificationException ex) {
+                exceptionCount.incrementAndGet();
+            }
+        }
+
+        adderThread.join();
+        doubleAdderThread.join();
+
+        assertTrue(exceptionCount.get() >= 1);
+    }
+
     @Test
-    @Order(301)
+    @Order(400)
     @DisplayName("Correctness :: Constructor -> Exceptions")
     public void testCorrectnessConstructorExceptions() {
         assertThrows(IllegalArgumentException.class, () -> new MerkleTree<MockSerializable>((HashAlgorithm) null));
@@ -175,17 +230,18 @@ public class MerkleTreeTests {
                                                                                             DefaultCryptographyImpl
                                                                                                     .getInstance()));
 
-        assertThrows(IllegalArgumentException.class, () -> new MerkleTree<>((Collection<MockSerializable>)null));
+        assertThrows(IllegalArgumentException.class, () -> new MerkleTree<>((Collection<MockSerializable>) null));
         assertThrows(IllegalArgumentException.class, () -> new MerkleTree<>(new LinkedList<>(), HashAlgorithm.NONE));
         assertThrows(IllegalArgumentException.class, () -> new MerkleTree<>(null, HashAlgorithm.SHA_384));
 
-        assertDoesNotThrow(() -> new MerkleTree<MockSerializable>(new LinkedList<>(), HashAlgorithm.SHA_384, DefaultCryptographyImpl.getInstance()));
+        assertDoesNotThrow(() -> new MerkleTree<MockSerializable>(new LinkedList<>(), HashAlgorithm.SHA_384,
+                                                                  DefaultCryptographyImpl.getInstance()));
         assertDoesNotThrow(() -> new MerkleTree<MockSerializable>(new LinkedList<>(), HashAlgorithm.SHA_384));
         assertDoesNotThrow(() -> new MerkleTree<MockSerializable>(new LinkedList<>()));
     }
 
     @Test
-    @Order(400)
+    @Order(500)
     @DisplayName("Serialization :: Recover -> Small Tree")
     public void testSerializationRecoverSmallTree() throws IOException {
         final MerkleTree<Hash> tree = new MerkleTree<>();
@@ -230,7 +286,7 @@ public class MerkleTreeTests {
     }
 
     @Test
-    @Order(500)
+    @Order(501)
     @DisplayName("Serialization :: New Instance -> Throws")
     public void testSerializationNewInstanceThrows() {
         assertThrows(UnsupportedOperationException.class,

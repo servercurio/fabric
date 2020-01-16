@@ -30,17 +30,8 @@ import java.util.TreeSet;
 
 public class MerkleLeafNode<T extends SerializationAware> extends AbstractMerkleNode<T> {
 
-    public static final ObjectId OBJECT_ID = new ObjectId(1, 39146);
-    public static final SortedSet<Version> VERSIONS;
-
     private T value;
 
-    static {
-        final TreeSet<Version> versionSet = new TreeSet<>();
-        versionSet.add(new Version(1, 0, 0));
-
-        VERSIONS = Collections.unmodifiableSortedSet(versionSet);
-    }
 
     public MerkleLeafNode(final MerkleTree<T> tree) {
         super(tree);
@@ -60,21 +51,6 @@ public class MerkleLeafNode<T extends SerializationAware> extends AbstractMerkle
         super(tree, parent);
 
         setValue(value);
-    }
-
-    @Override
-    public ObjectId getObjectId() {
-        return OBJECT_ID;
-    }
-
-    @Override
-    public SortedSet<Version> getVersionHistory() {
-        return VERSIONS;
-    }
-
-    @Override
-    public Version getVersion() {
-        return VERSIONS.last();
     }
 
     @Override

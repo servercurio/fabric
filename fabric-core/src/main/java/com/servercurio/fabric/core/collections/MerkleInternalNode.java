@@ -20,28 +20,13 @@ import com.servercurio.fabric.core.security.Cryptography;
 import com.servercurio.fabric.core.security.CryptographyException;
 import com.servercurio.fabric.core.security.Hash;
 import com.servercurio.fabric.core.security.HashAlgorithm;
-import com.servercurio.fabric.core.serialization.ObjectId;
 import com.servercurio.fabric.core.serialization.SerializationAware;
-import com.servercurio.fabric.core.serialization.Version;
-
-import java.util.Collections;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 public class MerkleInternalNode<T extends SerializationAware> extends AbstractMerkleNode<T> {
-
-    public static final ObjectId OBJECT_ID = new ObjectId(1, 39145);
-    public static final SortedSet<Version> VERSIONS;
 
     private MerkleNode<T> leftChild;
     private MerkleNode<T> rightChild;
 
-    static {
-        final TreeSet<Version> versionSet = new TreeSet<>();
-        versionSet.add(new Version(1, 0, 0));
-
-        VERSIONS = Collections.unmodifiableSortedSet(versionSet);
-    }
 
     public MerkleInternalNode(final MerkleTree<T> tree) {
         super(tree);
@@ -67,28 +52,9 @@ public class MerkleInternalNode<T extends SerializationAware> extends AbstractMe
     }
 
     @Override
-    public ObjectId getObjectId() {
-        return OBJECT_ID;
-    }
-
-    @Override
-    public SortedSet<Version> getVersionHistory() {
-        return VERSIONS;
-    }
-
-    @Override
-    public Version getVersion() {
-        return VERSIONS.last();
-    }
-
-    @Override
     public Hash getHash() {
         if (super.getHash() != null) {
             return super.getHash();
-        }
-
-        if (leftChild == null && rightChild == null) {
-            return null;
         }
 
         final Cryptography cryptography = getTree().getCryptography();
@@ -143,15 +109,4 @@ public class MerkleInternalNode<T extends SerializationAware> extends AbstractMe
         }
     }
 
-    public boolean isPartial() {
-        return !isFull() && !isEmpty();
-    }
-
-    public boolean isEmpty() {
-        return leftChild == null && rightChild == null;
-    }
-
-    public boolean isFull() {
-        return leftChild != null && rightChild != null;
-    }
 }
