@@ -21,7 +21,6 @@ import com.servercurio.fabric.core.security.Hash;
 import com.servercurio.fabric.core.security.Hashable;
 
 import java.nio.ByteBuffer;
-import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -75,12 +74,8 @@ public class MockSerializable implements SerializationAware, Hashable {
             return hash;
         }
 
-        try {
-            hash = Cryptography.getDefaultInstance().digestSync(integerValue);
-            return hash;
-        } catch (NoSuchAlgorithmException ex) {
-            throw new RuntimeException(ex);
-        }
+        hash = Cryptography.getDefaultInstance().digestSync(integerValue);
+        return hash;
     }
 
     @Override

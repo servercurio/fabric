@@ -164,6 +164,43 @@ public class MerkleTreeTests {
 
     @ParameterizedTest
     @Order(302)
+    @DisplayName("Correctness :: Iterator -> Remove All")
+    @ValueSource(ints = {1, 2, 6, 10})
+    public void testCorrectnessIteratorRemoveAll(int numberOfElements) {
+        final MerkleTree<MockSerializable> tree = new MerkleTree<>();
+        final MockSerializable[] elements = new MockSerializable[numberOfElements];
+
+        for (int i = 0; i < elements.length; i++) {
+            elements[i] = new MockSerializable(i);
+            tree.add(elements[i]);
+        }
+
+        assertEquals(numberOfElements, tree.size());
+
+        for (MockSerializable item : elements) {
+            assertTrue(tree.contains(item));
+        }
+
+        int expectedNodeCount = (numberOfElements * 2) - 1;
+        if (numberOfElements < 2) {
+            expectedNodeCount = (numberOfElements * 2);
+        }
+
+        assertEquals(expectedNodeCount, tree.getNodeCount());
+
+        final Iterator<MockSerializable> iter = tree.iterator();
+
+        while (iter.hasNext()) {
+            iter.next();
+            iter.remove();
+        }
+
+        assertEquals(0, tree.size());
+        assertEquals(1, tree.getNodeCount());
+    }
+
+    @ParameterizedTest
+    @Order(303)
     @DisplayName("Correctness :: Iterator -> Comodification")
     @ValueSource(ints = {3})
     public void testCorrectnessIteratorComodification(int seedCount) throws InterruptedException {

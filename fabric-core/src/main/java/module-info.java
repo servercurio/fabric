@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+import com.servercurio.fabric.core.collections.spi.MerkleMapSerializationProvider;
 import com.servercurio.fabric.core.collections.spi.MerkleTreeSerializationProvider;
 import com.servercurio.fabric.core.security.spi.SecuritySerializationProvider;
+import com.servercurio.fabric.core.serialization.spi.PrimitiveSerializationProvider;
 import com.servercurio.fabric.core.serialization.spi.SerializationProvider;
 
 module sc.fabric.core {
@@ -24,6 +26,6 @@ module sc.fabric.core {
     requires org.apache.commons.lang3;
 
     uses SerializationProvider;
-    provides SerializationProvider with SecuritySerializationProvider, MerkleTreeSerializationProvider;
+    provides SerializationProvider with SecuritySerializationProvider, MerkleTreeSerializationProvider, MerkleMapSerializationProvider, PrimitiveSerializationProvider;
 
 }

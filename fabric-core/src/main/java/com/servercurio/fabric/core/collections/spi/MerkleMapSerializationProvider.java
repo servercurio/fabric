@@ -16,9 +16,10 @@
 
 package com.servercurio.fabric.core.collections.spi;
 
+import com.servercurio.fabric.core.collections.MerkleMap;
+import com.servercurio.fabric.core.collections.MerkleMapException;
+import com.servercurio.fabric.core.collections.MerkleMapNode;
 import com.servercurio.fabric.core.collections.MerkleTree;
-import com.servercurio.fabric.core.collections.MerkleTreeException;
-import com.servercurio.fabric.core.security.Hash;
 import com.servercurio.fabric.core.security.HashAlgorithm;
 import com.servercurio.fabric.core.serialization.ObjectId;
 import com.servercurio.fabric.core.serialization.ObjectSerializer;
@@ -31,15 +32,16 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class MerkleTreeSerializationProvider extends AbstractSerializationProvider {
+public class MerkleMapSerializationProvider extends AbstractSerializationProvider {
 
-    public MerkleTreeSerializationProvider() {
+    public MerkleMapSerializationProvider() {
         // Method is currently empty because no initialization is required
     }
 
     @Override
     protected void handleObjectRegistration() {
-        registerObject(MerkleTree.OBJECT_ID, MerkleTree.class, MerkleTree.VERSIONS);
+        registerObject(MerkleMap.OBJECT_ID, MerkleMap.class, MerkleMap.VERSIONS);
+        registerObject(MerkleMapNode.OBJECT_ID, MerkleMapNode.class, MerkleMapNode.VERSIONS);
     }
 
     @Override
@@ -47,27 +49,33 @@ public class MerkleTreeSerializationProvider extends AbstractSerializationProvid
     public <T extends SerializationAware> T deserialize(final ObjectSerializer objectSerializer,
                                                         final DataInputStream inStream, final ObjectId objectId,
                                                         final Version version) throws IOException {
-        if (MerkleTree.OBJECT_ID.equals(objectId) && MerkleTree.VERSIONS.contains(version)) {
-            final int treeSize = inStream.readInt();
+        if (MerkleMap.OBJECT_ID.equals(objectId) && MerkleMap.VERSIONS.contains(version)) {
             final int algorithmId = inStream.readInt();
             final HashAlgorithm algorithm = HashAlgorithm.valueOf(algorithmId);
-            final Hash hash = objectSerializer.deserialize(inStream);
 
-            final MerkleTree<SerializationAware> tree = new MerkleTree<>(algorithm);
+            final MerkleMap<SerializationAware, SerializationAware> merkleMap = new MerkleMap<>(algorithm);
+            final MerkleTree<MerkleMapNode<?, ?>> tree = objectSerializer.deserialize(inStream);
 
-            for (int i = 0; i < treeSize; i++) {
-                final SerializationAware value = objectSerializer.deserialize(inStream);
-                tree.add(value);
+            for (MerkleMapNode<?, ?> node : tree) {
+                merkleMap.put(node.getKey(), node.getValue());
             }
 
-            if (!hash.equals(tree.getHash())) {
-                throw new MerkleTreeException(String.format(
-                        "Deserialized MerkleTree hash does not match serialized hash " +
+            if (!tree.getHash().equals(merkleMap.getHash())) {
+                throw new MerkleMapException(String.format(
+                        "Deserialized MerkleMap hash does not match serialized hash " +
                         "[ originalHash = '%s', computedHash = '%s' ]",
-                        hash, tree.getHash()));
+                        tree.getHash(), merkleMap.getHash()));
             }
 
-            return (T) tree;
+            return (T) merkleMap;
+        } else if (MerkleMapNode.OBJECT_ID.equals(objectId) && MerkleMapNode.VERSIONS.contains(version)) {
+            final int algorithmId = inStream.readInt();
+            final HashAlgorithm algorithm = HashAlgorithm.valueOf(algorithmId);
+
+            final SerializationAware key = objectSerializer.deserialize(inStream);
+            final SerializationAware value = objectSerializer.deserialize(inStream);
+
+            return (T) new MerkleMapNode<>(key, value, algorithm);
         }
 
         return null;
@@ -77,16 +85,16 @@ public class MerkleTreeSerializationProvider extends AbstractSerializationProvid
     public <T extends SerializationAware> void serialize(final ObjectSerializer objectSerializer,
                                                          final DataOutputStream outStream,
                                                          final T object) throws IOException {
-        if (object instanceof MerkleTree) {
-            final MerkleTree<?> tree = (MerkleTree<?>) object;
 
-            outStream.writeInt(tree.size());
-            outStream.writeInt(tree.getHashAlgorithm().id());
-            objectSerializer.serialize(outStream, tree.getHash());
-
-            for (final SerializationAware value : tree) {
-                objectSerializer.serialize(outStream, value);
-            }
+        if (object instanceof MerkleMap) {
+            final MerkleMap<?, ?> merkleMap = (MerkleMap<?, ?>) object;
+            outStream.writeInt(merkleMap.getAlgorithm().id());
+            objectSerializer.serialize(outStream, merkleMap.getMerkleTree());
+        } else if (object instanceof MerkleMapNode) {
+            final MerkleMapNode<?, ?> mapNode = (MerkleMapNode<?, ?>) object;
+            outStream.writeInt(mapNode.getAlgorithm().id());
+            objectSerializer.serialize(outStream, mapNode.getKey());
+            objectSerializer.serialize(outStream, mapNode.getValue());
         }
     }
 }

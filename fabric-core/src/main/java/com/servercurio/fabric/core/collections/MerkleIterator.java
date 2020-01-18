@@ -63,7 +63,7 @@ class MerkleIterator<T extends SerializationAware> implements Iterator<T> {
             throw new NoSuchElementException();
         }
 
-        MerkleNode<T> current = dfsStack.pop();
+        MerkleNode<T> current = dfsStack.pollFirst();
 
         while (current instanceof MerkleInternalNode) {
 
@@ -186,6 +186,7 @@ class MerkleIterator<T extends SerializationAware> implements Iterator<T> {
                 lastReturnedParent.setRightChild(tree.getRightMostLeafNode());
             }
 
+            dfsStack.addFirst(tree.getRightMostLeafNode());
             lastReturned.setParent(null);
         }
     }

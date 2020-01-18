@@ -33,7 +33,7 @@ public interface Cryptography {
 
     Hash digestSync(final HashAlgorithm algorithm, final InputStream stream);
 
-    Hash digestSync(final byte[] data) throws NoSuchAlgorithmException;
+    Hash digestSync(final byte[] data);
 
     Hash digestSync(final HashAlgorithm algorithm, final byte[] data);
 

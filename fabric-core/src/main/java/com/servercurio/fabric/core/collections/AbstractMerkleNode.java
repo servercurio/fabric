@@ -16,19 +16,19 @@
 
 package com.servercurio.fabric.core.collections;
 
+import com.servercurio.fabric.core.security.AbstractHashable;
 import com.servercurio.fabric.core.security.Hash;
 import com.servercurio.fabric.core.serialization.SerializationAware;
 
-abstract class AbstractMerkleNode<T extends SerializationAware> implements MerkleNode<T> {
+abstract class AbstractMerkleNode<T extends SerializationAware> extends AbstractHashable implements MerkleNode<T> {
 
     private MerkleTree<T> tree;
-    private Hash hash;
 
     private MerkleInternalNode<T> parent;
 
     protected AbstractMerkleNode(final MerkleTree<T> tree) {
+        super(tree.getHashAlgorithm(), tree.getCryptography());
         this.tree = tree;
-        this.hash = null;
     }
 
     protected AbstractMerkleNode(final MerkleTree<T> tree, final MerkleInternalNode<T> parent) {
@@ -37,28 +37,7 @@ abstract class AbstractMerkleNode<T extends SerializationAware> implements Merkl
         setParent(parent);
     }
 
-    @Override
-    public Hash getHash() {
-        return hash;
-    }
 
-    @Override
-    public void setHash(final Hash hash) {
-        if (this.hash == hash) {
-            return;
-        }
-
-        if (parent != null && parent.hasHash()) {
-            parent.setHash(null);
-        }
-
-        this.hash = hash;
-    }
-
-    @Override
-    public boolean hasHash() {
-        return hash != null;
-    }
 
     @Override
     public MerkleInternalNode<T> getParent() {

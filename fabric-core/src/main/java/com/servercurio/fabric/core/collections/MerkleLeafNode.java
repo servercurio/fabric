@@ -20,13 +20,7 @@ import com.servercurio.fabric.core.security.Cryptography;
 import com.servercurio.fabric.core.security.CryptographyException;
 import com.servercurio.fabric.core.security.Hash;
 import com.servercurio.fabric.core.security.HashAlgorithm;
-import com.servercurio.fabric.core.serialization.ObjectId;
 import com.servercurio.fabric.core.serialization.SerializationAware;
-import com.servercurio.fabric.core.serialization.Version;
-
-import java.util.Collections;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 public class MerkleLeafNode<T extends SerializationAware> extends AbstractMerkleNode<T> {
 
@@ -53,23 +47,10 @@ public class MerkleLeafNode<T extends SerializationAware> extends AbstractMerkle
         setValue(value);
     }
 
+
     @Override
-    public Hash getHash() {
-        if (super.getHash() != null) {
-            return super.getHash();
-        }
-
-        final Cryptography cryptography = getTree().getCryptography();
-        final HashAlgorithm algorithm = getTree().getHashAlgorithm();
-
-        try {
-            final Hash valueHash = cryptography.digestSync(algorithm, value);
-
-            setHash(valueHash);
-            return valueHash;
-        } catch (CryptographyException ex) {
-            throw new MerkleTreeException(ex);
-        }
+    protected Hash computeHash(final HashAlgorithm algorithm, final Cryptography cryptography) {
+        return cryptography.digestSync(algorithm, value);
     }
 
     public T getValue() {

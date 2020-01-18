@@ -51,25 +51,13 @@ public class MerkleInternalNode<T extends SerializationAware> extends AbstractMe
         setRightChild(rightChild);
     }
 
-    @Override
-    public Hash getHash() {
-        if (super.getHash() != null) {
-            return super.getHash();
-        }
 
-        final Cryptography cryptography = getTree().getCryptography();
-        final HashAlgorithm algorithm = getTree().getHashAlgorithm();
+    @Override
+    protected Hash computeHash(final HashAlgorithm algorithm, final Cryptography cryptography) {
         final Hash leftHash = (leftChild != null) ? leftChild.getHash() : null;
         final Hash rightHash = (rightChild != null) ? rightChild.getHash() : null;
 
-        try {
-            final Hash nodeHash = cryptography.digestSync(algorithm, leftHash, rightHash);
-            setHash(nodeHash);
-
-            return nodeHash;
-        } catch (CryptographyException ex) {
-            throw new MerkleTreeException(ex);
-        }
+        return cryptography.digestSync(algorithm, leftHash, rightHash);
     }
 
     public MerkleNode<T> getLeftChild() {
