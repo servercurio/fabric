@@ -63,7 +63,7 @@ class MerkleIterator<T extends SerializationAware> implements Iterator<T> {
             throw new NoSuchElementException();
         }
 
-        MerkleNode<T> current = dfsStack.pollFirst();
+        MerkleNode<T> current = dfsStack.pollLast();
 
         while (current instanceof MerkleInternalNode) {
 
@@ -75,17 +75,17 @@ class MerkleIterator<T extends SerializationAware> implements Iterator<T> {
             final MerkleInternalNode<T> currentInternal = (MerkleInternalNode<T>) current;
 //            visitedSet.add(current);
 
-            if (currentInternal.getRightChild() != null /* && !visitedSet
-                    .contains(currentInternal.getRightChild())*/ ) {
-                dfsStack.addFirst(currentInternal.getRightChild());
-            }
-
             if (currentInternal.getLeftChild() != null /* && !visitedSet
                     .contains(currentInternal.getLeftChild()) */ ) {
                 dfsStack.addFirst(currentInternal.getLeftChild());
             }
 
-            current = dfsStack.pollFirst();
+            if (currentInternal.getRightChild() != null /* && !visitedSet
+                    .contains(currentInternal.getRightChild())*/ ) {
+                dfsStack.addFirst(currentInternal.getRightChild());
+            }
+
+            current = dfsStack.pollLast();
         }
 
 //        if (!(current instanceof MerkleLeafNode)) {
@@ -94,6 +94,10 @@ class MerkleIterator<T extends SerializationAware> implements Iterator<T> {
 
 //        visitedSet.add(current);
         lastReturned = ((MerkleLeafNode<T>) current);
+
+        if (lastReturned == null) {
+            throw new NoSuchElementException();
+        }
 
         return lastReturned.getValue();
     }
@@ -129,7 +133,6 @@ class MerkleIterator<T extends SerializationAware> implements Iterator<T> {
         final boolean rightMostOnLeft = (rightMostParent.getLeftChild() == tree.getRightMostLeafNode());
 
         final boolean internalNodeRemoved = collapseRightMostPath(rightMostParent, rightMostOnLeft);
-
         replaceNode(lastReturnedParent);
 
 

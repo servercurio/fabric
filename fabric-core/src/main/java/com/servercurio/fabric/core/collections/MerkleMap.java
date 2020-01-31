@@ -64,6 +64,26 @@ public class MerkleMap<K extends SerializationAware, V extends SerializationAwar
         this.lookupMap = new HashMap<>();
     }
 
+    public MerkleMap(final Map<K, V> other) {
+        this(other, HashAlgorithm.SHA_384);
+    }
+
+    public MerkleMap(final Map<K, V> other, final HashAlgorithm algorithm) {
+        this(other, algorithm, Cryptography.getDefaultInstance());
+    }
+
+    public MerkleMap(final Map<K, V> other, final HashAlgorithm algorithm, final Cryptography cryptography) {
+        this(algorithm, cryptography);
+
+        if (other == null) {
+            throw new IllegalArgumentException("other");
+        }
+
+        if (other.size() > 0) {
+            putAll(other);
+        }
+    }
+
     public Cryptography getCryptography() {
         return cryptography;
     }

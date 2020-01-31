@@ -20,17 +20,14 @@ import com.servercurio.fabric.core.security.Hash;
 import com.servercurio.fabric.core.security.HashAlgorithm;
 import com.servercurio.fabric.core.security.impl.DefaultCryptographyImpl;
 import com.servercurio.fabric.core.serialization.MockObjectSerializer;
-import com.servercurio.fabric.core.serialization.MockSerializable;
 import com.servercurio.fabric.core.serialization.SerializableString;
 import com.servercurio.fabric.core.serialization.Version;
-import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -57,8 +54,8 @@ public class MerkleMapTests {
         assertEquals(generatedKeys.length, generatedValues.length);
 
         for (int i = 0; i < generatedKeys.length; i++) {
-          generatedKeys[i] = new SerializableString(String.format("key-%08d", i));
-          generatedValues[i] = new SerializableString(String.format("value-%08d", i));
+            generatedKeys[i] = new SerializableString(String.format("key-%08d", i));
+            generatedValues[i] = new SerializableString(String.format("value-%08d", i));
         }
     }
 
@@ -101,75 +98,77 @@ public class MerkleMapTests {
         assertNotEquals(startingHash, map.getHash());
     }
 
-//    @ParameterizedTest
-//    @Order(200)
-//    @DisplayName("Correctness :: Remove -> Validate Forward")
-//    @ValueSource(ints = {1, 2, 6, 10})
-//    public void testCorrectnessRemoveValidateForward(int numberOfElements) {
-//        final MerkleTree<MockSerializable> tree = new MerkleTree<>();
-//        final MockSerializable[] elements = new MockSerializable[numberOfElements];
-//
-//        for (int i = 0; i < elements.length; i++) {
-//            elements[i] = new MockSerializable(i);
-//            tree.add(elements[i]);
-//        }
-//
-//        assertEquals(numberOfElements, tree.size());
-//
-//        for (MockSerializable item : elements) {
-//            assertTrue(tree.contains(item));
-//        }
-//
-//        int expectedNodeCount = (numberOfElements * 2) - 1;
-//        if (numberOfElements < 2) {
-//            expectedNodeCount = (numberOfElements * 2);
-//        }
-//
-//        assertEquals(expectedNodeCount, tree.getNodeCount());
-//
-//        for (int i = 0; i < elements.length; i++) {
-//
-//            tree.remove(elements[i]);
-//            assertEquals(numberOfElements - (i + 1), tree.size());
-//            assertFalse(tree.contains(elements[i]));
-//
-//            for (int j = i + 1; j < elements.length; j++) {
-//                assertTrue(tree.contains(elements[j]));
-//            }
-//        }
-//
-//        assertEquals(0, tree.size());
-//        assertEquals(1, tree.getNodeCount());
-//    }
-//
-//    @Test
-//    @Order(300)
-//    @DisplayName("Correctness :: Iterator -> Empty Next")
-//    public void testCorrectnessIteratorEmptyNext() {
-//        final MerkleTree<MockSerializable> tree = new MerkleTree<>();
-//
-//        assertEquals(0, tree.size());
-//        assertEquals(1, tree.getNodeCount());
-//
-//        final Iterator<MockSerializable> iterator = tree.iterator();
-//
-//        assertThrows(NoSuchElementException.class, iterator::next);
-//    }
-//
-//    @Test
-//    @Order(301)
-//    @DisplayName("Correctness :: Iterator -> Empty Remove")
-//    public void testCorrectnessIteratorEmptyRemove() {
-//        final MerkleTree<MockSerializable> tree = new MerkleTree<>();
-//
-//        assertEquals(0, tree.size());
-//        assertEquals(1, tree.getNodeCount());
-//
-//        final Iterator<MockSerializable> iterator = tree.iterator();
-//
-//        assertThrows(IllegalStateException.class, iterator::remove);
-//    }
-//
+    @ParameterizedTest
+    @Order(200)
+    @DisplayName("Correctness :: Remove -> Validate Forward")
+    @ValueSource(ints = {1, 2, 6, 10})
+    public void testCorrectnessRemoveValidateForward(int numberOfElements) {
+        final MerkleMap<SerializableString, SerializableString> map = new MerkleMap<>();
+
+        assertTrue(numberOfElements <= NUMBER_OF_PAIRS);
+
+        for (int i = 0; i < numberOfElements; i++) {
+            map.put(generatedKeys[i], generatedValues[i]);
+        }
+
+        assertEquals(numberOfElements, map.size());
+        assertEquals(numberOfElements, map.getMerkleTree().size());
+
+        for (int i = 0; i < numberOfElements; i++) {
+            assertTrue(map.containsKey(generatedKeys[i]));
+            assertTrue(map.containsValue(generatedValues[i]));
+
+            assertEquals(generatedValues[i], map.get(generatedKeys[i]));
+        }
+
+
+        for (int i = 0; i < numberOfElements; i++) {
+
+            map.remove(generatedKeys[i]);
+            assertEquals(numberOfElements - (i + 1), map.size());
+            assertFalse(map.containsKey(generatedKeys[i]));
+
+            for (int j = i + 1; j < numberOfElements; j++) {
+                assertTrue(map.containsKey(generatedKeys[j]));
+            }
+        }
+
+        assertEquals(0, map.size());
+        assertEquals(0, map.getMerkleTree().size());
+        assertEquals(1, map.getMerkleTree().getNodeCount());
+    }
+
+    @Test
+    @Order(300)
+    @DisplayName("Correctness :: Iterator -> Empty Next")
+    public void testCorrectnessIteratorEmptyNext() {
+        final MerkleMap<SerializableString, SerializableString> map = new MerkleMap<>();
+
+        assertEquals(0, map.size());
+        assertEquals(0, map.getMerkleTree().size());
+        assertEquals(1, map.getMerkleTree().getNodeCount());
+
+        final Iterator<Map.Entry<SerializableString, SerializableString>> iterator = map.entrySet().iterator();
+
+        assertThrows(NoSuchElementException.class, iterator::next);
+    }
+
+    @Test
+    @Order(301)
+    @DisplayName("Correctness :: Iterator -> Empty Remove")
+    public void testCorrectnessIteratorEmptyRemove() {
+        final MerkleMap<SerializableString, SerializableString> map = new MerkleMap<>();
+
+        assertEquals(0, map.size());
+        assertEquals(0, map.getMerkleTree().size());
+        assertEquals(1, map.getMerkleTree().getNodeCount());
+
+        final Iterator<Map.Entry<SerializableString, SerializableString>> iterator = map.entrySet().iterator();
+
+        assertThrows(IllegalStateException.class, iterator::remove);
+    }
+
+    //
 //    @ParameterizedTest
 //    @Order(302)
 //    @DisplayName("Correctness :: Iterator -> Comodification")
@@ -224,92 +223,108 @@ public class MerkleMapTests {
 //        assertTrue(exceptionCount.get() >= 1);
 //    }
 //
-//    @Test
-//    @Order(400)
-//    @DisplayName("Correctness :: Constructor -> Exceptions")
-//    public void testCorrectnessConstructorExceptions() {
-//        assertThrows(IllegalArgumentException.class, () -> new MerkleTree<MockSerializable>((HashAlgorithm) null));
-//        assertThrows(IllegalArgumentException.class, () -> new MerkleTree<MockSerializable>(HashAlgorithm.NONE));
-//
-//        assertThrows(IllegalArgumentException.class,
-//                     () -> new MerkleTree<MockSerializable>(HashAlgorithm.SHA_384, null));
-//
-//        assertThrows(IllegalArgumentException.class, () -> new MerkleTree<MockSerializable>(null, HashAlgorithm.SHA_384,
-//                                                                                            DefaultCryptographyImpl
-//                                                                                                    .getInstance()));
-//
-//        assertThrows(IllegalArgumentException.class, () -> new MerkleTree<>((Collection<MockSerializable>) null));
-//        assertThrows(IllegalArgumentException.class, () -> new MerkleTree<>(new LinkedList<>(), HashAlgorithm.NONE));
-//        assertThrows(IllegalArgumentException.class, () -> new MerkleTree<>(null, HashAlgorithm.SHA_384));
-//
-//        assertDoesNotThrow(() -> new MerkleTree<MockSerializable>(new LinkedList<>(), HashAlgorithm.SHA_384,
-//                                                                  DefaultCryptographyImpl.getInstance()));
-//        assertDoesNotThrow(() -> new MerkleTree<MockSerializable>(new LinkedList<>(), HashAlgorithm.SHA_384));
-//        assertDoesNotThrow(() -> new MerkleTree<MockSerializable>(new LinkedList<>()));
-//    }
+    @Test
+    @Order(400)
+    @DisplayName("Correctness :: Constructor -> Exceptions")
+    public void testCorrectnessConstructorExceptions() {
+        assertThrows(IllegalArgumentException.class,
+                     () -> new MerkleMap<SerializableString, SerializableString>((HashAlgorithm) null));
+        assertThrows(IllegalArgumentException.class,
+                     () -> new MerkleMap<SerializableString, SerializableString>(HashAlgorithm.NONE));
 
-//    @Test
-//    @Order(500)
-//    @DisplayName("Serialization :: Recover -> Small Tree")
-//    public void testSerializationRecoverSmallTree() throws IOException {
-//        final MerkleTree<Hash> tree = new MerkleTree<>();
-//
-//        assertEquals(0, tree.size());
-//        assertEquals(1, tree.getNodeCount());
-//
-//        tree.add(WELL_KNOWN_HASH);
-//        tree.add(ALTERNATE_WELL_KNOWN_HASH);
-//
-//        assertEquals(2, tree.size());
-//        assertEquals(3, tree.getNodeCount());
-//
-//        byte[] serializedTree = null;
-//
-//        try (final ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-//            try (final DataOutputStream dos = new DataOutputStream(bos)) {
-//
-//                objectSerializer.serialize(dos, tree);
-//                dos.flush();
-//                bos.flush();
-//
-//                serializedTree = bos.toByteArray();
-//            }
-//        }
-//
-//        assertNotNull(serializedTree);
-//        assertTrue(serializedTree.length > 1);
-//
-//        MerkleTree<Hash> recoveredTree = null;
-//
-//        try (final ByteArrayInputStream bis = new ByteArrayInputStream(serializedTree)) {
-//            try (final DataInputStream dis = new DataInputStream(bis)) {
-//                recoveredTree = objectSerializer.deserialize(dis);
-//            }
-//        }
-//
-//        assertNotNull(recoveredTree);
-//        assertEquals(2, recoveredTree.size());
-//        assertEquals(3, recoveredTree.getNodeCount());
-//        assertEquals(tree.getHash(), recoveredTree.getHash());
-//    }
+        assertThrows(IllegalArgumentException.class,
+                     () -> new MerkleMap<SerializableString, SerializableString>(HashAlgorithm.SHA_384, null));
 
-//    @Test
-//    @Order(501)
-//    @DisplayName("Serialization :: New Instance -> Throws")
-//    public void testSerializationNewInstanceThrows() {
-//        assertThrows(UnsupportedOperationException.class,
-//                     () -> objectSerializer.newInstance(MerkleTree.OBJECT_ID, MerkleTree.VERSIONS.last()));
-//    }
-//
-//    @Test
-//    @Order(600)
-//    @DisplayName("Serialization :: Version History -> Contains")
-//    public void testSerializationVersionHistoryContains() {
-//        final MerkleTree<MockSerializable> tree = new MerkleTree<>();
-//        final SortedSet<Version> treeVersions = tree.getVersionHistory();
-//
-//        assertNotNull(treeVersions);
-//        assertFalse(treeVersions.isEmpty());
-//        assertEquals(1, treeVersions.size());
-//    }
+        assertThrows(IllegalArgumentException.class,
+                     () -> new MerkleMap<SerializableString, SerializableString>(null, HashAlgorithm.SHA_384,
+                                                                                 DefaultCryptographyImpl
+                                                                                         .getInstance()));
+
+        assertThrows(IllegalArgumentException.class,
+                     () -> new MerkleMap<>((Map<SerializableString, SerializableString>) null));
+        assertThrows(IllegalArgumentException.class,
+                     () -> new MerkleMap<SerializableString, SerializableString>(new HashMap<>(), HashAlgorithm.NONE));
+        assertThrows(IllegalArgumentException.class, () -> new MerkleTree<>(null, HashAlgorithm.SHA_384));
+
+        assertDoesNotThrow(
+                () -> new MerkleMap<SerializableString, SerializableString>(new HashMap<>(), HashAlgorithm.SHA_384,
+                                                                            DefaultCryptographyImpl.getInstance()));
+        assertDoesNotThrow(
+                () -> new MerkleMap<SerializableString, SerializableString>(new HashMap<>(), HashAlgorithm.SHA_384));
+        assertDoesNotThrow(() -> new MerkleMap<SerializableString, SerializableString>(new HashMap<>()));
+    }
+
+    @ParameterizedTest
+    @Order(500)
+    @DisplayName("Serialization :: Recover -> Small Map")
+    @ValueSource(ints = {1, 2, 6, 10})
+    public void testSerializationRecoverSmallMap(int numberOfElements) throws IOException {
+        final MerkleMap<SerializableString, SerializableString> map = new MerkleMap<>();
+
+        assertEquals(0, map.size());
+        assertEquals(0, map.getMerkleTree().size());
+        assertEquals(1, map.getMerkleTree().getNodeCount());
+
+        assertTrue(numberOfElements <= NUMBER_OF_PAIRS);
+
+        for (int i = 0; i < numberOfElements; i++) {
+            map.put(generatedKeys[i], generatedValues[i]);
+        }
+
+        assertEquals(numberOfElements, map.size());
+        assertEquals(numberOfElements, map.getMerkleTree().size());
+
+
+        byte[] serializedMap = null;
+
+        try (final ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+            try (final DataOutputStream dos = new DataOutputStream(bos)) {
+
+                objectSerializer.serialize(dos, map);
+                dos.flush();
+                bos.flush();
+
+                serializedMap = bos.toByteArray();
+            }
+        }
+
+        assertNotNull(serializedMap);
+        assertTrue(serializedMap.length > 1);
+
+        MerkleMap<SerializableString, SerializableString> recoveredMap = null;
+
+        try (final ByteArrayInputStream bis = new ByteArrayInputStream(serializedMap)) {
+            try (final DataInputStream dis = new DataInputStream(bis)) {
+                recoveredMap = objectSerializer.deserialize(dis);
+            }
+        }
+
+        assertNotNull(recoveredMap);
+        assertEquals(numberOfElements, recoveredMap.size());
+        assertEquals(numberOfElements, recoveredMap.getMerkleTree().size());
+        assertEquals((numberOfElements * 2) + 1, recoveredMap.getMerkleTree().getNodeCount());
+        assertEquals(map.getHash(), recoveredMap.getHash());
+    }
+
+    @Test
+    @Order(501)
+    @DisplayName("Serialization :: New Instance -> Throws")
+    public void testSerializationNewInstanceThrows() {
+        assertThrows(UnsupportedOperationException.class,
+                     () -> objectSerializer.newInstance(MerkleMap.OBJECT_ID, MerkleMap.VERSIONS.last()));
+        assertThrows(UnsupportedOperationException.class,
+                     () -> objectSerializer.newInstance(MerkleMapNode.OBJECT_ID, MerkleMapNode.VERSIONS.last()));
+    }
+
+    @Test
+    @Order(600)
+    @DisplayName("Serialization :: Version History -> Contains")
+    public void testSerializationVersionHistoryContains() {
+        final MerkleMap<SerializableString, SerializableString> map = new MerkleMap<>();
+        final SortedSet<Version> mapVersions = map.getVersionHistory();
+
+        assertNotNull(mapVersions);
+        assertFalse(mapVersions.isEmpty());
+        assertEquals(1, mapVersions.size());
+    }
 }

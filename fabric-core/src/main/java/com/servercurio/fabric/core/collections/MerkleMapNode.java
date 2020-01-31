@@ -22,6 +22,8 @@ import com.servercurio.fabric.core.serialization.SerializationAware;
 import com.servercurio.fabric.core.serialization.Version;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.Collections;
 import java.util.Map;
@@ -136,5 +138,13 @@ public class MerkleMapNode<K extends SerializationAware, V extends Serialization
                 .append(key)
                 .append(value)
                 .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
+                .append("key", key)
+                .append("value", value)
+                .toString();
     }
 }
