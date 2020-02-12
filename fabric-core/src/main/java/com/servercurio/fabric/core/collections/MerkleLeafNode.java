@@ -64,4 +64,14 @@ public class MerkleLeafNode<T extends SerializationAware> extends AbstractMerkle
         this.value = value;
         setHash(null);
     }
+
+    @Override
+    public MerkleNode<T> getLeftChild() {
+        return null;
+    }
+
+    @Override
+    public MerkleNode<T> getRightChild() {
+        return null;
+    }
 }

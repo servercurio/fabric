@@ -302,7 +302,6 @@ public class MerkleMapTests {
         assertNotNull(recoveredMap);
         assertEquals(numberOfElements, recoveredMap.size());
         assertEquals(numberOfElements, recoveredMap.getMerkleTree().size());
-        assertEquals((numberOfElements * 2) + 1, recoveredMap.getMerkleTree().getNodeCount());
         assertEquals(map.getHash(), recoveredMap.getHash());
     }
 

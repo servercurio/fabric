@@ -202,7 +202,7 @@ public class MerkleTreeTests {
     @ParameterizedTest
     @Order(303)
     @DisplayName("Correctness :: Iterator -> Comodification")
-    @ValueSource(ints = {3})
+    @ValueSource(ints = {4})
     public void testCorrectnessIteratorComodification(int seedCount) throws InterruptedException {
         final MerkleTree<MockSerializable> tree = new MerkleTree<>();
 
@@ -288,9 +288,11 @@ public class MerkleTreeTests {
 
         tree.add(WELL_KNOWN_HASH);
         tree.add(ALTERNATE_WELL_KNOWN_HASH);
+        tree.add(WELL_KNOWN_HASH);
+        tree.add(ALTERNATE_WELL_KNOWN_HASH);
 
-        assertEquals(2, tree.size());
-        assertEquals(3, tree.getNodeCount());
+        assertEquals(4, tree.size());
+        assertEquals(7, tree.getNodeCount());
 
         byte[] serializedTree = null;
 
@@ -317,8 +319,8 @@ public class MerkleTreeTests {
         }
 
         assertNotNull(recoveredTree);
-        assertEquals(2, recoveredTree.size());
-        assertEquals(3, recoveredTree.getNodeCount());
+        assertEquals(4, recoveredTree.size());
+        assertEquals(7, recoveredTree.getNodeCount());
         assertEquals(tree.getHash(), recoveredTree.getHash());
     }
 

@@ -27,4 +27,8 @@ interface MerkleNode<T extends SerializationAware> extends Hashable {
 
     MerkleTree<T> getTree();
 
+    MerkleNode<T> getLeftChild();
+
+    MerkleNode<T> getRightChild();
+
 }

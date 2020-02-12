@@ -18,7 +18,10 @@ package com.servercurio.fabric.core.collections;
 
 import com.servercurio.fabric.core.serialization.SerializationAware;
 
-import java.util.*;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.NoSuchElementException;
 
 class MerkleIterator<T extends SerializationAware> implements Iterator<T> {
 
@@ -27,6 +30,9 @@ class MerkleIterator<T extends SerializationAware> implements Iterator<T> {
 //    private Set<MerkleNode<T>> visitedSet;
 
     private MerkleLeafNode<T> lastReturned;
+    private MerkleNode<T> current;
+    private boolean visitedRoot;
+
     private int expectedModificationCount;
 
     public MerkleIterator(final MerkleTree<T> tree) {
@@ -34,7 +40,9 @@ class MerkleIterator<T extends SerializationAware> implements Iterator<T> {
         this.dfsStack = new LinkedList<>();
 //        this.visitedSet = new HashSet<>(tree.getNodeCount());
 
-        this.dfsStack.addFirst(tree.getRoot());
+        this.dfsStack.push(tree.getRoot());
+        this.current = tree.getRoot();
+        this.visitedRoot = false;
         this.expectedModificationCount = tree.getModificationCount();
     }
 
@@ -46,6 +54,12 @@ class MerkleIterator<T extends SerializationAware> implements Iterator<T> {
      */
     @Override
     public boolean hasNext() {
+        if (visitedRoot) {
+            if (dfsStack.size() == 1 && dfsStack.peek() == tree.getRoot()) {
+                return false;
+            }
+        }
+
         return !tree.isEmpty() && !dfsStack.isEmpty();
     }
 
@@ -63,42 +77,41 @@ class MerkleIterator<T extends SerializationAware> implements Iterator<T> {
             throw new NoSuchElementException();
         }
 
-        MerkleNode<T> current = dfsStack.pollLast();
-
-        while (current instanceof MerkleInternalNode) {
-
-//            if (visitedSet.contains(current)) {
-//                current = dfsStack.pollFirst();
-//                continue;
-//            }
-
-            final MerkleInternalNode<T> currentInternal = (MerkleInternalNode<T>) current;
-//            visitedSet.add(current);
-
-            if (currentInternal.getLeftChild() != null /* && !visitedSet
-                    .contains(currentInternal.getLeftChild()) */ ) {
-                dfsStack.addFirst(currentInternal.getLeftChild());
-            }
-
-            if (currentInternal.getRightChild() != null /* && !visitedSet
-                    .contains(currentInternal.getRightChild())*/ ) {
-                dfsStack.addFirst(currentInternal.getRightChild());
-            }
-
-            current = dfsStack.pollLast();
+        if (tree.size() < 2) {
+            visitedRoot = true;
         }
 
-//        if (!(current instanceof MerkleLeafNode)) {
-//            throw new NoSuchElementException();
-//        }
+        MerkleLeafNode<T> nextToReturn = null;
 
-//        visitedSet.add(current);
-        lastReturned = ((MerkleLeafNode<T>) current);
+        do {
 
-        if (lastReturned == null) {
+            while (current.getLeftChild() != null) {
+                current = current.getLeftChild();
+                dfsStack.push(current);
+            }
+
+            current = dfsStack.pop();
+
+            if (current == tree.getRoot()) {
+                visitedRoot = true;
+            }
+
+            if (current instanceof MerkleLeafNode) {
+                nextToReturn = (MerkleLeafNode<T>) current;
+            }
+
+            if (current.getRightChild() != null) {
+                current = current.getRightChild();
+                dfsStack.push(current);
+            }
+
+        } while (!dfsStack.isEmpty() && nextToReturn == null);
+
+        if (nextToReturn == null) {
             throw new NoSuchElementException();
         }
 
+        lastReturned = nextToReturn;
         return lastReturned.getValue();
     }
 

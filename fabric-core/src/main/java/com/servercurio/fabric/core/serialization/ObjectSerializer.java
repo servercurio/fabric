@@ -80,6 +80,8 @@ public class ObjectSerializer {
 
         provider.serialize(this, outStream, object);
 
+        outStream.flush();
+
     }
 
     private void initialize() {
