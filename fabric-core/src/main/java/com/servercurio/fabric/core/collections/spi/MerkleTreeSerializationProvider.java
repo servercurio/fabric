@@ -30,6 +30,8 @@ import com.servercurio.fabric.core.serialization.spi.SerializationProvider;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MerkleTreeSerializationProvider extends AbstractSerializationProvider {
 
@@ -53,18 +55,20 @@ public class MerkleTreeSerializationProvider extends AbstractSerializationProvid
             final HashAlgorithm algorithm = HashAlgorithm.valueOf(algorithmId);
             final Hash hash = objectSerializer.deserialize(inStream);
 
-            final MerkleTree<SerializationAware> tree = new MerkleTree<>(algorithm);
+            final List<SerializationAware> values = new ArrayList<>(treeSize);
 
             for (int i = 0; i < treeSize; i++) {
                 final SerializationAware value = objectSerializer.deserialize(inStream);
-                tree.add(value);
+                values.add(value);
             }
+
+            final MerkleTree<SerializationAware> tree = new MerkleTree<>(values, algorithm);
 
             if (!hash.equals(tree.getHash())) {
                 throw new MerkleTreeException(String.format(
                         "Deserialized MerkleTree hash does not match serialized hash " +
                         "[ originalHash = '%s', computedHash = '%s' ]",
-                        hash, tree.getHash()));
+                        hash, tree.getHash()), tree);
             }
 
             return (T) tree;

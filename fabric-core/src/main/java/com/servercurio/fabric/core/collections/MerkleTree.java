@@ -95,7 +95,7 @@ public class MerkleTree<T extends SerializationAware> extends AbstractCollection
             throw new IllegalArgumentException("other");
         }
 
-        addAll(other);
+        rebuild(other);
     }
 
 
@@ -233,4 +233,81 @@ public class MerkleTree<T extends SerializationAware> extends AbstractCollection
         return leafCount;
     }
 
+
+    protected void reassignRightMostNode() {
+        if (getLeafCount() > 2) {
+            final MerkleNode<T> newRightNode =
+                    new TreeNavigator<>(getRoot().getTree()).nodeAt(getNodeCount());
+
+//            if (newRightNode instanceof MerkleInternalNode) {
+//                throw new MerkleTreeException("Illegal internal node returned when leaf node expected");
+//            }
+
+            setRightMostLeafNode((MerkleLeafNode<T>) newRightNode);
+        } else {
+            final MerkleLeafNode<T> newRightNode = (getLeafCount() == 2) ?
+                                                   (MerkleLeafNode<T>) getRoot().getRightChild() :
+                                                   (MerkleLeafNode<T>) getRoot().getLeftChild();
+
+            setRightMostLeafNode(newRightNode);
+        }
+    }
+
+    private void rebuild(final Collection<T> values) {
+        if (values == null) {
+            throw new IllegalArgumentException("values");
+        }
+
+        if (values.isEmpty()) {
+            return;
+        }
+
+        final List<MerkleNode<T>> leafNodes = new ArrayList<>();
+        this.setLeafCount(values.size());
+
+        for (T value : values) {
+            leafNodes.add(new MerkleLeafNode<>(this, value));
+        }
+
+
+        List<MerkleNode<T>> currentLevel = buildNextLevel(leafNodes);
+
+        while (currentLevel.size() > 1) {
+            currentLevel = buildNextLevel(currentLevel);
+        }
+
+        this.root = (MerkleInternalNode<T>) currentLevel.get(0);
+        reassignRightMostNode();
+    }
+
+    private List<MerkleNode<T>> buildNextLevel(final List<MerkleNode<T>> currentLevel) {
+        final List<MerkleNode<T>> nextLevel = new ArrayList<>();
+
+        MerkleInternalNode<T> currentPartialNode = null;
+        final Iterator<MerkleNode<T>> iter = currentLevel.iterator();
+
+        while (iter.hasNext()) {
+            final MerkleNode<T> node = iter.next();
+
+            if (currentPartialNode == null) {
+                if (currentLevel.size() > 2 && !iter.hasNext()) {
+                    nextLevel.add(node);
+                } else {
+                    currentPartialNode = new MerkleInternalNode<>(this);
+                    currentPartialNode.setLeftChild(node);
+                    this.setNodeCount(this.getNodeCount() + 1);
+                    nextLevel.add(currentPartialNode);
+
+                }
+            } else {
+                currentPartialNode.setRightChild(node);
+                this.setNodeCount(this.getNodeCount() + 1);
+                currentPartialNode = null;
+            }
+
+
+        }
+
+        return nextLevel;
+    }
 }

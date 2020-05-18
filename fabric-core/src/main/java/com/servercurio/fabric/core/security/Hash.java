@@ -40,6 +40,8 @@ public class Hash implements SerializationAware, Comparable<Hash> {
     private static final String VALUE_FIELD = "value";
     private static final String OTHER_PARAM = "other";
 
+    private static final int DEFAULT_PREFIX_LEN = 4;
+
     static {
         final TreeSet<Version> versionSet = new TreeSet<>();
         versionSet.add(new Version(1, 0, 0));
@@ -139,6 +141,24 @@ public class Hash implements SerializationAware, Comparable<Hash> {
         return VERSIONS.last();
     }
 
+    public String getPrefix() {
+        return getPrefix(DEFAULT_PREFIX_LEN);
+    }
+
+    public String getPrefix(final int count) {
+        if (count <= 0 || count > value.length) {
+            throw new IndexOutOfBoundsException(count);
+        }
+
+        final StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < count; i++) {
+            sb.append(String.format("%02x", value[i]));
+        }
+
+        return sb.toString();
+    }
+
     @Override
     public int compareTo(final Hash other) {
         if (other == null) {
@@ -185,4 +205,5 @@ public class Hash implements SerializationAware, Comparable<Hash> {
                 .append(VALUE_FIELD, Base64.getEncoder().encodeToString(value))
                 .build();
     }
+
 }

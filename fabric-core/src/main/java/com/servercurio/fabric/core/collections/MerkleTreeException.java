@@ -18,6 +18,8 @@ package com.servercurio.fabric.core.collections;
 
 public class MerkleTreeException extends CollectionException {
 
+    private MerkleTree<?> tree;
+
     /**
      * Constructs a new runtime exception with {@code null} as its detail message.  The cause is not initialized, and
      * may subsequently be initialized by a call to {@link #initCause}.
@@ -34,6 +36,18 @@ public class MerkleTreeException extends CollectionException {
      */
     public MerkleTreeException(final String message) {
         super(message);
+    }
+
+    /**
+     * Constructs a new runtime exception with the specified detail message. The cause is not initialized, and may
+     * subsequently be initialized by a call to {@link #initCause}.
+     *
+     * @param message the detail message. The detail message is saved for later retrieval by the {@link #getMessage()}
+     *                method.
+     */
+    public MerkleTreeException(final String message, final MerkleTree<?> tree) {
+        super(message);
+        this.tree = tree;
     }
 
     /**
@@ -63,4 +77,8 @@ public class MerkleTreeException extends CollectionException {
         super(cause);
     }
 
+
+    public MerkleTree<?> getTree() {
+        return tree;
+    }
 }

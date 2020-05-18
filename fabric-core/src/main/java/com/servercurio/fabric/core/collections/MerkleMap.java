@@ -84,6 +84,12 @@ public class MerkleMap<K extends SerializationAware, V extends SerializationAwar
         }
     }
 
+    public MerkleMap(final MerkleTree<MerkleMapNode<K, V>> tree, final HashAlgorithm algorithm) {
+        this(algorithm);
+        this.merkleTree = tree;
+        rebuild();
+    }
+
     public Cryptography getCryptography() {
         return cryptography;
     }
@@ -210,6 +216,12 @@ public class MerkleMap<K extends SerializationAware, V extends SerializationAwar
     @Override
     public Set<Entry<K, V>> entrySet() {
         return entrySet;
+    }
+
+    private void rebuild() {
+        for (MerkleMapNode<K, V> node : merkleTree) {
+            lookupMap.put(node.getKey(), node);
+        }
     }
 
     private class EntrySetView extends AbstractSet<Map.Entry<K, V>> {

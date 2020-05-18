@@ -277,22 +277,24 @@ public class MerkleTreeTests {
         assertDoesNotThrow(() -> new MerkleTree<MockSerializable>(new LinkedList<>()));
     }
 
-    @Test
+    @ParameterizedTest
     @Order(500)
     @DisplayName("Serialization :: Recover -> Small Tree")
-    public void testSerializationRecoverSmallTree() throws IOException {
+    @ValueSource(ints = {1, 2, 6, 10, 25})
+    public void testSerializationRecoverSmallTree(int numberOfElements) throws IOException {
         final MerkleTree<Hash> tree = new MerkleTree<>();
 
         assertEquals(0, tree.size());
         assertEquals(1, tree.getNodeCount());
 
-        tree.add(WELL_KNOWN_HASH);
-        tree.add(ALTERNATE_WELL_KNOWN_HASH);
-        tree.add(WELL_KNOWN_HASH);
-        tree.add(ALTERNATE_WELL_KNOWN_HASH);
+        for (int i = 0; i < numberOfElements; i++) {
+            final Hash value = (i % 2 != 0) ? WELL_KNOWN_HASH : ALTERNATE_WELL_KNOWN_HASH;
+            tree.add(value);
+        }
 
-        assertEquals(4, tree.size());
-        assertEquals(7, tree.getNodeCount());
+        int expectedNodeCount = (numberOfElements * 2) + ((numberOfElements == 1) ? 0 : -1);
+        assertEquals(numberOfElements, tree.size());
+        assertEquals(expectedNodeCount, tree.getNodeCount());
 
         byte[] serializedTree = null;
 
@@ -314,13 +316,22 @@ public class MerkleTreeTests {
 
         try (final ByteArrayInputStream bis = new ByteArrayInputStream(serializedTree)) {
             try (final DataInputStream dis = new DataInputStream(bis)) {
-                recoveredTree = objectSerializer.deserialize(dis);
+                try {
+                    recoveredTree = objectSerializer.deserialize(dis);
+                } catch (MerkleTreeException ex) {
+                    @SuppressWarnings("unchecked")
+                    final MerkleTree<Hash> recoveryTree = (MerkleTree<Hash>) ex.getTree();
+
+                    final TreeVisualizer<Hash> visualizer = new TreeVisualizer<>(tree, recoveryTree);
+                    visualizer.print(new PrintWriter(System.out));
+                    fail();
+                }
             }
         }
 
         assertNotNull(recoveredTree);
-        assertEquals(4, recoveredTree.size());
-        assertEquals(7, recoveredTree.getNodeCount());
+        assertEquals(numberOfElements, recoveredTree.size());
+        assertEquals(tree.getNodeCount(), recoveredTree.getNodeCount());
         assertEquals(tree.getHash(), recoveredTree.getHash());
     }
 

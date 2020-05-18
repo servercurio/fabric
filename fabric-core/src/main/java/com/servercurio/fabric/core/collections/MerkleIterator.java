@@ -154,7 +154,7 @@ class MerkleIterator<T extends SerializationAware> implements Iterator<T> {
         tree.setNodeCount(tree.getNodeCount() - nodeDelta);
         lastReturned = null;
 
-        reassignRightMostNode();
+        tree.reassignRightMostNode();
 
         expectedModificationCount++;
         tree.setModificationCount(tree.getModificationCount() + 1);
@@ -202,29 +202,12 @@ class MerkleIterator<T extends SerializationAware> implements Iterator<T> {
                 lastReturnedParent.setRightChild(tree.getRightMostLeafNode());
             }
 
-            dfsStack.addFirst(tree.getRightMostLeafNode());
+            dfsStack.push(tree.getRightMostLeafNode());
             lastReturned.setParent(null);
         }
     }
 
-    private void reassignRightMostNode() {
-        if (tree.getLeafCount() > 2) {
-            final MerkleNode<T> newRightNode =
-                    new TreeNavigator<>(tree.getRoot().getTree()).nodeAt(tree.getNodeCount());
 
-//            if (newRightNode instanceof MerkleInternalNode) {
-//                throw new MerkleTreeException("Illegal internal node returned when leaf node expected");
-//            }
-
-            tree.setRightMostLeafNode((MerkleLeafNode<T>) newRightNode);
-        } else {
-            final MerkleLeafNode<T> newRightNode = (tree.getLeafCount() == 2) ?
-                                                   (MerkleLeafNode<T>) tree.getRoot().getRightChild() :
-                                                   (MerkleLeafNode<T>) tree.getRoot().getLeftChild();
-
-            tree.setRightMostLeafNode(newRightNode);
-        }
-    }
 
     private void checkForComodification() {
         if (tree.getModificationCount() != expectedModificationCount) {

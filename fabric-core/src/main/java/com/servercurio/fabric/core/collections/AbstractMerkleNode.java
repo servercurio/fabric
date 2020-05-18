@@ -19,6 +19,9 @@ package com.servercurio.fabric.core.collections;
 import com.servercurio.fabric.core.security.AbstractHashable;
 import com.servercurio.fabric.core.security.Hash;
 import com.servercurio.fabric.core.serialization.SerializationAware;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import java.util.Objects;
 
 abstract class AbstractMerkleNode<T extends SerializationAware> extends AbstractHashable implements MerkleNode<T> {
 
@@ -64,4 +67,21 @@ abstract class AbstractMerkleNode<T extends SerializationAware> extends Abstract
         return tree;
     }
 
+    @Override
+    public String toString() {
+       final Hash hash = getHash();
+       final StringBuilder sb = new StringBuilder();
+
+       if (hash == null || hash.getValue() == null || hash.getValue().length < 4) {
+           return super.toString();
+       }
+
+       final byte[] hashValue = hash.getValue();
+
+       for (int i = 0; i < 4; i++) {
+           sb.append(String.format("%02x", hashValue[i]));
+       }
+
+       return sb.toString();
+    }
 }

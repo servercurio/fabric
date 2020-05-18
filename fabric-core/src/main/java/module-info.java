@@ -22,8 +22,12 @@ import com.servercurio.fabric.core.serialization.spi.SerializationProvider;
 
 module sc.fabric.core {
 
-
     requires org.apache.commons.lang3;
+    requires jung.visualization;
+    requires jung.algorithms;
+    requires jung.graph.impl;
+
+    requires java.desktop;
 
     uses SerializationProvider;
     provides SerializationProvider with SecuritySerializationProvider, MerkleTreeSerializationProvider, MerkleMapSerializationProvider, PrimitiveSerializationProvider;

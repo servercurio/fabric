@@ -26,7 +26,6 @@ import com.servercurio.fabric.core.serialization.ObjectSerializer;
 import com.servercurio.fabric.core.serialization.SerializationAware;
 import com.servercurio.fabric.core.serialization.Version;
 import com.servercurio.fabric.core.serialization.spi.AbstractSerializationProvider;
-import com.servercurio.fabric.core.serialization.spi.SerializationProvider;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -50,15 +49,12 @@ public class MerkleMapSerializationProvider extends AbstractSerializationProvide
                                                         final DataInputStream inStream, final ObjectId objectId,
                                                         final Version version) throws IOException {
         if (MerkleMap.OBJECT_ID.equals(objectId) && MerkleMap.VERSIONS.contains(version)) {
-            final int algorithmId = inStream.readInt();
-            final HashAlgorithm algorithm = HashAlgorithm.valueOf(algorithmId);
+            final MerkleTree<MerkleMapNode<SerializationAware, SerializationAware>> tree =
+                    (MerkleTree<MerkleMapNode<SerializationAware, SerializationAware>>) objectSerializer
+                            .deserialize(inStream);
 
-            final MerkleMap<SerializationAware, SerializationAware> merkleMap = new MerkleMap<>(algorithm);
-            final MerkleTree<MerkleMapNode<?, ?>> tree = objectSerializer.deserialize(inStream);
-
-            for (MerkleMapNode<?, ?> node : tree) {
-                merkleMap.put(node.getKey(), node.getValue());
-            }
+            final MerkleMap<SerializationAware, SerializationAware> merkleMap =
+                    new MerkleMap<>(tree, tree.getHashAlgorithm());
 
             if (!tree.getHash().equals(merkleMap.getHash())) {
                 throw new MerkleMapException(String.format(
@@ -88,7 +84,6 @@ public class MerkleMapSerializationProvider extends AbstractSerializationProvide
 
         if (object instanceof MerkleMap) {
             final MerkleMap<?, ?> merkleMap = (MerkleMap<?, ?>) object;
-            outStream.writeInt(merkleMap.getAlgorithm().id());
             objectSerializer.serialize(outStream, merkleMap.getMerkleTree());
         } else if (object instanceof MerkleMapNode) {
             final MerkleMapNode<?, ?> mapNode = (MerkleMapNode<?, ?>) object;
