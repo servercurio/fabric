@@ -97,11 +97,11 @@ public final class DefaultCryptographyImpl implements Cryptography, AutoCloseabl
 
     @Override
     public Hash digestSync(final InputStream stream) {
-        return digestSync(HashAlgorithm.SHA_384, stream);
+        return digestSync(stream, HashAlgorithm.SHA_384);
     }
 
     @Override
-    public Hash digestSync(final HashAlgorithm algorithm, final InputStream stream) {
+    public Hash digestSync(final InputStream stream, final HashAlgorithm algorithm) {
         final MessageDigest digest = acquireAlgorithm(algorithm);
         final byte[] buffer = new byte[STREAM_BUFFER_SIZE];
 
@@ -121,11 +121,11 @@ public final class DefaultCryptographyImpl implements Cryptography, AutoCloseabl
 
     @Override
     public Hash digestSync(final byte[] data) {
-        return digestSync(HashAlgorithm.SHA_384, data);
+        return digestSync(data, HashAlgorithm.SHA_384);
     }
 
     @Override
-    public Hash digestSync(final HashAlgorithm algorithm, final byte[] data) {
+    public Hash digestSync(final byte[] data, final HashAlgorithm algorithm) {
         final MessageDigest digest = acquireAlgorithm(algorithm);
 
         digest.update(data);
@@ -134,11 +134,11 @@ public final class DefaultCryptographyImpl implements Cryptography, AutoCloseabl
 
     @Override
     public Hash digestSync(final Hash leftHash, final Hash rightHash) {
-        return digestSync(HashAlgorithm.SHA_384, leftHash, rightHash);
+        return digestSync(leftHash, rightHash, HashAlgorithm.SHA_384);
     }
 
     @Override
-    public Hash digestSync(final HashAlgorithm algorithm, final Hash leftHash, final Hash rightHash) {
+    public Hash digestSync(final Hash leftHash, final Hash rightHash, final HashAlgorithm algorithm) {
         final MessageDigest digest = acquireAlgorithm(algorithm);
 
         if (leftHash != null) {
@@ -158,11 +158,11 @@ public final class DefaultCryptographyImpl implements Cryptography, AutoCloseabl
 
     @Override
     public Hash digestSync(final ByteBuffer buffer) {
-        return digestSync(HashAlgorithm.SHA_384, buffer);
+        return digestSync(buffer, HashAlgorithm.SHA_384);
     }
 
     @Override
-    public Hash digestSync(final HashAlgorithm algorithm, final ByteBuffer buffer) {
+    public Hash digestSync(final ByteBuffer buffer, final HashAlgorithm algorithm) {
         final MessageDigest digest = acquireAlgorithm(algorithm);
 
         digest.update(buffer);

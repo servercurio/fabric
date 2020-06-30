@@ -30,18 +30,18 @@ public interface Cryptography {
 
     Hash digestSync(final InputStream stream);
 
-    Hash digestSync(final HashAlgorithm algorithm, final InputStream stream);
+    Hash digestSync(final InputStream stream, final HashAlgorithm algorithm);
 
     Hash digestSync(final byte[] data);
 
-    Hash digestSync(final HashAlgorithm algorithm, final byte[] data);
+    Hash digestSync(final byte[] data, final HashAlgorithm algorithm);
 
     Hash digestSync(final Hash leftHash, final Hash rightHash);
 
-    Hash digestSync(final HashAlgorithm algorithm, final Hash leftHash, final Hash rightHash);
+    Hash digestSync(final Hash leftHash, final Hash rightHash, final HashAlgorithm algorithm);
 
     Hash digestSync(final ByteBuffer buffer) throws NoSuchAlgorithmException;
 
-    Hash digestSync(final HashAlgorithm algorithm, final ByteBuffer buffer);
+    Hash digestSync(final ByteBuffer buffer, final HashAlgorithm algorithm);
 
 }
