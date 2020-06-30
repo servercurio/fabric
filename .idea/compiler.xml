@@ -6,9 +6,13 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="fabric-core" />
-        <module name="fabric-data-store" />
+        <module name="fabric" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="fabric-bom" target="12" />
+      <module name="fabric-core" target="14" />
+      <module name="fabric-data-store" target="14" />
+    </bytecodeTargetLevel>
   </component>
 </project>
