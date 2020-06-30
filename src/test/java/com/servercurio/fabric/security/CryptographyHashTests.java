@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Cryptography: Hashing")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class CryptographyHashTests {
+public class CryptographyHashTests {
 
     private static final MockHash WELL_KNOWN_HASH;
     private static final MockHash ALTERNATE_WELL_KNOWN_HASH;
@@ -87,7 +87,7 @@ class CryptographyHashTests {
     @Test
     @Order(103)
     @DisplayName("Hash :: SHA_384 -> Byte Buffer")
-    void testCryptoSha384ByteBuffer() throws NoSuchAlgorithmException {
+    public void testCryptoSha384ByteBuffer() throws NoSuchAlgorithmException {
         final Cryptography provider = Cryptography.getDefaultInstance();
 
         final ByteBuffer buffer = ByteBuffer.allocateDirect(IN_MEMORY_DATA.length);
@@ -114,7 +114,7 @@ class CryptographyHashTests {
     @Test
     @Order(100)
     @DisplayName("Hash :: SHA_384 -> Hash of Hashes")
-    void testCryptoSha384HashOfHashes() throws NoSuchAlgorithmException {
+    public void testCryptoSha384HashOfHashes() throws NoSuchAlgorithmException {
         final Cryptography provider = Cryptography.getDefaultInstance();
 
         final Hash defaultHashOfHashes = provider
@@ -137,7 +137,7 @@ class CryptographyHashTests {
     @Test
     @Order(102)
     @DisplayName("Hash :: SHA_384 -> In Memory Data")
-    void testCryptoSha384InMemoryData() throws NoSuchAlgorithmException {
+    public void testCryptoSha384InMemoryData() throws NoSuchAlgorithmException {
         final Cryptography provider = Cryptography.getDefaultInstance();
 
         final Hash defaultMemoryDataHash = provider.digestSync(IN_MEMORY_DATA);
@@ -159,7 +159,7 @@ class CryptographyHashTests {
     @Test
     @Order(101)
     @DisplayName("Hash :: SHA_384 -> Large File")
-    void testCryptoSha384LargeFile() throws NoSuchAlgorithmException, IOException {
+    public void testCryptoSha384LargeFile() throws NoSuchAlgorithmException, IOException {
         final Cryptography provider = Cryptography.getDefaultInstance();
         final ClassLoader classLoader = getClass().getClassLoader();
 
