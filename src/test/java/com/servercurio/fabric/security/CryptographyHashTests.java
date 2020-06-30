@@ -29,13 +29,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Cryptography: Hashing")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class CryptographyHashTests {
+class CryptographyHashTests {
 
     private static final MockHash WELL_KNOWN_HASH;
     private static final MockHash ALTERNATE_WELL_KNOWN_HASH;
     private static final MockHash HASH_OF_WELL_KNOWN_HASHES;
 
-    private static final String LARGE_FILE_NAME = "90bf0ba937946ceae52361d742eede93eee76cc502156d73e1bc8aadb7dd827437b80434f793cbe539ae1330d30fb12c.bin";
+    private static final String LARGE_FILE_NAME =
+            "90bf0ba937946ceae52361d742eede93eee76cc502156d73e1bc8aadb7dd827437b80434f793cbe539ae1330d30fb12c.bin";
     private static final MockHash LARGE_FILE_KNOWN_HASH;
 
     private static final byte[] IN_MEMORY_DATA;
@@ -43,45 +44,77 @@ public class CryptographyHashTests {
 
     static {
         WELL_KNOWN_HASH = new MockHash(HashAlgorithm.SHA_384,
-                                       Base64.getDecoder().decode("pKA/NF3xZhm+DOBne5MhXxq41eSYHyom/bAPvyCrrDNT8vt5eODhhtWG7LpQlHEE"));
+                                       Base64.getDecoder()
+                                             .decode("pKA/NF3xZhm+DOBne5MhXxq41eSYHyom/bAPvyCrrDNT8vt5eODhhtWG7LpQlHEE"));
 
         ALTERNATE_WELL_KNOWN_HASH = new MockHash(HashAlgorithm.SHA_384,
-                Base64.getDecoder().decode("RXzuRQUHOT5zssgipY+PLujP4FrmQJQzVAvni+s52GcwtzkAnq+nRwwmW7noRqvx"));
+                                                 Base64.getDecoder()
+                                                       .decode("RXzuRQUHOT5zssgipY+PLujP4FrmQJQzVAvni+s52GcwtzkAnq+nRwwmW7noRqvx"));
 
         HASH_OF_WELL_KNOWN_HASHES = new MockHash(HashAlgorithm.SHA_384,
-                Base64.getDecoder().decode("jJ2gb5dQn1Bxdz0fxLowPxakxynJFajOjm7PBbkIVuznXA/9Cfa4QlFAagSyvDTm"));
+                                                 Base64.getDecoder()
+                                                       .decode("jJ2gb5dQn1Bxdz0fxLowPxakxynJFajOjm7PBbkIVuznXA/9Cfa4QlFAagSyvDTm"));
 
         LARGE_FILE_KNOWN_HASH = new MockHash(HashAlgorithm.SHA_384,
-                Base64.getDecoder().decode("iztga7XMnm5KBe5gkbsPu1XUGdQUGJNG4gC3zSQNtKWBQ78y/N6nm/jXHwSq563L"));
+                                             Base64.getDecoder()
+                                                   .decode("iztga7XMnm5KBe5gkbsPu1XUGdQUGJNG4gC3zSQNtKWBQ78y/N6nm/jXHwSq563L"));
 
         IN_MEMORY_DATA = Base64.getDecoder()
-                .decode("3K0By4fDo8jHaEoYKK7vtyb5KE1t1uYKG5p+r5ZNcnvNYCYZSTgAB6PpvHmsSGTwWov+42iTjzg9Eu4DBHtAdw==");
+                               .decode("3K0By4fDo8jHaEoYKK7vtyb5KE1t1uYKG5p+r5ZNcnvNYCYZSTgAB6PpvHmsSGTwWov+42iTjzg9Eu4DBHtAdw==");
 
         IN_MEMORY_DATA_KNOWN_HASH = new MockHash(HashAlgorithm.SHA_384,
-                Base64.getDecoder().decode("AhmB45prgDLfSo23+TqTa3U231O85iO424sEe+lgxVhPbyviG23klX+VRcNOAOMj"));
-    }
-
-    @BeforeAll
-    public static void startup() {
-
+                                                 Base64.getDecoder()
+                                                       .decode("AhmB45prgDLfSo23+TqTa3U231O85iO424sEe+lgxVhPbyviG23klX+VRcNOAOMj"));
     }
 
     @AfterAll
-    public static void shutdown() {
+    static void shutdown() {
+
+    }
+
+    @BeforeAll
+    static void startup() {
 
     }
 
     @BeforeEach
-    public void beforeTest() {
+    void beforeTest() {
         WELL_KNOWN_HASH.setOverrideAlgorithm(null);
         ALTERNATE_WELL_KNOWN_HASH.setOverrideAlgorithm(null);
         HASH_OF_WELL_KNOWN_HASHES.setOverrideAlgorithm(null);
     }
 
     @Test
+    @Order(103)
+    @DisplayName("Hash :: SHA_384 -> Byte Buffer")
+    void testCryptoSha384ByteBuffer() throws NoSuchAlgorithmException {
+        final Cryptography provider = Cryptography.getDefaultInstance();
+
+        final ByteBuffer buffer = ByteBuffer.allocateDirect(IN_MEMORY_DATA.length);
+        buffer.put(IN_MEMORY_DATA).rewind();
+
+        final Hash defaultBufferHash = provider
+                .digestSync(buffer);
+
+        buffer.rewind();
+
+        final Hash explicitBufferHash = provider
+                .digestSync(HashAlgorithm.SHA_384, buffer);
+
+        assertEquals(IN_MEMORY_DATA_KNOWN_HASH, defaultBufferHash);
+        assertArrayEquals(IN_MEMORY_DATA_KNOWN_HASH.getValue(), defaultBufferHash.getValue());
+
+        assertEquals(IN_MEMORY_DATA_KNOWN_HASH, explicitBufferHash);
+        assertArrayEquals(IN_MEMORY_DATA_KNOWN_HASH.getValue(), explicitBufferHash.getValue());
+
+        assertEquals(1, DefaultCryptographyImpl.getHashAlgorithmCache().get().size());
+
+    }
+
+    @Test
     @Order(100)
     @DisplayName("Hash :: SHA_384 -> Hash of Hashes")
-    public void testCryptoSha384HashOfHashes() throws NoSuchAlgorithmException {
+    void testCryptoSha384HashOfHashes() throws NoSuchAlgorithmException {
         final Cryptography provider = Cryptography.getDefaultInstance();
 
         final Hash defaultHashOfHashes = provider
@@ -102,36 +135,9 @@ public class CryptographyHashTests {
     }
 
     @Test
-    @Order(101)
-    @DisplayName("Hash :: SHA_384 -> Large File")
-    public void testCryptoSha384LargeFile() throws NoSuchAlgorithmException, IOException {
-        final Cryptography provider = Cryptography.getDefaultInstance();
-        final ClassLoader classLoader = getClass().getClassLoader();
-
-        try (final InputStream stream = classLoader.getResourceAsStream(LARGE_FILE_NAME)) {
-            final Hash defaultFileHash = provider.digestSync(stream);
-
-            assertNotNull(defaultFileHash);
-            assertEquals(LARGE_FILE_KNOWN_HASH, defaultFileHash);
-            assertArrayEquals(LARGE_FILE_KNOWN_HASH.getValue(), defaultFileHash.getValue());
-        }
-
-        try (final InputStream stream = classLoader.getResourceAsStream(LARGE_FILE_NAME)) {
-            final Hash explicitFileHash = provider.digestSync(HashAlgorithm.SHA_384, stream);
-
-            assertNotNull(explicitFileHash);
-            assertEquals(LARGE_FILE_KNOWN_HASH, explicitFileHash);
-            assertArrayEquals(LARGE_FILE_KNOWN_HASH.getValue(), explicitFileHash.getValue());
-        }
-
-        assertEquals(1, DefaultCryptographyImpl.getHashAlgorithmCache().get().size());
-
-    }
-
-    @Test
     @Order(102)
     @DisplayName("Hash :: SHA_384 -> In Memory Data")
-    public void testCryptoSha384InMemoryData() throws NoSuchAlgorithmException {
+    void testCryptoSha384InMemoryData() throws NoSuchAlgorithmException {
         final Cryptography provider = Cryptography.getDefaultInstance();
 
         final Hash defaultMemoryDataHash = provider.digestSync(IN_MEMORY_DATA);
@@ -151,27 +157,27 @@ public class CryptographyHashTests {
     }
 
     @Test
-    @Order(103)
-    @DisplayName("Hash :: SHA_384 -> Byte Buffer")
-    public void testCryptoSha384ByteBuffer() throws NoSuchAlgorithmException {
+    @Order(101)
+    @DisplayName("Hash :: SHA_384 -> Large File")
+    void testCryptoSha384LargeFile() throws NoSuchAlgorithmException, IOException {
         final Cryptography provider = Cryptography.getDefaultInstance();
+        final ClassLoader classLoader = getClass().getClassLoader();
 
-        final ByteBuffer buffer = ByteBuffer.allocateDirect(IN_MEMORY_DATA.length);
-        buffer.put(IN_MEMORY_DATA).rewind();
+        try (final InputStream stream = classLoader.getResourceAsStream(LARGE_FILE_NAME)) {
+            final Hash defaultFileHash = provider.digestSync(stream);
 
-        final Hash defaultBufferHash = provider
-                .digestSync(buffer);
+            assertNotNull(defaultFileHash);
+            assertEquals(LARGE_FILE_KNOWN_HASH, defaultFileHash);
+            assertArrayEquals(LARGE_FILE_KNOWN_HASH.getValue(), defaultFileHash.getValue());
+        }
 
-        buffer.rewind();
+        try (final InputStream stream = classLoader.getResourceAsStream(LARGE_FILE_NAME)) {
+            final Hash explicitFileHash = provider.digestSync(HashAlgorithm.SHA_384, stream);
 
-        final Hash explicitBufferHash = provider
-                .digestSync(HashAlgorithm.SHA_384, buffer);
-
-        assertEquals(IN_MEMORY_DATA_KNOWN_HASH, defaultBufferHash);
-        assertArrayEquals(IN_MEMORY_DATA_KNOWN_HASH.getValue(), defaultBufferHash.getValue());
-
-        assertEquals(IN_MEMORY_DATA_KNOWN_HASH, explicitBufferHash);
-        assertArrayEquals(IN_MEMORY_DATA_KNOWN_HASH.getValue(), explicitBufferHash.getValue());
+            assertNotNull(explicitFileHash);
+            assertEquals(LARGE_FILE_KNOWN_HASH, explicitFileHash);
+            assertArrayEquals(LARGE_FILE_KNOWN_HASH.getValue(), explicitFileHash.getValue());
+        }
 
         assertEquals(1, DefaultCryptographyImpl.getHashAlgorithmCache().get().size());
 
