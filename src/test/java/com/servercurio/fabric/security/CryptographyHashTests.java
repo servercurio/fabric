@@ -99,7 +99,7 @@ public class CryptographyHashTests {
         buffer.rewind();
 
         final Hash explicitBufferHash = provider
-                .digestSync(HashAlgorithm.SHA_384, buffer);
+                .digestSync(buffer, HashAlgorithm.SHA_384);
 
         assertEquals(IN_MEMORY_DATA_KNOWN_HASH, defaultBufferHash);
         assertArrayEquals(IN_MEMORY_DATA_KNOWN_HASH.getValue(), defaultBufferHash.getValue());
@@ -121,7 +121,7 @@ public class CryptographyHashTests {
                 .digestSync(WELL_KNOWN_HASH, ALTERNATE_WELL_KNOWN_HASH);
 
         final Hash explicitHashOfHashes = provider
-                .digestSync(HashAlgorithm.SHA_384, WELL_KNOWN_HASH, ALTERNATE_WELL_KNOWN_HASH);
+                .digestSync(WELL_KNOWN_HASH, ALTERNATE_WELL_KNOWN_HASH, HashAlgorithm.SHA_384);
 
         assertEquals(HASH_OF_WELL_KNOWN_HASHES, defaultHashOfHashes);
         assertArrayEquals(HASH_OF_WELL_KNOWN_HASHES.getValue(), defaultHashOfHashes.getValue());
@@ -143,7 +143,7 @@ public class CryptographyHashTests {
         final Hash defaultMemoryDataHash = provider.digestSync(IN_MEMORY_DATA);
 
         final Hash explicitMemoryDataHash = provider
-                .digestSync(HashAlgorithm.SHA_384, IN_MEMORY_DATA);
+                .digestSync(IN_MEMORY_DATA, HashAlgorithm.SHA_384);
 
 
         assertEquals(IN_MEMORY_DATA_KNOWN_HASH, defaultMemoryDataHash);
@@ -172,7 +172,7 @@ public class CryptographyHashTests {
         }
 
         try (final InputStream stream = classLoader.getResourceAsStream(LARGE_FILE_NAME)) {
-            final Hash explicitFileHash = provider.digestSync(HashAlgorithm.SHA_384, stream);
+            final Hash explicitFileHash = provider.digestSync(stream, HashAlgorithm.SHA_384);
 
             assertNotNull(explicitFileHash);
             assertEquals(LARGE_FILE_KNOWN_HASH, explicitFileHash);
