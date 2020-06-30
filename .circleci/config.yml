@@ -27,10 +27,10 @@ jobs:
       - run: mvn clean compile install test sonar:sonar
       - run:
           command: |
-            mkdir -p ~/repo/junit/fabric-core
-            mkdir -p ~/repo/jacoco/fabric-core
-            cp -R target/surefire-reports/* ~/repo/junit/fabric-core
-            cp -R target/site/jacoco/* ~/repo/jacoco/fabric-core
+            mkdir -p ~/repo/junit/fabric
+            mkdir -p ~/repo/jacoco/fabric
+            cp -R target/surefire-reports/* ~/repo/junit/fabric
+            cp -R target/site/jacoco/* ~/repo/jacoco/fabric
       # Download and cache dependencies
       - restore_cache:
           keys:
@@ -47,7 +47,7 @@ jobs:
 
       - store_test_results: # uploads the test metadata from the `target/surefire-reports` directory so that it can show up in the CircleCI dashboard.
           # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
-          path: junit
+          path: ~/repo/junit/fabric
 
 workflows:
   version: 2
