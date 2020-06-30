@@ -68,17 +68,17 @@ class CryptographyHashTests {
     }
 
     @AfterAll
-    static void shutdown() {
+    public static void shutdown() {
 
     }
 
     @BeforeAll
-    static void startup() {
+    public static void startup() {
 
     }
 
     @BeforeEach
-    void beforeTest() {
+    public void beforeTest() {
         WELL_KNOWN_HASH.setOverrideAlgorithm(null);
         ALTERNATE_WELL_KNOWN_HASH.setOverrideAlgorithm(null);
         HASH_OF_WELL_KNOWN_HASHES.setOverrideAlgorithm(null);
