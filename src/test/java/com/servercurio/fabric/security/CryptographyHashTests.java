@@ -52,7 +52,7 @@ public class CryptographyHashTests {
                 Base64.getDecoder().decode("jJ2gb5dQn1Bxdz0fxLowPxakxynJFajOjm7PBbkIVuznXA/9Cfa4QlFAagSyvDTm"));
 
         LARGE_FILE_KNOWN_HASH = new MockHash(HashAlgorithm.SHA_384,
-                Base64.getDecoder().decode("kL8LqTeUbOrlI2HXQu7ek+7nbMUCFW1z4byKrbfdgnQ3uAQ095PL5TmuEzDTD7Es"));
+                Base64.getDecoder().decode("iztga7XMnm5KBe5gkbsPu1XUGdQUGJNG4gC3zSQNtKWBQ78y/N6nm/jXHwSq563L"));
 
         IN_MEMORY_DATA = Base64.getDecoder()
                 .decode("3K0By4fDo8jHaEoYKK7vtyb5KE1t1uYKG5p+r5ZNcnvNYCYZSTgAB6PpvHmsSGTwWov+42iTjzg9Eu4DBHtAdw==");
