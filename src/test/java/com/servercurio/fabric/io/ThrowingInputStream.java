@@ -39,7 +39,8 @@ public class ThrowingInputStream extends BufferedInputStream {
 
     /**
      * Creates a {@code BufferedInputStream} with the specified buffer size, and saves its  argument, the input stream
-     * {@code in}, for later use.  An internal buffer array of length  {@code size} is created and stored in {@code buf}.
+     * {@code in}, for later use.  An internal buffer array of length  {@code size} is created and stored in {@code
+     * buf}.
      *
      * @param in   the underlying input stream.
      * @param size the buffer size.
@@ -272,8 +273,8 @@ public class ThrowingInputStream extends BufferedInputStream {
      * implementation of this method invokes {@link #skip(long) skip()} with parameter {@code n}.  If the return value
      * of {@code skip(n)} is non-negative and less than {@code n}, then {@link #read()} is invoked repeatedly until the
      * stream is {@code n} bytes beyond its position when this method was invoked or end of stream is reached.  If the
-     * return value of {@code skip(n)} is negative or greater than {@code n}, then an {@code IOException} is thrown.
-     * Any exception thrown by {@code skip()} or {@code read()} will be propagated.
+     * return value of {@code skip(n)} is negative or greater than {@code n}, then an {@code IOException} is thrown. Any
+     * exception thrown by {@code skip()} or {@code read()} will be propagated.
      * @see InputStream#skip(long)
      */
     @Override
@@ -289,6 +290,6 @@ public class ThrowingInputStream extends BufferedInputStream {
             throw new IOException("Number of bytes read exceeded limit: " + THROW_AFTER_BYTE_COUNT);
         }
 
-        return (int)amount;
+        return (int) amount;
     }
 }

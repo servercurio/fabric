@@ -16,7 +16,7 @@
 
 package com.servercurio.fabric.security;
 
-public class MockHashable  extends AbstractHashable {
+public class MockHashable extends AbstractHashable {
 
     private byte[] content;
 
