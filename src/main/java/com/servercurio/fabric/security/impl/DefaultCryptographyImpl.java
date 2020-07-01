@@ -26,7 +26,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public final class DefaultCryptographyImpl implements Cryptography, AutoCloseable {
 
@@ -37,8 +41,10 @@ public final class DefaultCryptographyImpl implements Cryptography, AutoCloseabl
     private static final ThreadLocal<HashMap<HashAlgorithm, MessageDigest>> hashAlgorithmCache = ThreadLocal
             .withInitial(HashMap::new);
 
-    private DefaultCryptographyImpl() {
+    private ExecutorService executorService;
 
+    private DefaultCryptographyImpl() {
+        this.executorService = Executors.newCachedThreadPool();
     }
 
     public static ThreadLocal<HashMap<HashAlgorithm, MessageDigest>> getHashAlgorithmCache() {
@@ -96,6 +102,7 @@ public final class DefaultCryptographyImpl implements Cryptography, AutoCloseabl
      */
     @Override
     public void close() {
+        executorService.shutdownNow();
         hashAlgorithmCache.remove();
     }
 
@@ -171,5 +178,45 @@ public final class DefaultCryptographyImpl implements Cryptography, AutoCloseabl
 
         digest.update(buffer);
         return new Hash(algorithm, digest.digest());
+    }
+
+    @Override
+    public Future<Hash> digestAsync(final InputStream stream) {
+        return executorService.submit(() -> digestSync(stream));
+    }
+
+    @Override
+    public Future<Hash> digestAsync(final InputStream stream, final HashAlgorithm algorithm) {
+        return executorService.submit(() -> digestSync(stream, algorithm));
+    }
+
+    @Override
+    public Future<Hash> digestAsync(final byte[] data) {
+        return executorService.submit(() -> digestSync(data));
+    }
+
+    @Override
+    public Future<Hash> digestAsync(final byte[] data, final HashAlgorithm algorithm) {
+        return executorService.submit(() -> digestSync(data, algorithm));
+    }
+
+    @Override
+    public Future<Hash> digestAsync(final Hash leftHash, final Hash rightHash) {
+        return executorService.submit(() -> digestSync(leftHash, rightHash));
+    }
+
+    @Override
+    public Future<Hash> digestAsync(final Hash leftHash, final Hash rightHash, final HashAlgorithm algorithm) {
+        return executorService.submit(() -> digestSync(leftHash, rightHash, algorithm));
+    }
+
+    @Override
+    public Future<Hash> digestAsync(final ByteBuffer buffer) throws NoSuchAlgorithmException {
+        return executorService.submit(() -> digestSync(buffer));
+    }
+
+    @Override
+    public Future<Hash> digestAsync(final ByteBuffer buffer, final HashAlgorithm algorithm) {
+        return executorService.submit(() -> digestSync(buffer, algorithm));
     }
 }
