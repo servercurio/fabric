@@ -132,12 +132,13 @@ public class CryptographyHashTests {
             assertThrows(IllegalArgumentException.class, () -> new Hash(null));
 
             final Hash emptyCopy = new Hash(Hash.EMPTY);
+            final Hash emptyRef = Hash.EMPTY;
             final Hash validCopy = new Hash(WELL_KNOWN_HASH);
 
             assertTrue(emptyCopy.isEmpty());
             assertFalse(validCopy.isEmpty());
 
-            assertEquals(Hash.EMPTY, Hash.EMPTY);
+            assertEquals(Hash.EMPTY, emptyRef);
             assertNotEquals(null, Hash.EMPTY);
 
             assertEquals(EQUAL, Hash.EMPTY.compareTo(emptyCopy));
