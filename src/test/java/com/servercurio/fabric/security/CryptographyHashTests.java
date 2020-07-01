@@ -67,11 +67,6 @@ public class CryptographyHashTests {
                                                        .decode("AhmB45prgDLfSo23+TqTa3U231O85iO424sEe+lgxVhPbyviG23klX+VRcNOAOMj"));
     }
 
-    @AfterAll
-    public static void shutdown() {
-
-    }
-
     @BeforeAll
     public static void startup() {
 
@@ -84,30 +79,8 @@ public class CryptographyHashTests {
         HASH_OF_WELL_KNOWN_HASHES.setOverrideAlgorithm(null);
     }
 
-    @Test
-    @Order(103)
-    @DisplayName("Hash :: SHA_384 -> Byte Buffer")
-    public void testCryptoSha384ByteBuffer() throws NoSuchAlgorithmException {
-        final Cryptography provider = Cryptography.getDefaultInstance();
-
-        final ByteBuffer buffer = ByteBuffer.allocateDirect(IN_MEMORY_DATA.length);
-        buffer.put(IN_MEMORY_DATA).rewind();
-
-        final Hash defaultBufferHash = provider
-                .digestSync(buffer);
-
-        buffer.rewind();
-
-        final Hash explicitBufferHash = provider
-                .digestSync(buffer, HashAlgorithm.SHA_384);
-
-        assertEquals(IN_MEMORY_DATA_KNOWN_HASH, defaultBufferHash);
-        assertArrayEquals(IN_MEMORY_DATA_KNOWN_HASH.getValue(), defaultBufferHash.getValue());
-
-        assertEquals(IN_MEMORY_DATA_KNOWN_HASH, explicitBufferHash);
-        assertArrayEquals(IN_MEMORY_DATA_KNOWN_HASH.getValue(), explicitBufferHash.getValue());
-
-        assertEquals(1, DefaultCryptographyImpl.getHashAlgorithmCache().get().size());
+    @AfterAll
+    public static void shutdown() {
 
     }
 
@@ -129,6 +102,33 @@ public class CryptographyHashTests {
         assertEquals(HASH_OF_WELL_KNOWN_HASHES, explicitHashOfHashes);
         assertArrayEquals(HASH_OF_WELL_KNOWN_HASHES.getValue(), explicitHashOfHashes.getValue());
 
+
+        assertEquals(1, DefaultCryptographyImpl.getHashAlgorithmCache().get().size());
+
+    }
+
+    @Test
+    @Order(101)
+    @DisplayName("Hash :: SHA_384 -> Large File")
+    public void testCryptoSha384LargeFile() throws NoSuchAlgorithmException, IOException {
+        final Cryptography provider = Cryptography.getDefaultInstance();
+        final ClassLoader classLoader = getClass().getClassLoader();
+
+        try (final InputStream stream = classLoader.getResourceAsStream(LARGE_FILE_NAME)) {
+            final Hash defaultFileHash = provider.digestSync(stream);
+
+            assertNotNull(defaultFileHash);
+            assertEquals(LARGE_FILE_KNOWN_HASH, defaultFileHash);
+            assertArrayEquals(LARGE_FILE_KNOWN_HASH.getValue(), defaultFileHash.getValue());
+        }
+
+        try (final InputStream stream = classLoader.getResourceAsStream(LARGE_FILE_NAME)) {
+            final Hash explicitFileHash = provider.digestSync(stream, HashAlgorithm.SHA_384);
+
+            assertNotNull(explicitFileHash);
+            assertEquals(LARGE_FILE_KNOWN_HASH, explicitFileHash);
+            assertArrayEquals(LARGE_FILE_KNOWN_HASH.getValue(), explicitFileHash.getValue());
+        }
 
         assertEquals(1, DefaultCryptographyImpl.getHashAlgorithmCache().get().size());
 
@@ -157,27 +157,27 @@ public class CryptographyHashTests {
     }
 
     @Test
-    @Order(101)
-    @DisplayName("Hash :: SHA_384 -> Large File")
-    public void testCryptoSha384LargeFile() throws NoSuchAlgorithmException, IOException {
+    @Order(103)
+    @DisplayName("Hash :: SHA_384 -> Byte Buffer")
+    public void testCryptoSha384ByteBuffer() throws NoSuchAlgorithmException {
         final Cryptography provider = Cryptography.getDefaultInstance();
-        final ClassLoader classLoader = getClass().getClassLoader();
 
-        try (final InputStream stream = classLoader.getResourceAsStream(LARGE_FILE_NAME)) {
-            final Hash defaultFileHash = provider.digestSync(stream);
+        final ByteBuffer buffer = ByteBuffer.allocateDirect(IN_MEMORY_DATA.length);
+        buffer.put(IN_MEMORY_DATA).rewind();
 
-            assertNotNull(defaultFileHash);
-            assertEquals(LARGE_FILE_KNOWN_HASH, defaultFileHash);
-            assertArrayEquals(LARGE_FILE_KNOWN_HASH.getValue(), defaultFileHash.getValue());
-        }
+        final Hash defaultBufferHash = provider
+                .digestSync(buffer);
 
-        try (final InputStream stream = classLoader.getResourceAsStream(LARGE_FILE_NAME)) {
-            final Hash explicitFileHash = provider.digestSync(stream, HashAlgorithm.SHA_384);
+        buffer.rewind();
 
-            assertNotNull(explicitFileHash);
-            assertEquals(LARGE_FILE_KNOWN_HASH, explicitFileHash);
-            assertArrayEquals(LARGE_FILE_KNOWN_HASH.getValue(), explicitFileHash.getValue());
-        }
+        final Hash explicitBufferHash = provider
+                .digestSync(buffer, HashAlgorithm.SHA_384);
+
+        assertEquals(IN_MEMORY_DATA_KNOWN_HASH, defaultBufferHash);
+        assertArrayEquals(IN_MEMORY_DATA_KNOWN_HASH.getValue(), defaultBufferHash.getValue());
+
+        assertEquals(IN_MEMORY_DATA_KNOWN_HASH, explicitBufferHash);
+        assertArrayEquals(IN_MEMORY_DATA_KNOWN_HASH.getValue(), explicitBufferHash.getValue());
 
         assertEquals(1, DefaultCryptographyImpl.getHashAlgorithmCache().get().size());
 

@@ -127,8 +127,15 @@ public class Hash implements Comparable<Hash> {
         return sb.toString();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int compareTo(final Hash other) {
+        if (this == other) {
+            return 0;
+        }
+
         if (other == null) {
             return 1;
         }
@@ -139,6 +146,9 @@ public class Hash implements Comparable<Hash> {
                 .build();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
@@ -147,6 +157,9 @@ public class Hash implements Comparable<Hash> {
                 .toHashCode();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
