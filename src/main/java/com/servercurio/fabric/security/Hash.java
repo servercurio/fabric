@@ -18,7 +18,12 @@ package com.servercurio.fabric.security;
 
 import java.util.Arrays;
 import java.util.Base64;
-import org.apache.commons.lang3.builder.*;
+import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 
 public class Hash implements Comparable<Hash> {
 
