@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - checkout
-      - run: mvn clean compile install test pmd:pmd pmd:cpd sonar:sonar
+      - run: mvn clean compile install test pmd:pmd pmd:cpd spotbugs:spotbugs sonar:sonar
       - run:
           command: |
             mkdir -p ~/repo/junit/fabric

@@ -48,6 +48,7 @@
         <maven.clean.plugin.version>3.1.0</maven.clean.plugin.version>
         <maven.deploy.plugin.version>2.8.2</maven.deploy.plugin.version>
         <maven.pmd.plugin.version>3.13.0</maven.pmd.plugin.version>
+        <maven.spotbugs.plugin.version>4.0.4</maven.spotbugs.plugin.version>
 
         <git.commitid.plugin.version>4.0.0</git.commitid.plugin.version>
 
@@ -56,6 +57,7 @@
         <jacoco.version>0.8.5</jacoco.version>
         <sonar.version>3.7.0.1746</sonar.version>
         <pmd.version>6.25.0</pmd.version>
+        <spotbugs.version>4.0.6</spotbugs.version>
 
         <sonar.organization>servercurio</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -283,6 +285,10 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+            </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
@@ -384,6 +390,18 @@
                             <groupId>net.sourceforge.pmd</groupId>
                             <artifactId>pmd-jsp</artifactId>
                             <version>${pmd.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>com.github.spotbugs</groupId>
+                    <artifactId>spotbugs-maven-plugin</artifactId>
+                    <version>${maven.spotbugs.plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.github.spotbugs</groupId>
+                            <artifactId>spotbugs</artifactId>
+                            <version>${spotbugs.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>
