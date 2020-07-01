@@ -20,7 +20,6 @@ import com.servercurio.fabric.security.Cryptography;
 import com.servercurio.fabric.security.CryptographyException;
 import com.servercurio.fabric.security.Hash;
 import com.servercurio.fabric.security.HashAlgorithm;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;

@@ -16,9 +16,8 @@
 
 package com.servercurio.fabric.security;
 
-import org.junit.jupiter.api.*;
-
 import java.util.Base64;
+import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
