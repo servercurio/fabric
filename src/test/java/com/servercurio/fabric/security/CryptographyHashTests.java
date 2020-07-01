@@ -17,7 +17,6 @@
 package com.servercurio.fabric.security;
 
 import com.servercurio.fabric.io.ThrowingInputStream;
-import com.servercurio.fabric.lang.Constants;
 import com.servercurio.fabric.security.impl.DefaultCryptographyImpl;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.*;
@@ -28,7 +27,8 @@ import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
-import static com.servercurio.fabric.lang.Constants.Comparable.*;
+import static com.servercurio.fabric.lang.Comparable.EQUAL;
+import static com.servercurio.fabric.lang.Comparable.GREATER_THAN;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Cryptography: Hashing")
@@ -99,6 +99,75 @@ public class CryptographyHashTests {
     }
 
     @Test
+    @Order(25)
+    @DisplayName("Hash :: HashAlgorithm -> Basic Enum")
+    public void testCryptoHashAlgorithmBasicEnum() {
+        final BouncyCastleProvider bcProv = new BouncyCastleProvider();
+        assertEquals(384, HashAlgorithm.SHA_384.bits());
+        assertEquals(48, HashAlgorithm.SHA_384.bytes());
+        assertEquals(HashAlgorithm.SHA_384, HashAlgorithm.valueOf("SHA_384"));
+        assertEquals(HashAlgorithm.SHA_384, HashAlgorithm.valueOf(HashAlgorithm.SHA_384.id()));
+        assertEquals("SHA-384", HashAlgorithm.SHA_384.algorithmName());
+
+        assertNull(HashAlgorithm.valueOf(-1));
+
+        assertThrows(CryptographyException.class, HashAlgorithm.NONE::instance);
+        assertThrows(CryptographyException.class, () -> HashAlgorithm.NONE.instance(bcProv));
+        assertThrows(CryptographyException.class, () -> HashAlgorithm.SHA_384.instance("INVALID"));
+    }
+
+    @Test
+    @Order(50)
+    @DisplayName("Hash :: SHA_384 -> Basic Hash")
+    public void testCryptoSha384BasicHash() throws Exception {
+        try (final Cryptography provider = Cryptography.newDefaultInstance()) {
+
+            final byte[] invalidLengthHash = new byte[HashAlgorithm.SHA_384.bytes() - 5];
+            final byte[] validHashBytes = WELL_KNOWN_HASH.getValue();
+
+            assertThrows(IllegalArgumentException.class, () -> new Hash(null, validHashBytes));
+            assertThrows(IllegalArgumentException.class, () -> new Hash(HashAlgorithm.SHA_384, null));
+            assertThrows(IllegalArgumentException.class, () -> new Hash(HashAlgorithm.SHA_384, invalidLengthHash));
+
+            assertThrows(IllegalArgumentException.class, () -> new Hash(null));
+
+            final Hash emptyCopy = new Hash(Hash.EMPTY);
+            final Hash validCopy = new Hash(WELL_KNOWN_HASH);
+
+            assertTrue(emptyCopy.isEmpty());
+            assertFalse(validCopy.isEmpty());
+
+            assertEquals(Hash.EMPTY, Hash.EMPTY);
+            assertNotEquals(null, Hash.EMPTY);
+
+            assertEquals(EQUAL, Hash.EMPTY.compareTo(emptyCopy));
+            assertEquals(EQUAL, Hash.EMPTY.compareTo(Hash.EMPTY));
+            assertEquals(GREATER_THAN, Hash.EMPTY.compareTo(null));
+
+            assertEquals("a4a03f34", WELL_KNOWN_HASH.getPrefix());
+            assertEquals("a4a03f345df1", WELL_KNOWN_HASH.getPrefix(6));
+            assertThrows(IndexOutOfBoundsException.class, Hash.EMPTY::getPrefix);
+
+            assertNotNull(Hash.EMPTY.toString());
+            assertNotEquals(0, validCopy.hashCode());
+
+            assertEquals(Hash.EMPTY, emptyCopy);
+            assertEquals(WELL_KNOWN_HASH, validCopy);
+
+            assertThrows(IllegalArgumentException.class, () -> emptyCopy.setAlgorithm(null));
+
+            emptyCopy.setAlgorithm(HashAlgorithm.SHA_384);
+            assertEquals(HashAlgorithm.SHA_384.bytes(), emptyCopy.getValue().length);
+
+            assertThrows(IllegalArgumentException.class, () -> validCopy.setValue(null));
+            assertThrows(IllegalArgumentException.class, () -> validCopy.setValue(invalidLengthHash));
+
+            validCopy.setValue(new byte[HashAlgorithm.SHA_384.bytes()]);
+            assertTrue(validCopy.isEmpty());
+        }
+    }
+
+    @Test
     @Order(103)
     @DisplayName("Hash :: SHA_384 -> Byte Buffer")
     public void testCryptoSha384ByteBuffer() throws NoSuchAlgorithmException {
@@ -123,73 +192,6 @@ public class CryptographyHashTests {
 
         assertEquals(1, DefaultCryptographyImpl.getHashAlgorithmCache().get().size());
 
-    }
-
-    @Test
-    @Order(25)
-    @DisplayName("Hash :: HashAlgorithm -> Basic Enum")
-    public void testCryptoHashAlgorithmBasicEnum() throws Exception {
-        assertEquals(384, HashAlgorithm.SHA_384.bits());
-        assertEquals(48, HashAlgorithm.SHA_384.bytes());
-        assertEquals(HashAlgorithm.SHA_384, HashAlgorithm.valueOf("SHA_384"));
-        assertEquals(HashAlgorithm.SHA_384, HashAlgorithm.valueOf(HashAlgorithm.SHA_384.id()));
-        assertEquals("SHA-384", HashAlgorithm.SHA_384.algorithmName());
-
-        assertNull(HashAlgorithm.valueOf(-1));
-
-        assertThrows(CryptographyException.class, HashAlgorithm.NONE::instance);
-        assertThrows(CryptographyException.class, () -> HashAlgorithm.NONE.instance(new BouncyCastleProvider()));
-        assertThrows(CryptographyException.class, () -> HashAlgorithm.SHA_384.instance("INVALID"));
-    }
-
-    @Test
-    @Order(50)
-    @DisplayName("Hash :: SHA_384 -> Basic Hash")
-    public void testCryptoSha384BasicHash() throws Exception {
-        try (final Cryptography provider = Cryptography.newDefaultInstance()) {
-
-            final byte[] invalidLengthHash = new byte[HashAlgorithm.SHA_384.bytes() - 5];
-
-            assertThrows(IllegalArgumentException.class, () -> new Hash(null, WELL_KNOWN_HASH.getValue()));
-            assertThrows(IllegalArgumentException.class, () -> new Hash(HashAlgorithm.SHA_384, null));
-            assertThrows(IllegalArgumentException.class, () -> new Hash(HashAlgorithm.SHA_384, invalidLengthHash));
-
-            assertThrows(IllegalArgumentException.class, () -> new Hash(null));
-
-            final Hash emptyCopy = new Hash(Hash.EMPTY);
-            final Hash validCopy = new Hash(WELL_KNOWN_HASH);
-
-            assertTrue(emptyCopy.isEmpty());
-            assertFalse(validCopy.isEmpty());
-
-            assertEquals(Hash.EMPTY, Hash.EMPTY);
-            assertNotEquals(Hash.EMPTY, null);
-
-            assertEquals(EQUALS, Hash.EMPTY.compareTo(emptyCopy));
-            assertEquals(EQUALS, Hash.EMPTY.compareTo(Hash.EMPTY));
-            assertEquals(GREATER_THAN, Hash.EMPTY.compareTo(null));
-
-            assertEquals("a4a03f34", WELL_KNOWN_HASH.getPrefix());
-            assertEquals("a4a03f345df1", WELL_KNOWN_HASH.getPrefix(6));
-            assertThrows(IndexOutOfBoundsException.class, Hash.EMPTY::getPrefix);
-
-            assertNotNull(Hash.EMPTY.toString());
-            assertTrue(validCopy.hashCode() != 0);
-
-            assertEquals(Hash.EMPTY, emptyCopy);
-            assertEquals(WELL_KNOWN_HASH, validCopy);
-
-            assertThrows(IllegalArgumentException.class, () -> emptyCopy.setAlgorithm(null));
-
-            emptyCopy.setAlgorithm(HashAlgorithm.SHA_384);
-            assertEquals(HashAlgorithm.SHA_384.bytes(), emptyCopy.getValue().length);
-
-            assertThrows(IllegalArgumentException.class, () -> validCopy.setValue(null));
-            assertThrows(IllegalArgumentException.class, () -> validCopy.setValue(invalidLengthHash));
-
-            validCopy.setValue(new byte[HashAlgorithm.SHA_384.bytes()]);
-            assertTrue(validCopy.isEmpty());
-        }
     }
 
     @Test
@@ -266,18 +268,16 @@ public class CryptographyHashTests {
             assertArrayEquals(LARGE_FILE_KNOWN_HASH.getValue(), explicitFileHash.getValue());
         }
 
-        assertThrows(CryptographyException.class, () -> {
-            try (
-                    final InputStream stream = classLoader.getResourceAsStream(LARGE_FILE_NAME);
-                    final ThrowingInputStream throwingStream = new ThrowingInputStream(stream)
-            ) {
-                final Hash explicitFileHash = provider.digestSync(throwingStream, HashAlgorithm.SHA_384);
 
-                assertNotNull(explicitFileHash);
-                assertEquals(LARGE_FILE_KNOWN_HASH, explicitFileHash);
-                assertArrayEquals(LARGE_FILE_KNOWN_HASH.getValue(), explicitFileHash.getValue());
-            }
-        });
+        try (
+                final InputStream stream = classLoader.getResourceAsStream(LARGE_FILE_NAME);
+                final ThrowingInputStream throwingStream = new ThrowingInputStream(stream)
+        ) {
+            assertThrows(CryptographyException.class, () -> {
+                provider.digestSync(throwingStream, HashAlgorithm.SHA_384);
+            });
+        }
+
 
         assertEquals(1, DefaultCryptographyImpl.getHashAlgorithmCache().get().size());
 
