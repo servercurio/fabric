@@ -63,12 +63,24 @@ public class CryptographyHashableTests {
         final MockHashable threeArgCtorHashable =
                 new MockHashable(HashAlgorithm.SHA_384, Cryptography.getDefaultInstance(), IN_MEMORY_DATA);
 
+        // Basic getter checks
+        assertEquals(HashAlgorithm.SHA_384, singleArgCtorHashable.getAlgorithm());
+        assertEquals(Cryptography.getDefaultInstance(), singleArgCtorHashable.getCryptography());
+
         assertThrows(IllegalArgumentException.class, () -> new MockHashable(null, IN_MEMORY_DATA));
         assertThrows(IllegalArgumentException.class,
                      () -> new MockHashable(HashAlgorithm.SHA_384, null, IN_MEMORY_DATA));
 
         assertEquals(IN_MEMORY_DATA_KNOWN_HASH, singleArgCtorHashable.getHash());
+
+        // Check the hash, set same hash, and check it again
         assertEquals(IN_MEMORY_DATA_KNOWN_HASH, twoArgCtorHashable.getHash());
+        twoArgCtorHashable.setHash(twoArgCtorHashable.getHash());
+        assertEquals(IN_MEMORY_DATA_KNOWN_HASH, twoArgCtorHashable.getHash());
+
+
+        // Check it twice to double check caching
+        assertEquals(IN_MEMORY_DATA_KNOWN_HASH, threeArgCtorHashable.getHash());
         assertEquals(IN_MEMORY_DATA_KNOWN_HASH, threeArgCtorHashable.getHash());
 
     }

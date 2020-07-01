@@ -49,6 +49,10 @@ public final class DefaultCryptographyImpl implements Cryptography, AutoCloseabl
         return INSTANCE;
     }
 
+    public static Cryptography newInstance() {
+        return new DefaultCryptographyImpl();
+    }
+
     private static MessageDigest acquireAlgorithm(final HashAlgorithm algorithm) {
         final HashMap<HashAlgorithm, MessageDigest> cache = hashAlgorithmCache.get();
 

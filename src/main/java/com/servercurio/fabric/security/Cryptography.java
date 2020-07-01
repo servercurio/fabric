@@ -22,10 +22,14 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.security.NoSuchAlgorithmException;
 
-public interface Cryptography {
+public interface Cryptography extends AutoCloseable {
 
     static Cryptography getDefaultInstance() {
         return DefaultCryptographyImpl.getInstance();
+    }
+
+    static Cryptography newDefaultInstance() {
+        return DefaultCryptographyImpl.newInstance();
     }
 
     Hash digestSync(final InputStream stream);
