@@ -16,6 +16,7 @@
 
 package com.servercurio.fabric.security.impl;
 
+import com.servercurio.fabric.security.CipherTransformation;
 import com.servercurio.fabric.security.Cryptography;
 import com.servercurio.fabric.security.CryptographyException;
 import com.servercurio.fabric.security.Hash;
@@ -31,6 +32,7 @@ import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import javax.crypto.Cipher;
 
 public final class DefaultCryptographyImpl implements Cryptography, AutoCloseable {
 
@@ -44,7 +46,10 @@ public final class DefaultCryptographyImpl implements Cryptography, AutoCloseabl
     private static final ThreadLocal<HashMap<SignatureAlgorithm, Signature>> signatureAlgorithmCache = ThreadLocal
             .withInitial(HashMap::new);
 
-    private ExecutorService executorService;
+    private static final ThreadLocal<HashMap<CipherTransformation, Cipher>> cipherAlgorithmCache = ThreadLocal
+            .withInitial(HashMap::new);
+
+    private final ExecutorService executorService;
 
     private DefaultCryptographyImpl() {
         this.executorService = Executors.newCachedThreadPool();
@@ -52,6 +57,14 @@ public final class DefaultCryptographyImpl implements Cryptography, AutoCloseabl
 
     public static ThreadLocal<HashMap<HashAlgorithm, MessageDigest>> getHashAlgorithmCache() {
         return hashAlgorithmCache;
+    }
+
+    public static ThreadLocal<HashMap<SignatureAlgorithm, Signature>> getSignatureAlgorithmCache() {
+        return signatureAlgorithmCache;
+    }
+
+    public static ThreadLocal<HashMap<CipherTransformation, Cipher>> getCipherAlgorithmCache() {
+        return cipherAlgorithmCache;
     }
 
     public static Cryptography getInstance() {
@@ -82,6 +95,16 @@ public final class DefaultCryptographyImpl implements Cryptography, AutoCloseabl
         return cache.get(algorithm);
     }
 
+    private static Cipher acquireAlgorithm(final CipherTransformation algorithm) {
+        final HashMap<CipherTransformation, Cipher> cache = cipherAlgorithmCache.get();
+
+        if (!cache.containsKey(algorithm)) {
+            cache.put(algorithm, algorithm.instance());
+        }
+
+        return cache.get(algorithm);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -89,6 +112,70 @@ public final class DefaultCryptographyImpl implements Cryptography, AutoCloseabl
     public void close() {
         executorService.shutdownNow();
         hashAlgorithmCache.remove();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Future<Hash> digestAsync(final InputStream stream) {
+        return executorService.submit(() -> digestSync(stream));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Future<Hash> digestAsync(final InputStream stream, final HashAlgorithm algorithm) {
+        return executorService.submit(() -> digestSync(stream, algorithm));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Future<Hash> digestAsync(final byte[] data) {
+        return executorService.submit(() -> digestSync(data));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Future<Hash> digestAsync(final byte[] data, final HashAlgorithm algorithm) {
+        return executorService.submit(() -> digestSync(data, algorithm));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Future<Hash> digestAsync(final Hash leftHash, final Hash rightHash) {
+        return executorService.submit(() -> digestSync(leftHash, rightHash));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Future<Hash> digestAsync(final Hash leftHash, final Hash rightHash, final HashAlgorithm algorithm) {
+        return executorService.submit(() -> digestSync(leftHash, rightHash, algorithm));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Future<Hash> digestAsync(final ByteBuffer buffer) throws NoSuchAlgorithmException {
+        return executorService.submit(() -> digestSync(buffer));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Future<Hash> digestAsync(final ByteBuffer buffer, final HashAlgorithm algorithm) {
+        return executorService.submit(() -> digestSync(buffer, algorithm));
     }
 
     /**
@@ -189,67 +276,18 @@ public final class DefaultCryptographyImpl implements Cryptography, AutoCloseabl
         return new Hash(algorithm, digest.digest());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public Future<Hash> digestAsync(final InputStream stream) {
-        return executorService.submit(() -> digestSync(stream));
+    public Cipher acquirePrimitive(final CipherTransformation algorithm) {
+        return acquireAlgorithm(algorithm);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public Future<Hash> digestAsync(final InputStream stream, final HashAlgorithm algorithm) {
-        return executorService.submit(() -> digestSync(stream, algorithm));
+    public Signature acquirePrimitive(final SignatureAlgorithm algorithm) {
+        return acquireAlgorithm(algorithm);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public Future<Hash> digestAsync(final byte[] data) {
-        return executorService.submit(() -> digestSync(data));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Future<Hash> digestAsync(final byte[] data, final HashAlgorithm algorithm) {
-        return executorService.submit(() -> digestSync(data, algorithm));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Future<Hash> digestAsync(final Hash leftHash, final Hash rightHash) {
-        return executorService.submit(() -> digestSync(leftHash, rightHash));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Future<Hash> digestAsync(final Hash leftHash, final Hash rightHash, final HashAlgorithm algorithm) {
-        return executorService.submit(() -> digestSync(leftHash, rightHash, algorithm));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Future<Hash> digestAsync(final ByteBuffer buffer) throws NoSuchAlgorithmException {
-        return executorService.submit(() -> digestSync(buffer));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Future<Hash> digestAsync(final ByteBuffer buffer, final HashAlgorithm algorithm) {
-        return executorService.submit(() -> digestSync(buffer, algorithm));
+    public MessageDigest acquirePrimitive(final HashAlgorithm algorithm) {
+        return acquireAlgorithm(algorithm);
     }
 }

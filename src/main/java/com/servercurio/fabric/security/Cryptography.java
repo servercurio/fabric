@@ -19,8 +19,11 @@ package com.servercurio.fabric.security;
 import com.servercurio.fabric.security.impl.DefaultCryptographyImpl;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.Signature;
 import java.util.concurrent.Future;
+import javax.crypto.Cipher;
 
 public interface Cryptography extends AutoCloseable {
 
@@ -31,6 +34,22 @@ public interface Cryptography extends AutoCloseable {
     static Cryptography newDefaultInstance() {
         return DefaultCryptographyImpl.newInstance();
     }
+
+    Future<Hash> digestAsync(final InputStream stream);
+
+    Future<Hash> digestAsync(final InputStream stream, final HashAlgorithm algorithm);
+
+    Future<Hash> digestAsync(final byte[] data);
+
+    Future<Hash> digestAsync(final byte[] data, final HashAlgorithm algorithm);
+
+    Future<Hash> digestAsync(final Hash leftHash, final Hash rightHash);
+
+    Future<Hash> digestAsync(final Hash leftHash, final Hash rightHash, final HashAlgorithm algorithm);
+
+    Future<Hash> digestAsync(final ByteBuffer buffer) throws NoSuchAlgorithmException;
+
+    Future<Hash> digestAsync(final ByteBuffer buffer, final HashAlgorithm algorithm);
 
     Hash digestSync(final InputStream stream);
 
@@ -48,20 +67,10 @@ public interface Cryptography extends AutoCloseable {
 
     Hash digestSync(final ByteBuffer buffer, final HashAlgorithm algorithm);
 
+    Cipher acquirePrimitive(final CipherTransformation algorithm);
 
-    Future<Hash> digestAsync(final InputStream stream);
+    Signature acquirePrimitive(final SignatureAlgorithm algorithm);
 
-    Future<Hash> digestAsync(final InputStream stream, final HashAlgorithm algorithm);
+    MessageDigest acquirePrimitive(final HashAlgorithm algorithm);
 
-    Future<Hash> digestAsync(final byte[] data);
-
-    Future<Hash> digestAsync(final byte[] data, final HashAlgorithm algorithm);
-
-    Future<Hash> digestAsync(final Hash leftHash, final Hash rightHash);
-
-    Future<Hash> digestAsync(final Hash leftHash, final Hash rightHash, final HashAlgorithm algorithm);
-
-    Future<Hash> digestAsync(final ByteBuffer buffer) throws NoSuchAlgorithmException;
-
-    Future<Hash> digestAsync(final ByteBuffer buffer, final HashAlgorithm algorithm);
 }
