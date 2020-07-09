@@ -15,18 +15,3 @@
  */
 
 package com.servercurio.fabric.lang;
-
-public final class Comparable {
-
-    public static final int LESS_THAN = -1;
-    public static final int EQUAL = 0;
-    public static final int GREATER_THAN = 1;
-
-    /**
-     * Private default constructor to prevent instantiation.
-     */
-    private Comparable() {
-
-    }
-
-}

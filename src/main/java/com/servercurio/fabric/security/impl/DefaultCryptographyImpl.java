@@ -20,12 +20,13 @@ import com.servercurio.fabric.security.Cryptography;
 import com.servercurio.fabric.security.CryptographyException;
 import com.servercurio.fabric.security.Hash;
 import com.servercurio.fabric.security.HashAlgorithm;
-import java.io.Closeable;
+import com.servercurio.fabric.security.SignatureAlgorithm;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.Signature;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -38,6 +39,9 @@ public final class DefaultCryptographyImpl implements Cryptography, AutoCloseabl
     private static final int STREAM_BUFFER_SIZE = 8192;
 
     private static final ThreadLocal<HashMap<HashAlgorithm, MessageDigest>> hashAlgorithmCache = ThreadLocal
+            .withInitial(HashMap::new);
+
+    private static final ThreadLocal<HashMap<SignatureAlgorithm, Signature>> signatureAlgorithmCache = ThreadLocal
             .withInitial(HashMap::new);
 
     private ExecutorService executorService;
@@ -60,6 +64,16 @@ public final class DefaultCryptographyImpl implements Cryptography, AutoCloseabl
 
     private static MessageDigest acquireAlgorithm(final HashAlgorithm algorithm) {
         final HashMap<HashAlgorithm, MessageDigest> cache = hashAlgorithmCache.get();
+
+        if (!cache.containsKey(algorithm)) {
+            cache.put(algorithm, algorithm.instance());
+        }
+
+        return cache.get(algorithm);
+    }
+
+    private static Signature acquireAlgorithm(final SignatureAlgorithm algorithm) {
+        final HashMap<SignatureAlgorithm, Signature> cache = signatureAlgorithmCache.get();
 
         if (!cache.containsKey(algorithm)) {
             cache.put(algorithm, algorithm.instance());

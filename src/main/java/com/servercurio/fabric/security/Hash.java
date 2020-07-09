@@ -24,23 +24,38 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-
+/**
+ * @author Nathan Klick
+ * @see java.lang.Comparable
+ * @since 1.0
+ */
 public class Hash implements Comparable<Hash> {
 
+    //region Public Constants
+    public static final Hash EMPTY = new Hash().immutable();
+    //endregion
 
-    public static final Hash EMPTY = new Hash();
-
+    //region Private Constants
     private static final String ALGORITHM_FIELD = "algorithm";
     private static final String VALUE_FIELD = "value";
     private static final String OTHER_PARAM = "other";
 
     private static final int DEFAULT_PREFIX_LEN = 4;
+    //endregion
 
-
+    //region Private Instance Variables
+    /**
+     *
+     */
     private HashAlgorithm algorithm;
 
+    /**
+     *
+     */
     private byte[] value;
+    //endregion
 
+    //region Constructors
     public Hash() {
         this(HashAlgorithm.NONE, new byte[1], false);
     }
@@ -73,11 +88,28 @@ public class Hash implements Comparable<Hash> {
             this.value = Arrays.copyOf(other.value, other.value.length);
         }
     }
+    //endregion
 
+    //region Getters & Setters
+
+    /**
+     * Returns the algorithm that created the underlying hash value, as specified by the {@code HashAlgorithm} enum.
+     *
+     * @return the type of algorithm, not null
+     */
     public HashAlgorithm getAlgorithm() {
         return algorithm;
     }
 
+    /**
+     * Changes the algorithm type and allocates a new underlying zero-filled byte array of the appropriate length. Any
+     * previous value represented by this instance will be discarded.
+     *
+     * @param algorithm
+     *         the type of the algorithm
+     * @throws IllegalArgumentException
+     *         if the {@code algorithm} parameter is null
+     */
     public void setAlgorithm(final HashAlgorithm algorithm) {
         if (algorithm == null) {
             throw new IllegalArgumentException(ALGORITHM_FIELD);
@@ -87,10 +119,21 @@ public class Hash implements Comparable<Hash> {
         this.value = new byte[algorithm.bytes()];
     }
 
+    /**
+     * Returns the underlying byte array containing the hash value. This method allows for direct modification of the
+     * underlying pre-allocated buffer of the length specified by configured algorithm type.
+     *
+     * @return the underlying byte array, not null
+     * @see HashAlgorithm
+     * @see Hash#getAlgorithm()
+     */
     public byte[] getValue() {
         return value;
     }
 
+    /**
+     * @param value
+     */
     public void setValue(final byte[] value) {
         if (value == null || value.length != getAlgorithm().bytes()) {
             throw new IllegalArgumentException(VALUE_FIELD);
@@ -99,6 +142,12 @@ public class Hash implements Comparable<Hash> {
         this.value = value;
     }
 
+    /**
+     * Returns true if the underlying byte array contains all zeros or if the algorithm type is {@link
+     * HashAlgorithm#NONE}.
+     *
+     * @return true if the underlying byte array contains all zero; otherwise false
+     */
     public boolean isEmpty() {
         if (getAlgorithm() == HashAlgorithm.NONE) {
             return true;
@@ -112,12 +161,34 @@ public class Hash implements Comparable<Hash> {
 
         return true;
     }
+    //endregion
 
-    public String getPrefix() {
-        return getPrefix(DEFAULT_PREFIX_LEN);
+    //region Member Methods
+
+    /**
+     * Returns the first four (4) bytes represented as a hexadecimal string.
+     *
+     * @return the hexadecimal string representation of the first four (4) bytes
+     * @throws IndexOutOfBoundsException
+     *         if the total length of the hash is less than four (4) bytes, such as a hash of type {@link
+     *         HashAlgorithm#NONE}
+     */
+    public String toPrefix() {
+        return toPrefix(DEFAULT_PREFIX_LEN);
     }
 
-    public String getPrefix(final int count) {
+    /**
+     * Returns the first {@code count} bytes represented as a hexadecimal string. The {@code count} parameter must be
+     * greater than zero and less than the total size of the hash in bytes.
+     *
+     * @param count
+     *         the number of bytes to include in the prefix
+     * @return the hexadecimal string representation of the first {@code count} bytes
+     * @throws IndexOutOfBoundsException
+     *         if the {@code count} parameter is less than zero, equals zero, or is greater than the length of the
+     *         underlying byte array
+     */
+    public String toPrefix(final int count) {
         if (count <= 0 || count > value.length) {
             throw new IndexOutOfBoundsException(count);
         }
@@ -130,6 +201,13 @@ public class Hash implements Comparable<Hash> {
 
         return sb.toString();
     }
+
+    public Hash immutable() {
+        return new ImmutableHash(this);
+    }
+    //endregion
+
+    //region ToString, Equals, HashCode, & CompareTo
 
     /**
      * {@inheritDoc}
@@ -182,7 +260,9 @@ public class Hash implements Comparable<Hash> {
                 .isEquals();
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
@@ -190,5 +270,6 @@ public class Hash implements Comparable<Hash> {
                 .append(VALUE_FIELD, Base64.getEncoder().encodeToString(value))
                 .build();
     }
+    //endregion
 
 }

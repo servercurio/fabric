@@ -46,10 +46,10 @@ public enum HashAlgorithm {
         }
     }
 
-    private int bits;
-    private int bytes;
-    private String algorithmName;
-    private int id;
+    private final int bits;
+    private final int bytes;
+    private final String algorithmName;
+    private final int id;
 
     HashAlgorithm(final int id, final String algorithmName, final int bits) {
         this.id = id;

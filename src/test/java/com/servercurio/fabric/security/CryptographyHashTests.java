@@ -28,8 +28,8 @@ import java.util.concurrent.Future;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.*;
 
-import static com.servercurio.fabric.lang.Comparable.EQUAL;
-import static com.servercurio.fabric.lang.Comparable.GREATER_THAN;
+import static com.servercurio.fabric.lang.ComparableConstants.EQUAL;
+import static com.servercurio.fabric.lang.ComparableConstants.GREATER_THAN;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Cryptography: Hashing")
@@ -126,19 +126,23 @@ public class CryptographyHashTests {
             final byte[] invalidLengthHash = new byte[HashAlgorithm.SHA_384.bytes() - 5];
             final byte[] validHashBytes = WELL_KNOWN_HASH.getValue();
 
+            // Constructor Exceptions
             assertThrows(IllegalArgumentException.class, () -> new Hash(null, validHashBytes));
             assertThrows(IllegalArgumentException.class, () -> new Hash(HashAlgorithm.SHA_384, null));
             assertThrows(IllegalArgumentException.class, () -> new Hash(HashAlgorithm.SHA_384, invalidLengthHash));
-
             assertThrows(IllegalArgumentException.class, () -> new Hash(null));
 
+            // Constructor Copies
             final Hash emptyCopy = new Hash(Hash.EMPTY);
             final Hash emptyRef = Hash.EMPTY;
             final Hash validCopy = new Hash(WELL_KNOWN_HASH);
+            final Hash immutableCopy = new ImmutableHash(validCopy);
 
+            // isEmpty Validations
             assertTrue(emptyCopy.isEmpty());
             assertFalse(validCopy.isEmpty());
 
+            // Equals Validation
             assertEquals(Hash.EMPTY, emptyRef);
             assertNotEquals(null, Hash.EMPTY);
 
@@ -146,26 +150,39 @@ public class CryptographyHashTests {
             assertEquals(EQUAL, Hash.EMPTY.compareTo(Hash.EMPTY));
             assertEquals(GREATER_THAN, Hash.EMPTY.compareTo(null));
 
-            assertEquals("a4a03f34", WELL_KNOWN_HASH.getPrefix());
-            assertEquals("a4a03f345df1", WELL_KNOWN_HASH.getPrefix(6));
-            assertThrows(IndexOutOfBoundsException.class, Hash.EMPTY::getPrefix);
+            // toPrefix Validations
+            assertEquals("a4a03f34", WELL_KNOWN_HASH.toPrefix());
+            assertEquals("a4a03f345df1", WELL_KNOWN_HASH.toPrefix(6));
+            assertThrows(IndexOutOfBoundsException.class, Hash.EMPTY::toPrefix);
 
+            // toString/hashCode/equals Validations (using empty & actual hash values)
             assertNotNull(Hash.EMPTY.toString());
             assertNotEquals(0, validCopy.hashCode());
 
             assertEquals(Hash.EMPTY, emptyCopy);
             assertEquals(WELL_KNOWN_HASH, validCopy);
 
+            // Assert immutable hash equals
+            assertTrue(immutableCopy.equals(validCopy));
+            assertFalse(validCopy.equals(immutableCopy));
+
+            // setAlgorithm Validations
             assertThrows(IllegalArgumentException.class, () -> emptyCopy.setAlgorithm(null));
+            assertThrows(UnsupportedOperationException.class, () -> immutableCopy.setAlgorithm(HashAlgorithm.SHA_384));
 
             emptyCopy.setAlgorithm(HashAlgorithm.SHA_384);
             assertEquals(HashAlgorithm.SHA_384.bytes(), emptyCopy.getValue().length);
 
+            // setValue Validations
             assertThrows(IllegalArgumentException.class, () -> validCopy.setValue(null));
             assertThrows(IllegalArgumentException.class, () -> validCopy.setValue(invalidLengthHash));
+            assertThrows(UnsupportedOperationException.class, () -> immutableCopy.setValue(null));
 
             validCopy.setValue(new byte[HashAlgorithm.SHA_384.bytes()]);
             assertTrue(validCopy.isEmpty());
+
+            // immutable getValue Validations
+            assertNotSame(validCopy.getValue(), immutableCopy.getValue());
         }
     }
 

@@ -16,7 +16,7 @@
 
 package com.servercurio.fabric.lang;
 
-public final class Strings {
+public final class StringConstants {
 
     public static final String EMPTY = "";
     public static final String SPACE = " ";
@@ -72,6 +72,6 @@ public final class Strings {
     /**
      * Private default constructor to prevent instantiation.
      */
-    private Strings() {
+    private StringConstants() {
     }
 }
