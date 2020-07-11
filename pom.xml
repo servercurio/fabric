@@ -37,6 +37,7 @@
         <maven.compiler.source>14</maven.compiler.source>
         <maven.compiler.target>14</maven.compiler.target>
 
+        <!-- Apache Maven Build Plugins -->
         <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
         <maven.jar.plugin.version>3.2.0</maven.jar.plugin.version>
         <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
@@ -51,10 +52,11 @@
         <maven.spotbugs.plugin.version>4.0.4</maven.spotbugs.plugin.version>
         <maven.checkstyle.plugin.version>3.1.1</maven.checkstyle.plugin.version>
 
+        <!-- Third-party Build Plugins -->
         <git.commitid.plugin.version>4.0.0</git.commitid.plugin.version>
-
         <ow2.asm.version>8.0.1</ow2.asm.version>
 
+        <!-- SonarQube Properties -->
         <jacoco.version>0.8.5</jacoco.version>
         <sonar.version>3.7.0.1746</sonar.version>
         <pmd.version>6.25.0</pmd.version>
@@ -64,49 +66,45 @@
         <sonar.organization>servercurio</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
 
+
+        <!-- Spring Libraries -->
+        <spring.core.version>5.2.7.RELEASE</spring.core.version>
+        <spring.data.version>Neumann-SR1</spring.data.version>
+        <spring.security.version>5.3.2.RELEASE</spring.security.version>
+        <spring.session.version>Dragonfruit-RELEASE</spring.session.version>
+        <spring.batch.version>4.2.4.RELEASE</spring.batch.version>
+        <spring.ldap.version>2.3.3.RELEASE</spring.ldap.version>
+        <spring.statemachine.version>2.2.0.RELEASE</spring.statemachine.version>
+        <spring.boot.version>2.3.1.RELEASE</spring.boot.version>
+
+        <!-- Atomix Cluster -->
+        <atomix.version>3.1.8</atomix.version>
+
+        <!-- Portmapper -->
+        <portmapper.version>2.0.5</portmapper.version>
+
+        <!-- Logging Libraries -->
+        <logback.version>1.3.0-alpha5</logback.version>
+        <slf4j.version>2.0.0-alpha1</slf4j.version>
+
+        <!-- Apache Commons Libraries -->
+        <commons.lang3.version>3.9</commons.lang3.version>
+        <commons.collections4.version>4.4</commons.collections4.version>
+        <commons.io.version>2.7</commons.io.version>
+
+        <!-- Cryptography & Security Libraries -->
+        <bouncycastle.version>1.64</bouncycastle.version>
+
+        <!-- Test Libraries -->
         <junit.jupiter.version>5.6.2</junit.jupiter.version>
         <junit.platform.version>1.6.2</junit.platform.version>
-        <spring.core.version>5.1.9.RELEASE</spring.core.version>
 
-        <logback.version>1.3.0-alpha4</logback.version>
-        <slf4j.version>1.8.0-beta4</slf4j.version>
-
-        <commons.lang3.version>3.9</commons.lang3.version>
-
-        <bouncycastle.version>1.64</bouncycastle.version>
     </properties>
 
     <!-- Project Dependency Management -->
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-api</artifactId>
-                <version>${junit.jupiter.version}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.junit.platform</groupId>
-                <artifactId>junit-platform-engine</artifactId>
-                <version>${junit.platform.version}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-engine</artifactId>
-                <version>${junit.jupiter.version}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-params</artifactId>
-                <version>${junit.jupiter.version}</version>
-                <scope>test</scope>
-            </dependency>
-
+            <!-- Spring Framework -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-framework-bom</artifactId>
@@ -115,6 +113,77 @@
                 <scope>import</scope>
             </dependency>
 
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-releasetrain</artifactId>
+                <version>${spring.data.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-bom</artifactId>
+                <version>${spring.security.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.session</groupId>
+                <artifactId>spring-session-bom</artifactId>
+                <version>${spring.session.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.statemachine</groupId>
+                <artifactId>spring-statemachine-bom</artifactId>
+                <version>${spring.statemachine.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.ldap</groupId>
+                <artifactId>spring-ldap-core</artifactId>
+                <version>${spring.ldap.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.ldap</groupId>
+                <artifactId>spring-ldap-ldif-core</artifactId>
+                <version>${spring.ldap.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.batch</groupId>
+                <artifactId>spring-batch-core</artifactId>
+                <version>${spring.batch.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.batch</groupId>
+                <artifactId>spring-batch-infrastructure</artifactId>
+                <version>${spring.batch.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.batch</groupId>
+                <artifactId>spring-batch-integration</artifactId>
+                <version>${spring.batch.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring.boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Logging -->
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
@@ -127,12 +196,26 @@
                 <version>${logback.version}</version>
             </dependency>
 
+            <!-- Apache Commons -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons.lang3.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>${commons.collections4.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons.io.version}</version>
+            </dependency>
+
+            <!-- BouncyCastle -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk15on</artifactId>
@@ -162,27 +245,105 @@
                 <artifactId>bctls-jdk15on</artifactId>
                 <version>${bouncycastle.version}</version>
             </dependency>
+
+            <!-- Atomix -->
+            <dependency>
+                <groupId>io.atomix</groupId>
+                <artifactId>atomix</artifactId>
+                <version>${atomix.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.atomix</groupId>
+                <artifactId>atomix-raft</artifactId>
+                <version>${atomix.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.atomix</groupId>
+                <artifactId>atomix-primary-backup</artifactId>
+                <version>${atomix.version}</version>
+            </dependency>
+
+            <!-- Portmapper -->
+            <dependency>
+                <groupId>com.offbynull.portmapper</groupId>
+                <artifactId>portmapper</artifactId>
+                <version>${portmapper.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.commons</groupId>
+                        <artifactId>commons-collections4</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>commons-io</groupId>
+                        <artifactId>commons-io</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.commons</groupId>
+                        <artifactId>commons-lang3</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <!-- JUnit 5 -->
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${junit.jupiter.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-engine</artifactId>
+                <version>${junit.platform.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${junit.jupiter.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-params</artifactId>
+                <version>${junit.jupiter.version}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <!-- Project Dependencies -->
     <dependencies>
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-
+        <!-- Apache Commons -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
 
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
+        <!-- BouncyCastle -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
         </dependency>
 
+
+        <!-- JUnit 5 -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>

@@ -55,15 +55,15 @@ public final class DefaultCryptographyImpl implements Cryptography, AutoCloseabl
         this.executorService = Executors.newCachedThreadPool();
     }
 
-    public static ThreadLocal<HashMap<HashAlgorithm, MessageDigest>> getHashAlgorithmCache() {
+    protected static ThreadLocal<HashMap<HashAlgorithm, MessageDigest>> getHashAlgorithmCache() {
         return hashAlgorithmCache;
     }
 
-    public static ThreadLocal<HashMap<SignatureAlgorithm, Signature>> getSignatureAlgorithmCache() {
+    protected static ThreadLocal<HashMap<SignatureAlgorithm, Signature>> getSignatureAlgorithmCache() {
         return signatureAlgorithmCache;
     }
 
-    public static ThreadLocal<HashMap<CipherTransformation, Cipher>> getCipherAlgorithmCache() {
+    protected static ThreadLocal<HashMap<CipherTransformation, Cipher>> getCipherAlgorithmCache() {
         return cipherAlgorithmCache;
     }
 

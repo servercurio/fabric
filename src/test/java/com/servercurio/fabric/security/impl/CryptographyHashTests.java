@@ -14,9 +14,15 @@
  * limitations under the License.
  */
 
-package com.servercurio.fabric.security;
+package com.servercurio.fabric.security.impl;
 
 import com.servercurio.fabric.io.ThrowingInputStream;
+import com.servercurio.fabric.security.Cryptography;
+import com.servercurio.fabric.security.CryptographyException;
+import com.servercurio.fabric.security.Hash;
+import com.servercurio.fabric.security.HashAlgorithm;
+import com.servercurio.fabric.security.ImmutableHash;
+import com.servercurio.fabric.security.MockHash;
 import com.servercurio.fabric.security.impl.DefaultCryptographyImpl;
 import java.io.IOException;
 import java.io.InputStream;
