@@ -57,7 +57,7 @@ public class Hash implements Comparable<Hash> {
 
     //region Constructors
     public Hash() {
-        this(HashAlgorithm.NONE, new byte[1], false);
+        this(HashAlgorithm.NONE, new byte[0], false);
     }
 
     public Hash(final HashAlgorithm algorithm, final byte[] value) {

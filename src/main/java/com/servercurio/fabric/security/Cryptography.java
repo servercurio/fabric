@@ -17,60 +17,57 @@
 package com.servercurio.fabric.security;
 
 import com.servercurio.fabric.security.impl.DefaultCryptographyImpl;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
+import com.servercurio.fabric.security.spi.MacProvider;
+import com.servercurio.fabric.security.spi.MessageDigestProvider;
+import com.servercurio.fabric.security.spi.SignatureProvider;
+import com.servercurio.fabric.security.spi.SymmetricEncryptionProvider;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.Signature;
-import java.util.concurrent.Future;
 import javax.crypto.Cipher;
+import javax.crypto.Mac;
 
-public interface Cryptography extends AutoCloseable {
+/**
+ *
+ */
+public interface Cryptography extends AutoCloseable, MessageDigestProvider, SymmetricEncryptionProvider,
+        SignatureProvider, MacProvider {
 
+    /**
+     * @return
+     */
     static Cryptography getDefaultInstance() {
         return DefaultCryptographyImpl.getInstance();
     }
 
+    /**
+     * @return
+     */
     static Cryptography newDefaultInstance() {
         return DefaultCryptographyImpl.newInstance();
     }
 
-    Future<Hash> digestAsync(final InputStream stream);
-
-    Future<Hash> digestAsync(final InputStream stream, final HashAlgorithm algorithm);
-
-    Future<Hash> digestAsync(final byte[] data);
-
-    Future<Hash> digestAsync(final byte[] data, final HashAlgorithm algorithm);
-
-    Future<Hash> digestAsync(final Hash leftHash, final Hash rightHash);
-
-    Future<Hash> digestAsync(final Hash leftHash, final Hash rightHash, final HashAlgorithm algorithm);
-
-    Future<Hash> digestAsync(final ByteBuffer buffer) throws NoSuchAlgorithmException;
-
-    Future<Hash> digestAsync(final ByteBuffer buffer, final HashAlgorithm algorithm);
-
-    Hash digestSync(final InputStream stream);
-
-    Hash digestSync(final InputStream stream, final HashAlgorithm algorithm);
-
-    Hash digestSync(final byte[] data);
-
-    Hash digestSync(final byte[] data, final HashAlgorithm algorithm);
-
-    Hash digestSync(final Hash leftHash, final Hash rightHash);
-
-    Hash digestSync(final Hash leftHash, final Hash rightHash, final HashAlgorithm algorithm);
-
-    Hash digestSync(final ByteBuffer buffer) throws NoSuchAlgorithmException;
-
-    Hash digestSync(final ByteBuffer buffer, final HashAlgorithm algorithm);
-
+    /**
+     * @param algorithm
+     * @return
+     */
     Cipher acquirePrimitive(final CipherTransformation algorithm);
 
+    /**
+     * @param algorithm
+     * @return
+     */
     Signature acquirePrimitive(final SignatureAlgorithm algorithm);
 
+    /**
+     * @param algorithm
+     * @return
+     */
     MessageDigest acquirePrimitive(final HashAlgorithm algorithm);
+
+    /**
+     * @param algorithm
+     * @return
+     */
+    Mac acquirePrimitive(final MacAlgorithm algorithm);
 
 }

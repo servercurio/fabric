@@ -85,11 +85,11 @@ public class CryptographyHashTests {
 
         HASH_OF_NULL_LEFT_HASHES = new MockHash(HashAlgorithm.SHA_384,
                                                 Base64.getDecoder()
-                                                      .decode("wWH+6wHMHWLaWd3Hi00x+igQ5ZX5IFQ2OAlEEhQZozUAoJZBIreDb0PZw+IQHXoS"));
+                                                      .decode("91ToGuzfdK+VDc/57EZUmvBbDaTkOoFcTaR+nXKhsebBYyYzOfW2GQCMHnGVVrik"));
 
         HASH_OF_NULL_RIGHT_HASHES = new MockHash(HashAlgorithm.SHA_384,
                                                  Base64.getDecoder()
-                                                       .decode("szH3dRl7j8nnVla3HCtvC6eJqeB9aLa5ZZNH5KofMWJV/crbu5BCqvEsOWsSbSdq"));
+                                                       .decode("1F4jTbdJHows8y3NTinV6PLiwNe9fKCKfOKSZ+eL8vBxErjzdAv5g3JHgAzRZFMc"));
 
         LARGE_FILE_KNOWN_HASH = new MockHash(HashAlgorithm.SHA_384,
                                              Base64.getDecoder()

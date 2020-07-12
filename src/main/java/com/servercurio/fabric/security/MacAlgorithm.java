@@ -20,44 +20,26 @@ import com.servercurio.fabric.security.spi.CryptoPrimitiveSupplier;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Provider;
-import java.security.Signature;
 import java.util.HashMap;
 import java.util.Map;
+import javax.crypto.Mac;
 
-public enum SignatureAlgorithm implements CryptoPrimitiveSupplier<Signature> {
-    NONE(0, "NONE"),
-    RSA(1, "NONEwithRSA"),
-    RSA_SHA_224(2, "SHA224withRSA"),
-    RSA_SHA_256(3, "SHA256withRSA"),
-    RSA_SHA_384(4, "SHA384withRSA"),
-    RSA_SHA_512(5, "SHA512withRSA"),
-    RSA_SHA3_224(6, "SHA3-224withRSA"),
-    RSA_SHA3_256(7, "SHA3-256withRSA"),
-    RSA_SHA3_384(8, "SHA3-384withRSA"),
-    RSA_SHA3_512(9, "SHA3-512withRSA"),
-    DSA(10, "NONEwithDSA"),
-    DSA_SHA_224(11, "SHA224withDSA"),
-    DSA_SHA_256(12, "SHA256withDSA"),
-    DSA_SHA_384(13, "SHA384withDSA"),
-    DSA_SHA_512(14, "SHA512withDSA"),
-    DSA_SHA3_224(15, "SHA3-224withDSA"),
-    DSA_SHA3_256(16, "SHA3-256withDSA"),
-    DSA_SHA3_384(17, "SHA3-384withDSA"),
-    DSA_SHA3_512(18, "SHA3-512withDSA"),
-    ECDSA(19, "NONEwithECDSA"),
-    ECDSA_SHA_224(20, "SHA224withECDSA"),
-    ECDSA_SHA_256(21, "SHA256withECDSA"),
-    ECDSA_SHA_384(22, "SHA384withECDSA"),
-    ECDSA_SHA_512(23, "SHA512withECDSA"),
-    ECDSA_SHA3_224(24, "SHA3-224withECDSA"),
-    ECDSA_SHA3_256(25, "SHA3-256withECDSA"),
-    ECDSA_SHA3_384(26, "SHA3-384withECDSA"),
-    ECDSA_SHA3_512(27, "SHA3-512withECDSA");
+public enum MacAlgorithm implements CryptoPrimitiveSupplier<Mac> {
+    NONE(0, "NONE", HashAlgorithm.NONE),
+    HMAC_SHA_224(1, "HmacSHA224", HashAlgorithm.SHA_224),
+    HMAC_SHA_256(2, "HmacSHA256", HashAlgorithm.SHA_256),
+    HMAC_SHA_384(3, "HmacSHA384", HashAlgorithm.SHA_384),
+    HMAC_SHA_512(4, "HmacSHA512", HashAlgorithm.SHA_512),
+    HMAC_SHA3_224(5, "HmacSHA3-224", HashAlgorithm.SHA3_224),
+    HMAC_SHA3_256(6, "HmacSHA3-256", HashAlgorithm.SHA3_256),
+    HMAC_SHA3_384(7, "HmacSHA3-384", HashAlgorithm.SHA3_384),
+    HMAC_SHA3_512(8, "HmacSHA3-512", HashAlgorithm.SHA3_512);
 
-    private static final Map<Integer, SignatureAlgorithm> idMap = new HashMap<>();
+
+    private static final Map<Integer, MacAlgorithm> idMap = new HashMap<>();
 
     static {
-        for (SignatureAlgorithm algorithm : SignatureAlgorithm.values()) {
+        for (MacAlgorithm algorithm : MacAlgorithm.values()) {
             if (algorithm == NONE) {
                 continue;
             }
@@ -66,15 +48,21 @@ public enum SignatureAlgorithm implements CryptoPrimitiveSupplier<Signature> {
         }
     }
 
+    private final int bits;
+    private final int bytes;
     private final String algorithmName;
     private final int id;
+    private final HashAlgorithm hashAlgorithm;
 
-    SignatureAlgorithm(final int id, final String algorithmName) {
+    MacAlgorithm(final int id, final String algorithmName, final HashAlgorithm hashAlgorithm) {
         this.id = id;
         this.algorithmName = algorithmName;
+        this.hashAlgorithm = hashAlgorithm;
+        this.bits = hashAlgorithm.bits();
+        this.bytes = bits / Byte.SIZE;
     }
 
-    public static SignatureAlgorithm valueOf(final int id) {
+    public static MacAlgorithm valueOf(final int id) {
         if (!idMap.containsKey(id)) {
             return null;
         }
@@ -82,34 +70,45 @@ public enum SignatureAlgorithm implements CryptoPrimitiveSupplier<Signature> {
         return idMap.get(id);
     }
 
+    public HashAlgorithm hashAlgorithm() {
+        return hashAlgorithm;
+    }
+
     public String algorithmName() {
         return algorithmName;
     }
 
+    public int bits() {
+        return bits;
+    }
+
+    public int bytes() {
+        return bytes;
+    }
 
     public int id() {
         return id;
     }
 
-    public Signature instance() {
+    public Mac instance() {
         try {
-            return Signature.getInstance(algorithmName);
+            return Mac.getInstance(algorithmName);
         } catch (NoSuchAlgorithmException ex) {
             throw new CryptographyException(ex);
         }
     }
 
-    public Signature instance(final String provider) {
+    public Mac instance(final String provider) {
         try {
-            return Signature.getInstance(algorithmName, provider);
+            return Mac.getInstance(algorithmName, provider);
         } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
             throw new CryptographyException(ex);
         }
     }
 
-    public Signature instance(final Provider provider) {
+    public Mac instance(final Provider provider) {
         try {
-            return Signature.getInstance(algorithmName, provider);
+            return Mac.getInstance(algorithmName, provider);
         } catch (NoSuchAlgorithmException ex) {
             throw new CryptographyException(ex);
         }

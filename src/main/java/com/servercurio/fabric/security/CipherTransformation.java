@@ -16,6 +16,7 @@
 
 package com.servercurio.fabric.security;
 
+import com.servercurio.fabric.security.spi.CryptoPrimitiveSupplier;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Provider;
@@ -29,7 +30,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import static com.servercurio.fabric.lang.ComparableConstants.EQUAL;
 import static com.servercurio.fabric.lang.ComparableConstants.LESS_THAN;
 
-public class CipherTransformation implements Comparable<CipherTransformation> {
+public class CipherTransformation implements Comparable<CipherTransformation>, CryptoPrimitiveSupplier<Cipher> {
 
     private CipherAlgorithm algorithm;
     private CipherMode mode;
@@ -41,11 +42,11 @@ public class CipherTransformation implements Comparable<CipherTransformation> {
     }
 
     public CipherTransformation(final CipherAlgorithm algorithm) {
-        this(algorithm, CipherMode.GCM, CipherPadding.PKCS5);
+        this(algorithm, CipherMode.GCM, CipherPadding.NONE);
     }
 
     public CipherTransformation(final CipherAlgorithm algorithm, final CipherMode mode) {
-        this(algorithm, mode, CipherPadding.PKCS5);
+        this(algorithm, mode, CipherPadding.NONE);
     }
 
     public CipherTransformation(final CipherAlgorithm algorithm, final CipherMode mode,

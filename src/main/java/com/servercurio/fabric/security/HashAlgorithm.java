@@ -16,6 +16,7 @@
 
 package com.servercurio.fabric.security;
 
+import com.servercurio.fabric.security.spi.CryptoPrimitiveSupplier;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -23,7 +24,7 @@ import java.security.Provider;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum HashAlgorithm {
+public enum HashAlgorithm implements CryptoPrimitiveSupplier<MessageDigest> {
     NONE(0, "NONE", 0),
     SHA_224(1, "SHA-224", 224),
     SHA_256(2, "SHA-256", 256),
