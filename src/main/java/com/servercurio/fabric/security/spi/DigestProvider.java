@@ -20,15 +20,14 @@ import com.servercurio.fabric.security.Hash;
 import com.servercurio.fabric.security.HashAlgorithm;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.Future;
 
-public interface MessageDigestProvider {
+public interface DigestProvider {
 
     /**
      * @return
      */
-    default HashAlgorithm getDefaultHashAlgorithm() {
+    default HashAlgorithm getDefaultAlgorithm() {
         return HashAlgorithm.SHA_384;
     }
 
@@ -37,122 +36,118 @@ public interface MessageDigestProvider {
      * @return
      */
     default Future<Hash> digestAsync(final InputStream stream) {
-        return digestAsync(stream, getDefaultHashAlgorithm());
+        return digestAsync(getDefaultAlgorithm(), stream);
     }
 
     /**
-     * @param stream
      * @param algorithm
+     * @param stream
      * @return
      */
-    Future<Hash> digestAsync(final InputStream stream, final HashAlgorithm algorithm);
+    Future<Hash> digestAsync(final HashAlgorithm algorithm, final InputStream stream);
 
     /**
      * @param data
      * @return
      */
     default Future<Hash> digestAsync(final byte[] data) {
-        return digestAsync(data, getDefaultHashAlgorithm());
+        return digestAsync(getDefaultAlgorithm(), data);
     }
 
     /**
+     * @param algorithm
      * @param data
-     * @param algorithm
      * @return
      */
-    Future<Hash> digestAsync(final byte[] data, final HashAlgorithm algorithm);
+    Future<Hash> digestAsync(final HashAlgorithm algorithm, final byte[] data);
 
     /**
-     * @param leftHash
-     * @param rightHash
+     * @param hashes
      * @return
      */
-    default Future<Hash> digestAsync(final Hash leftHash, final Hash rightHash) {
-        return digestAsync(leftHash, rightHash, getDefaultHashAlgorithm());
+    default Future<Hash> digestAsync(final Hash... hashes) {
+        return digestAsync(getDefaultAlgorithm(), hashes);
     }
 
     /**
-     * @param leftHash
-     * @param rightHash
      * @param algorithm
+     * @param hashes
      * @return
      */
-    Future<Hash> digestAsync(final Hash leftHash, final Hash rightHash, final HashAlgorithm algorithm);
+    Future<Hash> digestAsync(final HashAlgorithm algorithm, final Hash... hashes);
 
     /**
      * @param buffer
      * @return
      */
     default Future<Hash> digestAsync(final ByteBuffer buffer) {
-        return digestAsync(buffer, getDefaultHashAlgorithm());
+        return digestAsync(getDefaultAlgorithm(), buffer);
     }
 
     /**
-     * @param buffer
      * @param algorithm
+     * @param buffer
      * @return
      */
-    Future<Hash> digestAsync(final ByteBuffer buffer, final HashAlgorithm algorithm);
+    Future<Hash> digestAsync(final HashAlgorithm algorithm, final ByteBuffer buffer);
 
     /**
      * @param stream
      * @return
      */
     default Hash digestSync(final InputStream stream) {
-        return digestSync(stream, getDefaultHashAlgorithm());
+        return digestSync(getDefaultAlgorithm(), stream);
     }
 
     /**
-     * @param stream
      * @param algorithm
+     * @param stream
      * @return
      */
-    Hash digestSync(final InputStream stream, final HashAlgorithm algorithm);
+    Hash digestSync(final HashAlgorithm algorithm, final InputStream stream);
 
     /**
      * @param data
      * @return
      */
     default Hash digestSync(final byte[] data) {
-        return digestSync(data, getDefaultHashAlgorithm());
+        return digestSync(getDefaultAlgorithm(), data);
     }
 
     /**
+     * @param algorithm
      * @param data
-     * @param algorithm
      * @return
      */
-    Hash digestSync(final byte[] data, final HashAlgorithm algorithm);
+    Hash digestSync(final HashAlgorithm algorithm, final byte[] data);
 
     /**
-     * @param leftHash
-     * @param rightHash
+     * @param hashes
      * @return
      */
-    default Hash digestSync(final Hash leftHash, final Hash rightHash) {
-        return digestSync(leftHash, rightHash, getDefaultHashAlgorithm());
+    default Hash digestSync(final Hash... hashes) {
+        return digestSync(getDefaultAlgorithm(), hashes);
     }
 
     /**
-     * @param leftHash
-     * @param rightHash
      * @param algorithm
+     * @param hashes
      * @return
      */
-    Hash digestSync(final Hash leftHash, final Hash rightHash, final HashAlgorithm algorithm);
+    Hash digestSync(final HashAlgorithm algorithm, final Hash... hashes);
 
     /**
      * @param buffer
      * @return
      */
     default Hash digestSync(final ByteBuffer buffer) {
-        return digestSync(buffer, getDefaultHashAlgorithm());
+        return digestSync(getDefaultAlgorithm(), buffer);
     }
 
     /**
-     * @param buffer
      * @param algorithm
+     * @param buffer
      * @return
      */
-    Hash digestSync(final ByteBuffer buffer, final HashAlgorithm algorithm);
+    Hash digestSync(final HashAlgorithm algorithm, final ByteBuffer buffer);
 }

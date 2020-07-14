@@ -17,7 +17,14 @@
 package com.servercurio.fabric.security;
 
 import java.util.Base64;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -57,14 +64,15 @@ public class CryptographyHashableTests {
     @Order(100)
     @DisplayName("Hashable :: SHA_384 -> Basic Hashable")
     public void testCryptoSha384BasicHashable() {
+        final Cryptography crypto = Cryptography.newDefaultInstance();
         final MockHashable singleArgCtorHashable = new MockHashable(IN_MEMORY_DATA);
         final MockHashable twoArgCtorHashable = new MockHashable(HashAlgorithm.SHA_384, IN_MEMORY_DATA);
         final MockHashable threeArgCtorHashable =
-                new MockHashable(HashAlgorithm.SHA_384, Cryptography.getDefaultInstance(), IN_MEMORY_DATA);
+                new MockHashable(HashAlgorithm.SHA_384, crypto, IN_MEMORY_DATA);
 
         // Basic getter checks
         assertEquals(HashAlgorithm.SHA_384, singleArgCtorHashable.getAlgorithm());
-        assertEquals(Cryptography.getDefaultInstance(), singleArgCtorHashable.getCryptography());
+        assertEquals(crypto, threeArgCtorHashable.getCryptography());
 
         assertThrows(IllegalArgumentException.class, () -> new MockHashable(null, IN_MEMORY_DATA));
         assertThrows(IllegalArgumentException.class,

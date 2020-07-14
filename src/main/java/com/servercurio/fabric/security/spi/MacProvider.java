@@ -28,7 +28,7 @@ public interface MacProvider {
     /**
      * @return
      */
-    default MacAlgorithm getDefaultMacAlgorithm() {
+    default MacAlgorithm getDefaultAlgorithm() {
         return MacAlgorithm.HMAC_SHA_384;
     }
 
@@ -38,16 +38,16 @@ public interface MacProvider {
      * @return
      */
     default Future<Hash> authenticateAsync(final Key key, final InputStream stream) {
-        return authenticateAsync(key, stream, getDefaultMacAlgorithm());
+        return authenticateAsync(getDefaultAlgorithm(), key, stream);
     }
 
     /**
+     * @param algorithm
      * @param key
      * @param stream
-     * @param algorithm
      * @return
      */
-    Future<Hash> authenticateAsync(final Key key, final InputStream stream, final MacAlgorithm algorithm);
+    Future<Hash> authenticateAsync(final MacAlgorithm algorithm, final Key key, final InputStream stream);
 
     /**
      * @param key
@@ -55,36 +55,33 @@ public interface MacProvider {
      * @return
      */
     default Future<Hash> authenticateAsync(final Key key, final byte[] data) {
-        return authenticateAsync(key, data, getDefaultMacAlgorithm());
+        return authenticateAsync(getDefaultAlgorithm(), key, data);
     }
 
     /**
+     * @param algorithm
      * @param key
      * @param data
-     * @param algorithm
      * @return
      */
-    Future<Hash> authenticateAsync(final Key key, final byte[] data, final MacAlgorithm algorithm);
+    Future<Hash> authenticateAsync(final MacAlgorithm algorithm, final Key key, final byte[] data);
 
     /**
      * @param key
-     * @param leftHash
-     * @param rightHash
+     * @param hashes
      * @return
      */
-    default Future<Hash> authenticateAsync(final Key key, final Hash leftHash, final Hash rightHash) {
-        return authenticateAsync(key, leftHash, rightHash, getDefaultMacAlgorithm());
+    default Future<Hash> authenticateAsync(final Key key, final Hash... hashes) {
+        return authenticateAsync(getDefaultAlgorithm(), key, hashes);
     }
 
     /**
-     * @param key
-     * @param leftHash
-     * @param rightHash
      * @param algorithm
+     * @param key
+     * @param hashes
      * @return
      */
-    Future<Hash> authenticateAsync(final Key key, final Hash leftHash, final Hash rightHash,
-                                   final MacAlgorithm algorithm);
+    Future<Hash> authenticateAsync(final MacAlgorithm algorithm, final Key key, final Hash... hashes);
 
     /**
      * @param key
@@ -92,16 +89,16 @@ public interface MacProvider {
      * @return
      */
     default Future<Hash> authenticateAsync(final Key key, final ByteBuffer buffer) {
-        return authenticateAsync(key, buffer, getDefaultMacAlgorithm());
+        return authenticateAsync(getDefaultAlgorithm(), key, buffer);
     }
 
     /**
+     * @param algorithm
      * @param key
      * @param buffer
-     * @param algorithm
      * @return
      */
-    Future<Hash> authenticateAsync(final Key key, final ByteBuffer buffer, final MacAlgorithm algorithm);
+    Future<Hash> authenticateAsync(final MacAlgorithm algorithm, final Key key, final ByteBuffer buffer);
 
     /**
      * @param key
@@ -109,16 +106,16 @@ public interface MacProvider {
      * @return
      */
     default Hash authenticateSync(final Key key, final InputStream stream) {
-        return authenticateSync(key, stream, getDefaultMacAlgorithm());
+        return authenticateSync(getDefaultAlgorithm(), key, stream);
     }
 
     /**
+     * @param algorithm
      * @param key
      * @param stream
-     * @param algorithm
      * @return
      */
-    Hash authenticateSync(final Key key, final InputStream stream, final MacAlgorithm algorithm);
+    Hash authenticateSync(final MacAlgorithm algorithm, final Key key, final InputStream stream);
 
     /**
      * @param key
@@ -126,36 +123,33 @@ public interface MacProvider {
      * @return
      */
     default Hash authenticateSync(final Key key, final byte[] data) {
-        return authenticateSync(key, data, getDefaultMacAlgorithm());
+        return authenticateSync(getDefaultAlgorithm(), key, data);
     }
 
     /**
+     * @param algorithm
      * @param key
      * @param data
-     * @param algorithm
      * @return
      */
-    Hash authenticateSync(final Key key, final byte[] data, final MacAlgorithm algorithm);
+    Hash authenticateSync(final MacAlgorithm algorithm, final Key key, final byte[] data);
 
     /**
      * @param key
-     * @param leftHash
-     * @param rightHash
+     * @param hashes
      * @return
      */
-    default Hash authenticateSync(final Key key, final Hash leftHash, final Hash rightHash) {
-        return authenticateSync(key, leftHash, rightHash, getDefaultMacAlgorithm());
+    default Hash authenticateSync(final Key key, final Hash... hashes) {
+        return authenticateSync(getDefaultAlgorithm(), key, hashes);
     }
 
     /**
-     * @param key
-     * @param leftHash
-     * @param rightHash
      * @param algorithm
+     * @param key
+     * @param hashes
      * @return
      */
-    Hash authenticateSync(final Key key, final Hash leftHash, final Hash rightHash,
-                                  final MacAlgorithm algorithm);
+    Hash authenticateSync(final MacAlgorithm algorithm, final Key key, final Hash... hashes);
 
     /**
      * @param key
@@ -163,14 +157,14 @@ public interface MacProvider {
      * @return
      */
     default Hash authenticateSync(final Key key, final ByteBuffer buffer) {
-        return authenticateSync(key, buffer, getDefaultMacAlgorithm());
+        return authenticateSync(getDefaultAlgorithm(), key, buffer);
     }
 
     /**
+     * @param algorithm
      * @param key
      * @param buffer
-     * @param algorithm
      * @return
      */
-    Hash authenticateSync(final Key key, final ByteBuffer buffer, final MacAlgorithm algorithm);
+    Hash authenticateSync(final MacAlgorithm algorithm, final Key key, final ByteBuffer buffer);
 }

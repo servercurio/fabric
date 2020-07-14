@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package com.servercurio.fabric.security.spi;
+package com.servercurio.fabric.security.impl;
 
-import com.servercurio.fabric.security.CipherTransformation;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 
-public interface SymmetricEncryptionProvider {
-
-    /**
-     * @return
-     */
-    default CipherTransformation getDefaultCipherTransformation() {
-        return new CipherTransformation();
-    }
-
-
+@FunctionalInterface
+interface TriConsumer<F, S, T> {
+    void apply(final F first, final S second, final T third) throws GeneralSecurityException, IOException;
 }

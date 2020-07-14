@@ -16,6 +16,7 @@
 
 package com.servercurio.fabric.security;
 
+import com.servercurio.fabric.lang.ComparableConstants;
 import java.util.Arrays;
 import java.util.Base64;
 import org.apache.commons.lang3.builder.CompareToBuilder;
@@ -146,7 +147,7 @@ public class Hash implements Comparable<Hash> {
      * Returns true if the underlying byte array contains all zeros or if the algorithm type is {@link
      * HashAlgorithm#NONE}.
      *
-     * @return true if the underlying byte array contains all zero; otherwise false
+     * @return true if the underlying byte array contains all zeros; otherwise false
      */
     public boolean isEmpty() {
         if (getAlgorithm() == HashAlgorithm.NONE) {
@@ -215,11 +216,11 @@ public class Hash implements Comparable<Hash> {
     @Override
     public int compareTo(final Hash other) {
         if (this == other) {
-            return 0;
+            return ComparableConstants.EQUAL;
         }
 
         if (other == null) {
-            return 1;
+            return ComparableConstants.GREATER_THAN;
         }
 
         return new CompareToBuilder()

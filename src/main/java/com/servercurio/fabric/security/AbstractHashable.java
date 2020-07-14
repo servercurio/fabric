@@ -27,7 +27,7 @@ public abstract class AbstractHashable implements Hashable {
     }
 
     public AbstractHashable(final HashAlgorithm algorithm) {
-        this(algorithm, Cryptography.getDefaultInstance());
+        this(algorithm, Cryptography.newDefaultInstance());
     }
 
     public AbstractHashable(final HashAlgorithm algorithm, final Cryptography cryptography) {

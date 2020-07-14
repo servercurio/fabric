@@ -18,10 +18,11 @@ package com.servercurio.fabric.security;
 
 import com.servercurio.fabric.security.impl.DefaultCryptographyImpl;
 import com.servercurio.fabric.security.spi.MacProvider;
-import com.servercurio.fabric.security.spi.MessageDigestProvider;
+import com.servercurio.fabric.security.spi.DigestProvider;
 import com.servercurio.fabric.security.spi.SignatureProvider;
-import com.servercurio.fabric.security.spi.SymmetricEncryptionProvider;
+import com.servercurio.fabric.security.spi.EncryptionProvider;
 import java.security.MessageDigest;
+import java.security.SecureRandom;
 import java.security.Signature;
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
@@ -29,15 +30,7 @@ import javax.crypto.Mac;
 /**
  *
  */
-public interface Cryptography extends AutoCloseable, MessageDigestProvider, SymmetricEncryptionProvider,
-        SignatureProvider, MacProvider {
-
-    /**
-     * @return
-     */
-    static Cryptography getDefaultInstance() {
-        return DefaultCryptographyImpl.getInstance();
-    }
+public interface Cryptography extends AutoCloseable {
 
     /**
      * @return
@@ -50,24 +43,41 @@ public interface Cryptography extends AutoCloseable, MessageDigestProvider, Symm
      * @param algorithm
      * @return
      */
-    Cipher acquirePrimitive(final CipherTransformation algorithm);
+    Cipher primitive(final CipherTransformation algorithm);
 
     /**
      * @param algorithm
      * @return
      */
-    Signature acquirePrimitive(final SignatureAlgorithm algorithm);
+    Signature primitive(final SignatureAlgorithm algorithm);
 
     /**
      * @param algorithm
      * @return
      */
-    MessageDigest acquirePrimitive(final HashAlgorithm algorithm);
+    MessageDigest primitive(final HashAlgorithm algorithm);
 
     /**
      * @param algorithm
      * @return
      */
-    Mac acquirePrimitive(final MacAlgorithm algorithm);
+    Mac primitive(final MacAlgorithm algorithm);
+
+    /**
+     *
+     * @return
+     */
+    SecureRandom random();
+
+    DigestProvider digest();
+
+    MacProvider mac();
+
+    SignatureProvider signature();
+
+    EncryptionProvider encryption();
+
+
+
 
 }

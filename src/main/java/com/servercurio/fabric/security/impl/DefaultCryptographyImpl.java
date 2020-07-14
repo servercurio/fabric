@@ -19,30 +19,31 @@ package com.servercurio.fabric.security.impl;
 import com.servercurio.fabric.security.CipherTransformation;
 import com.servercurio.fabric.security.Cryptography;
 import com.servercurio.fabric.security.CryptographyException;
-import com.servercurio.fabric.security.Hash;
 import com.servercurio.fabric.security.HashAlgorithm;
 import com.servercurio.fabric.security.MacAlgorithm;
 import com.servercurio.fabric.security.SignatureAlgorithm;
 import com.servercurio.fabric.security.spi.CryptoPrimitiveSupplier;
+import com.servercurio.fabric.security.spi.DigestProvider;
+import com.servercurio.fabric.security.spi.EncryptionProvider;
+import com.servercurio.fabric.security.spi.MacProvider;
+import com.servercurio.fabric.security.spi.SignatureProvider;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.security.InvalidKeyException;
-import java.security.Key;
+import java.security.DrbgParameters;
+import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.Signature;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
 
-public final class DefaultCryptographyImpl implements Cryptography, AutoCloseable {
+public final class DefaultCryptographyImpl implements Cryptography {
 
-    private static final DefaultCryptographyImpl INSTANCE = new DefaultCryptographyImpl();
-
-    private static final int STREAM_BUFFER_SIZE = 8192;
+    public static final int STREAM_BUFFER_SIZE = 8192;
 
     private static final ThreadLocal<HashMap<HashAlgorithm, MessageDigest>> hashAlgorithmCache = ThreadLocal
             .withInitial(HashMap::new);
@@ -56,6 +57,9 @@ public final class DefaultCryptographyImpl implements Cryptography, AutoCloseabl
     private static final ThreadLocal<HashMap<MacAlgorithm, Mac>> macAlgorithmCache = ThreadLocal
             .withInitial(HashMap::new);
 
+    private static final ThreadLocal<SecureRandom> secureRandomCache =
+            ThreadLocal.withInitial(DefaultCryptographyImpl::acquireRandom);
+
     private final ExecutorService executorService;
 
     /**
@@ -65,28 +69,25 @@ public final class DefaultCryptographyImpl implements Cryptography, AutoCloseabl
         this.executorService = Executors.newCachedThreadPool();
     }
 
-    public static Cryptography getInstance() {
-        return INSTANCE;
+    public static void applyToStream(final InputStream stream,
+                                     final TriConsumer<byte[], Integer, Integer> fn) throws IOException, GeneralSecurityException {
+        applyToStream(stream, STREAM_BUFFER_SIZE, fn);
+    }
+
+    public static void applyToStream(final InputStream stream, final int blockSize,
+                                     final TriConsumer<byte[], Integer, Integer> fn) throws IOException, GeneralSecurityException {
+        final byte[] buffer = new byte[blockSize];
+
+        int bytesRead = stream.readNBytes(buffer, 0, buffer.length);
+
+        while (bytesRead > 0) {
+            fn.apply(buffer, 0, bytesRead);
+            bytesRead = stream.readNBytes(buffer, 0, buffer.length);
+        }
     }
 
     public static Cryptography newInstance() {
         return new DefaultCryptographyImpl();
-    }
-
-    protected static ThreadLocal<HashMap<CipherTransformation, Cipher>> getCipherAlgorithmCache() {
-        return cipherAlgorithmCache;
-    }
-
-    protected static ThreadLocal<HashMap<HashAlgorithm, MessageDigest>> getHashAlgorithmCache() {
-        return hashAlgorithmCache;
-    }
-
-    protected static ThreadLocal<HashMap<MacAlgorithm, Mac>> getMacAlgorithmCache() {
-        return macAlgorithmCache;
-    }
-
-    protected static ThreadLocal<HashMap<SignatureAlgorithm, Signature>> getSignatureAlgorithmCache() {
-        return signatureAlgorithmCache;
     }
 
     private static <T, E extends CryptoPrimitiveSupplier<T>> T acquireAlgorithm(final E algorithm,
@@ -100,151 +101,20 @@ public final class DefaultCryptographyImpl implements Cryptography, AutoCloseabl
         return cache.get(algorithm);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Cipher acquirePrimitive(final CipherTransformation algorithm) {
-        return acquireAlgorithm(algorithm, cipherAlgorithmCache);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Signature acquirePrimitive(final SignatureAlgorithm algorithm) {
-        return acquireAlgorithm(algorithm, signatureAlgorithmCache);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public MessageDigest acquirePrimitive(final HashAlgorithm algorithm) {
-        return acquireAlgorithm(algorithm, hashAlgorithmCache);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Mac acquirePrimitive(final MacAlgorithm algorithm) {
-        return acquireAlgorithm(algorithm, macAlgorithmCache);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Future<Hash> authenticateAsync(final Key key, final InputStream stream, final MacAlgorithm algorithm) {
-        return executorService.submit(() -> authenticateSync(key, stream, algorithm));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Future<Hash> authenticateAsync(final Key key, final byte[] data, final MacAlgorithm algorithm) {
-        return executorService.submit(() -> authenticateSync(key, data, algorithm));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Future<Hash> authenticateAsync(final Key key, final Hash leftHash, final Hash rightHash,
-                                          final MacAlgorithm algorithm) {
-        return executorService.submit(() -> authenticateSync(key, leftHash, rightHash, algorithm));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Future<Hash> authenticateAsync(final Key key, final ByteBuffer buffer, final MacAlgorithm algorithm) {
-        return executorService.submit(() -> authenticateSync(key, buffer, algorithm));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Hash authenticateSync(final Key key, final InputStream stream, final MacAlgorithm algorithm) {
-        final Mac mac = acquirePrimitive(algorithm);
-        final byte[] buffer = new byte[STREAM_BUFFER_SIZE];
+    private static SecureRandom acquireRandom() {
+        DrbgParameters.Instantiation params =
+                DrbgParameters.instantiation(256, DrbgParameters.Capability.PR_AND_RESEED, null);
 
         try {
-            mac.init(key);
-            int bytesRead = stream.readNBytes(buffer, 0, buffer.length);
-
-            while (bytesRead > 0) {
-                mac.update(buffer, 0, bytesRead);
-                bytesRead = stream.readNBytes(buffer, 0, buffer.length);
-            }
-        } catch (IOException | InvalidKeyException ex) {
-            throw new CryptographyException(ex);
-        }
-
-        return new Hash(algorithm.hashAlgorithm(), mac.doFinal());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Hash authenticateSync(final Key key, final byte[] data, final MacAlgorithm algorithm) {
-        final Mac mac = acquirePrimitive(algorithm);
-        try {
-            mac.init(key);
-            mac.update(data);
-            return new Hash(algorithm.hashAlgorithm(), mac.doFinal());
-        } catch (InvalidKeyException ex) {
+            return SecureRandom
+                    .getInstance("DRBG", params);
+        } catch (NoSuchAlgorithmException ex) {
             throw new CryptographyException(ex);
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Hash authenticateSync(final Key key, final Hash leftHash, final Hash rightHash,
-                                 final MacAlgorithm algorithm) {
-        final Mac mac = acquirePrimitive(algorithm);
-
-        try {
-            mac.init(key);
-
-            if (leftHash != null) {
-                mac.update(leftHash.getValue());
-            } else {
-                mac.update(Hash.EMPTY.getValue());
-            }
-
-            if (rightHash != null) {
-                mac.update(rightHash.getValue());
-            } else {
-                mac.update(Hash.EMPTY.getValue());
-            }
-
-            return new Hash(algorithm.hashAlgorithm(), mac.doFinal());
-        } catch (InvalidKeyException ex) {
-            throw new CryptographyException(ex);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Hash authenticateSync(final Key key, final ByteBuffer buffer, final MacAlgorithm algorithm) {
-        final Mac mac = acquirePrimitive(algorithm);
-        try {
-            mac.init(key);
-            mac.update(buffer);
-            return new Hash(algorithm.hashAlgorithm(), mac.doFinal());
-        } catch (InvalidKeyException ex) {
-            throw new CryptographyException(ex);
-        }
+    public ExecutorService executorService() {
+        return executorService;
     }
 
     /**
@@ -257,106 +127,66 @@ public final class DefaultCryptographyImpl implements Cryptography, AutoCloseabl
         macAlgorithmCache.remove();
         cipherAlgorithmCache.remove();
         signatureAlgorithmCache.remove();
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Future<Hash> digestAsync(final InputStream stream, final HashAlgorithm algorithm) {
-        return executorService.submit(() -> digestSync(stream, algorithm));
+        secureRandomCache.remove();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Future<Hash> digestAsync(final byte[] data, final HashAlgorithm algorithm) {
-        return executorService.submit(() -> digestSync(data, algorithm));
+    public Cipher primitive(final CipherTransformation algorithm) {
+        return acquireAlgorithm(algorithm, cipherAlgorithmCache);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Future<Hash> digestAsync(final Hash leftHash, final Hash rightHash, final HashAlgorithm algorithm) {
-        return executorService.submit(() -> digestSync(leftHash, rightHash, algorithm));
+    public Signature primitive(final SignatureAlgorithm algorithm) {
+        return acquireAlgorithm(algorithm, signatureAlgorithmCache);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Future<Hash> digestAsync(final ByteBuffer buffer, final HashAlgorithm algorithm) {
-        return executorService.submit(() -> digestSync(buffer, algorithm));
+    public MessageDigest primitive(final HashAlgorithm algorithm) {
+        return acquireAlgorithm(algorithm, hashAlgorithmCache);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Hash digestSync(final InputStream stream, final HashAlgorithm algorithm) {
-        final MessageDigest digest = acquirePrimitive(algorithm);
-        final byte[] buffer = new byte[STREAM_BUFFER_SIZE];
-
-        try {
-            int bytesRead = stream.readNBytes(buffer, 0, buffer.length);
-
-            while (bytesRead > 0) {
-                digest.update(buffer, 0, bytesRead);
-                bytesRead = stream.readNBytes(buffer, 0, buffer.length);
-            }
-        } catch (IOException ex) {
-            throw new CryptographyException(ex);
-        }
-
-        return new Hash(algorithm, digest.digest());
+    public Mac primitive(final MacAlgorithm algorithm) {
+        return acquireAlgorithm(algorithm, macAlgorithmCache);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Hash digestSync(final byte[] data, final HashAlgorithm algorithm) {
-        final MessageDigest digest = acquirePrimitive(algorithm);
-
-        digest.update(data);
-        return new Hash(algorithm, digest.digest());
+    public SecureRandom random() {
+        return secureRandomCache.get();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public Hash digestSync(final Hash leftHash, final Hash rightHash, final HashAlgorithm algorithm) {
-        final MessageDigest digest = acquirePrimitive(algorithm);
-
-        if (leftHash != null) {
-            digest.update(leftHash.getValue());
-        } else {
-            digest.update(Hash.EMPTY.getValue());
-        }
-
-        if (rightHash != null) {
-            digest.update(rightHash.getValue());
-        } else {
-            digest.update(Hash.EMPTY.getValue());
-        }
-
-        return new Hash(algorithm, digest.digest());
+    public DigestProvider digest() {
+        return new DigestProviderImpl(this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public Hash digestSync(final ByteBuffer buffer, final HashAlgorithm algorithm) {
-        final MessageDigest digest = acquirePrimitive(algorithm);
-
-        digest.update(buffer);
-        return new Hash(algorithm, digest.digest());
+    public MacProvider mac() {
+        return new MacProviderImpl(this);
     }
 
+    @Override
+    public SignatureProvider signature() {
+        return new SignatureProviderImpl(this);
+    }
 
+    @Override
+    public EncryptionProvider encryption() {
+        return new EncryptionProviderImpl(this);
+    }
 }

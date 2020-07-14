@@ -36,7 +36,7 @@ public class MockHashable extends AbstractHashable {
 
     @Override
     protected Hash computeHash(final HashAlgorithm algorithm, final Cryptography cryptography) {
-        return cryptography.digestSync(content);
+        return cryptography.digest().digestSync(content);
     }
 
 }
