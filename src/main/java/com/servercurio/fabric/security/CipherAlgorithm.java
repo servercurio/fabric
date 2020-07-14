@@ -20,10 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum CipherAlgorithm {
-    NONE(0, "NONE"),
-    AES_128(1, "AES_128"),
-    AES_192(2, "AES_192"),
-    AES_256(3, "AES_256");
+    NONE(0, "NONE", "NONE"),
+    AES_128(1, "AES_128", "AES"),
+    AES_192(2, "AES_192", "AES"),
+    AES_256(3, "AES_256", "AES");
 
     private static final Map<Integer, CipherAlgorithm> idMap = new HashMap<>();
 
@@ -37,12 +37,14 @@ public enum CipherAlgorithm {
         }
     }
 
+    private final String keyAlgorithmName;
     private final String algorithmName;
     private final int id;
 
-    CipherAlgorithm(final int id, final String algorithmName) {
+    CipherAlgorithm(final int id, final String algorithmName, final String keyAlgorithmName) {
         this.id = id;
         this.algorithmName = algorithmName;
+        this.keyAlgorithmName = keyAlgorithmName;
     }
 
     public static CipherAlgorithm valueOf(final int id) {
@@ -59,6 +61,10 @@ public enum CipherAlgorithm {
 
     public int id() {
         return id;
+    }
+
+    public String keyAlgorithmName() {
+        return keyAlgorithmName;
     }
 
 }

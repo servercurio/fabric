@@ -130,4 +130,16 @@ public interface EncryptionProvider {
 
     ByteBuffer encryptSync(final CipherTransformation algorithm, final SecretKey key, final byte[] iv,
                            final ByteBuffer buffer);
+
+    default Future<byte[]> nonceAsync() {
+        return nonceAsync(getDefaultAlgorithm());
+    }
+
+    Future<byte[]> nonceAsync(final CipherTransformation algorithm);
+
+    default byte[] nonceSync() {
+        return nonceSync(getDefaultAlgorithm());
+    }
+
+    byte[] nonceSync(final CipherTransformation algorithm);
 }

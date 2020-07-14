@@ -25,6 +25,17 @@ import java.util.Arrays;
  */
 public class ImmutableHash extends Hash {
 
+    /**
+     * @param algorithm
+     * @param value
+     */
+    public ImmutableHash(final HashAlgorithm algorithm, final byte[] value) {
+        super(algorithm, value);
+    }
+
+    /**
+     * @param other
+     */
     public ImmutableHash(final Hash other) {
         super(other);
     }
@@ -39,7 +50,7 @@ public class ImmutableHash extends Hash {
      */
     @Override
     public void setAlgorithm(final HashAlgorithm algorithm) {
-       throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
     /**

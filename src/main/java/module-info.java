@@ -15,14 +15,16 @@
  */
 
 module com.servercurio.fabric {
-
     exports com.servercurio.fabric.io;
+    exports com.servercurio.fabric.lang;
+
     exports com.servercurio.fabric.security;
     exports com.servercurio.fabric.security.spi;
 
+
     requires org.apache.commons.lang3;
+
     requires org.bouncycastle.provider;
+
     requires java.desktop;
-
-
 }

@@ -17,10 +17,10 @@
 package com.servercurio.fabric.security;
 
 import com.servercurio.fabric.security.impl.DefaultCryptographyImpl;
-import com.servercurio.fabric.security.spi.MacProvider;
 import com.servercurio.fabric.security.spi.DigestProvider;
-import com.servercurio.fabric.security.spi.SignatureProvider;
 import com.servercurio.fabric.security.spi.EncryptionProvider;
+import com.servercurio.fabric.security.spi.MacProvider;
+import com.servercurio.fabric.security.spi.SignatureProvider;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.security.Signature;
@@ -38,6 +38,21 @@ public interface Cryptography extends AutoCloseable {
     static Cryptography newDefaultInstance() {
         return DefaultCryptographyImpl.newInstance();
     }
+
+    /**
+     * @return
+     */
+    DigestProvider digest();
+
+    /**
+     * @return
+     */
+    EncryptionProvider encryption();
+
+    /**
+     * @return
+     */
+    MacProvider mac();
 
     /**
      * @param algorithm
@@ -64,20 +79,65 @@ public interface Cryptography extends AutoCloseable {
     Mac primitive(final MacAlgorithm algorithm);
 
     /**
-     *
      * @return
      */
     SecureRandom random();
 
-    DigestProvider digest();
+    /**
+     * @param left
+     * @param right
+     * @return
+     */
+    default boolean secureEquals(final char[] left, final char[] right) {
+        int diff = left.length ^ right.length;
+        for (int i = 0; i < left.length && i < right.length; i++) {
+            diff |= left[i] ^ right[i];
+        }
+        return diff == 0;
+    }
 
-    MacProvider mac();
+    /**
+     * @param left
+     * @param right
+     * @return
+     */
+    default boolean secureEquals(final byte[] left, final byte[] right) {
+        int diff = left.length ^ right.length;
+        for (int i = 0; i < left.length && i < right.length; i++) {
+            diff |= left[i] ^ right[i];
+        }
+        return diff == 0;
+    }
 
+    /**
+     * @param left
+     * @param right
+     * @return
+     */
+    default boolean secureEquals(final int[] left, final int[] right) {
+        int diff = left.length ^ right.length;
+        for (int i = 0; i < left.length && i < right.length; i++) {
+            diff |= left[i] ^ right[i];
+        }
+        return diff == 0;
+    }
+
+    /**
+     * @param left
+     * @param right
+     * @return
+     */
+    default boolean secureEquals(final long[] left, final long[] right) {
+        int diff = left.length ^ right.length;
+        for (int i = 0; i < left.length && i < right.length; i++) {
+            diff |= left[i] ^ right[i];
+        }
+        return diff == 0;
+    }
+
+    /**
+     * @return
+     */
     SignatureProvider signature();
-
-    EncryptionProvider encryption();
-
-
-
 
 }
