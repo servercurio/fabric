@@ -141,7 +141,7 @@ public class CryptographyHashTests {
     @Test
     @Order(176)
     @DisplayName("Hash :: SHA_384 -> Async Byte Buffer")
-    public void testCryptoSha384AsyncByteBuffer() throws NoSuchAlgorithmException, ExecutionException, InterruptedException {
+    public void testCryptoSha384AsyncByteBuffer() throws ExecutionException, InterruptedException {
         final DigestProvider provider = Cryptography.newDefaultInstance().digest();
 
         final ByteBuffer defaultBuffer = ByteBuffer.allocateDirect(IN_MEMORY_DATA.length);
@@ -264,12 +264,13 @@ public class CryptographyHashTests {
             final Hash emptyRef = Hash.EMPTY;
             final Hash validCopy = new Hash(WELL_KNOWN_HASH);
             final Hash immutableCopy = new ImmutableHash(validCopy);
+            final Hash immutable = new ImmutableHash(validCopy.getAlgorithm(), validCopy.getValue());
 
             // isEmpty Validations
             assertTrue(emptyCopy.isEmpty());
             assertFalse(validCopy.isEmpty());
 
-            // Equals Validation
+            // CompareTo Validation
             assertEquals(Hash.EMPTY, emptyRef);
             assertNotEquals(null, Hash.EMPTY);
 
@@ -290,6 +291,7 @@ public class CryptographyHashTests {
             assertEquals(WELL_KNOWN_HASH, validCopy);
 
             // Assert immutable hash equals
+            assertTrue(immutable.equals(validCopy));
             assertTrue(immutableCopy.equals(validCopy));
             assertFalse(validCopy.equals(immutableCopy));
 
@@ -310,6 +312,7 @@ public class CryptographyHashTests {
 
             // immutable getValue Validations
             assertNotSame(validCopy.getValue(), immutableCopy.getValue());
+            assertNotSame(validCopy.getValue(), immutable.getValue());
         }
     }
 

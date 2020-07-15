@@ -26,8 +26,10 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import static com.servercurio.fabric.lang.ComparableConstants.EQUAL;
+import static com.servercurio.fabric.lang.ComparableConstants.GREATER_THAN;
 import static com.servercurio.fabric.lang.ComparableConstants.LESS_THAN;
 
 public class CipherTransformation implements Comparable<CipherTransformation>, CryptoPrimitiveSupplier<Cipher> {
@@ -38,11 +40,11 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
 
     //region Constructors
     public CipherTransformation() {
-        this(CipherAlgorithm.AES_256);
+        this(CipherAlgorithm.AES);
     }
 
     public CipherTransformation(final CipherAlgorithm algorithm) {
-        this(algorithm, CipherMode.GCM, CipherPadding.NONE);
+        this(algorithm, CipherMode.GCM);
     }
 
     public CipherTransformation(final CipherAlgorithm algorithm, final CipherMode mode) {
@@ -140,7 +142,7 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
         }
 
         if (that == null) {
-            return LESS_THAN;
+            return GREATER_THAN;
         }
 
         return new CompareToBuilder()
@@ -181,7 +183,7 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
+        return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
                 .append("algorithm", algorithm)
                 .append("mode", mode)
                 .append("padding", padding)

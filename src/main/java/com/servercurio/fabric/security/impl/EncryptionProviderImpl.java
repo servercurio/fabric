@@ -19,6 +19,7 @@ package com.servercurio.fabric.security.impl;
 import com.servercurio.fabric.security.CipherTransformation;
 import com.servercurio.fabric.security.CryptographyException;
 import com.servercurio.fabric.security.spi.EncryptionProvider;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -59,21 +60,27 @@ public class EncryptionProviderImpl implements EncryptionProvider {
     private int deriveNonceSize(final CipherTransformation algorithm) {
         final Cipher cipher = crypto.primitive(algorithm);
 
-        return switch (algorithm.getMode()) {
-            case GCM -> GCM_NONCE_SIZE;
-            case CTR -> cipher.getBlockSize() - CTR_COUNTER_SIZE;
-            default -> cipher.getBlockSize();
-        };
+        switch (algorithm.getMode()) {
+            case GCM:
+                return GCM_NONCE_SIZE;
+            case CTR:
+                return cipher.getBlockSize() - CTR_COUNTER_SIZE;
+            default:
+                return cipher.getBlockSize();
+        }
     }
 
     private AlgorithmParameterSpec deriveParameters(final CipherTransformation algorithm, final byte[] iv) {
         final Cipher cipher = crypto.primitive(algorithm);
 
-        return switch (algorithm.getMode()) {
-            case GCM -> new GCMParameterSpec(GCM_TAG_SIZE, iv);
-            case CTR -> new IvParameterSpec(deriveCounterIv(cipher.getBlockSize(), CTR_COUNTER_SIZE, iv));
-            default -> new IvParameterSpec(iv);
-        };
+        switch (algorithm.getMode()) {
+            case GCM:
+                return new GCMParameterSpec(GCM_TAG_SIZE, iv);
+            case CTR:
+                return new IvParameterSpec(deriveCounterIv(cipher.getBlockSize(), CTR_COUNTER_SIZE, iv));
+            default:
+                return new IvParameterSpec(iv);
+        }
     }
 
     @Override
@@ -103,11 +110,15 @@ public class EncryptionProviderImpl implements EncryptionProvider {
             final AlgorithmParameterSpec parameterSpec = deriveParameters(algorithm, iv);
             cipher.init(Cipher.DECRYPT_MODE, key, parameterSpec);
 
-            try (final CipherInputStream iStream = new CipherInputStream(cipherStream, cipher)) {
-                iStream.transferTo(clearStream);
-                clearStream.flush();
-            }
+            final CipherInputStream iStream = new CipherInputStream(cipherStream, cipher);
+            iStream.transferTo(clearStream);
+            clearStream.flush();
 
+            if (clearStream instanceof FileOutputStream) {
+                final FileOutputStream fos = (FileOutputStream) clearStream;
+                fos.getChannel().force(true);
+                fos.getFD().sync();
+            }
         } catch (IOException | GeneralSecurityException ex) {
             throw new CryptographyException(ex);
         }
@@ -174,11 +185,17 @@ public class EncryptionProviderImpl implements EncryptionProvider {
             cipher.init(Cipher.ENCRYPT_MODE, key, parameterSpec);
 
             try (final CipherOutputStream oStream = new CipherOutputStream(cipherStream, cipher)) {
+
                 clearStream.transferTo(oStream);
                 oStream.flush();
                 cipherStream.flush();
-            }
 
+                if (cipherStream instanceof FileOutputStream) {
+                    final FileOutputStream fos = (FileOutputStream) cipherStream;
+                    fos.getChannel().force(true);
+                    fos.getFD().sync();
+                }
+            }
         } catch (IOException | GeneralSecurityException ex) {
             throw new CryptographyException(ex);
         }

@@ -33,7 +33,8 @@ public enum HashAlgorithm implements CryptoPrimitiveSupplier<MessageDigest> {
     SHA3_224(5, "SHA3-224", 224),
     SHA3_256(6, "SHA3-256", 256),
     SHA3_384(7, "SHA3-384", 384),
-    SHA3_512(8, "SHA3-512", 512);
+    SHA3_512(8, "SHA3-512", 512),
+    SHA1(9, "SHA-1", 160);
 
     private static final Map<Integer, HashAlgorithm> idMap = new HashMap<>();
 

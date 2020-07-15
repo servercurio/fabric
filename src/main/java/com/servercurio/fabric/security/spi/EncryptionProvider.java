@@ -32,114 +32,312 @@ public interface EncryptionProvider {
         return new CipherTransformation();
     }
 
+    /**
+     *
+     * @param key
+     * @param iv
+     * @param cipherStream
+     * @param clearStream
+     * @return
+     */
     default Future<?> decryptAsync(final SecretKey key, final byte[] iv, final InputStream cipherStream,
                                       final OutputStream clearStream) {
         return decryptAsync(getDefaultAlgorithm(), key, iv, cipherStream, clearStream);
     }
 
+    /**
+     *
+     * @param algorithm
+     * @param key
+     * @param iv
+     * @param cipherStream
+     * @param clearStream
+     * @return
+     */
     Future<?> decryptAsync(final CipherTransformation algorithm, final SecretKey key, final byte[] iv,
                               final InputStream cipherStream, final OutputStream clearStream);
 
+    /**
+     *
+     * @param key
+     * @param iv
+     * @param data
+     * @return
+     */
     default Future<byte[]> decryptAsync(final SecretKey key, final byte[] iv, final byte[] data) {
         return decryptAsync(getDefaultAlgorithm(), key, iv, data);
     }
 
+    /**
+     *
+     * @param algorithm
+     * @param key
+     * @param iv
+     * @param data
+     * @return
+     */
     Future<byte[]> decryptAsync(final CipherTransformation algorithm,
                                 final SecretKey key,
                                 final byte[] iv,
                                 final byte[] data);
 
+    /**
+     *
+     * @param key
+     * @param iv
+     * @param buffer
+     * @return
+     */
     default Future<ByteBuffer> decryptAsync(final SecretKey key, final byte[] iv, final ByteBuffer buffer) {
         return decryptAsync(getDefaultAlgorithm(), key, iv, buffer);
     }
 
+    /**
+     *
+     * @param algorithm
+     * @param key
+     * @param iv
+     * @param buffer
+     * @return
+     */
     Future<ByteBuffer> decryptAsync(final CipherTransformation algorithm,
                                     final SecretKey key,
                                     final byte[] iv,
                                     final ByteBuffer buffer);
 
-    ////
-
+    /**
+     *
+     * @param key
+     * @param iv
+     * @param cipherStream
+     * @param clearStream
+     */
     default void decryptSync(final SecretKey key, final byte[] iv, final InputStream cipherStream,
                              final OutputStream clearStream) {
         decryptSync(getDefaultAlgorithm(), key, iv, cipherStream, clearStream);
     }
 
+    /**
+     *
+     * @param algorithm
+     * @param key
+     * @param iv
+     * @param cipherStream
+     * @param clearStream
+     */
     void decryptSync(final CipherTransformation algorithm,
                      final SecretKey key,
                      final byte[] iv,
                      final InputStream cipherStream,
                      final OutputStream clearStream);
 
+    /**
+     *
+     * @param key
+     * @param iv
+     * @param data
+     * @return
+     */
     default byte[] decryptSync(final SecretKey key, final byte[] iv, final byte[] data) {
         return decryptSync(getDefaultAlgorithm(), key, iv, data);
     }
 
+    /**
+     *
+     * @param algorithm
+     * @param key
+     * @param iv
+     * @param data
+     * @return
+     */
     byte[] decryptSync(final CipherTransformation algorithm, final SecretKey key, final byte[] iv, final byte[] data);
 
+    /**
+     *
+     * @param key
+     * @param iv
+     * @param buffer
+     * @return
+     */
     default ByteBuffer decryptSync(final SecretKey key, final byte[] iv, final ByteBuffer buffer) {
         return decryptSync(getDefaultAlgorithm(), key, iv, buffer);
     }
 
+    /**
+     *
+     * @param algorithm
+     * @param key
+     * @param iv
+     * @param buffer
+     * @return
+     */
     ByteBuffer decryptSync(final CipherTransformation algorithm,
                            final SecretKey key,
                            final byte[] iv,
                            final ByteBuffer buffer);
 
-    //////
-
+    /**
+     *
+     * @param key
+     * @param iv
+     * @param clearStream
+     * @param cipherStream
+     * @return
+     */
     default Future<?> encryptAsync(final SecretKey key, final byte[] iv, final InputStream clearStream,
                                       final OutputStream cipherStream) {
         return encryptAsync(getDefaultAlgorithm(), key, iv, clearStream, cipherStream);
     }
 
+    /**
+     *
+     * @param algorithm
+     * @param key
+     * @param iv
+     * @param clearStream
+     * @param cipherStream
+     * @return
+     */
     Future<?> encryptAsync(final CipherTransformation algorithm, final SecretKey key, final byte[] iv,
                               final InputStream clearStream, final OutputStream cipherStream);
 
+    /**
+     *
+     * @param key
+     * @param iv
+     * @param data
+     * @return
+     */
     default Future<byte[]> encryptAsync(final SecretKey key, final byte[] iv, final byte[] data) {
         return encryptAsync(getDefaultAlgorithm(), key, iv, data);
     }
 
+    /**
+     *
+     * @param algorithm
+     * @param key
+     * @param iv
+     * @param data
+     * @return
+     */
     Future<byte[]> encryptAsync(final CipherTransformation algorithm, final SecretKey key, final byte[] iv,
                                 final byte[] data);
 
+    /**
+     *
+     * @param key
+     * @param iv
+     * @param buffer
+     * @return
+     */
     default Future<ByteBuffer> encryptAsync(final SecretKey key, final byte[] iv, final ByteBuffer buffer) {
         return encryptAsync(getDefaultAlgorithm(), key, iv, buffer);
     }
 
+    /**
+     *
+     * @param algorithm
+     * @param key
+     * @param iv
+     * @param buffer
+     * @return
+     */
     Future<ByteBuffer> encryptAsync(final CipherTransformation algorithm, final SecretKey key, final byte[] iv,
                                     final ByteBuffer buffer);
 
+    /**
+     *
+     * @param key
+     * @param iv
+     * @param clearStream
+     * @param cipherStream
+     */
     default void encryptSync(final SecretKey key, final byte[] iv, final InputStream clearStream,
                              final OutputStream cipherStream) {
         encryptSync(getDefaultAlgorithm(), key, iv, clearStream, cipherStream);
     }
 
+    /**
+     *
+     * @param algorithm
+     * @param key
+     * @param iv
+     * @param clearStream
+     * @param cipherStream
+     */
     void encryptSync(final CipherTransformation algorithm, final SecretKey key, final byte[] iv,
                      final InputStream clearStream, final OutputStream cipherStream);
 
+    /**
+     *
+     * @param key
+     * @param iv
+     * @param data
+     * @return
+     */
     default byte[] encryptSync(final SecretKey key, final byte[] iv, final byte[] data) {
         return encryptSync(getDefaultAlgorithm(), key, iv, data);
     }
 
+    /**
+     *
+     * @param algorithm
+     * @param key
+     * @param iv
+     * @param data
+     * @return
+     */
     byte[] encryptSync(final CipherTransformation algorithm, final SecretKey key, final byte[] iv, final byte[] data);
 
+    /**
+     *
+     * @param key
+     * @param iv
+     * @param buffer
+     * @return
+     */
     default ByteBuffer encryptSync(final SecretKey key, final byte[] iv, final ByteBuffer buffer) {
         return encryptSync(getDefaultAlgorithm(), key, iv, buffer);
     }
 
+    /**
+     *
+     * @param algorithm
+     * @param key
+     * @param iv
+     * @param buffer
+     * @return
+     */
     ByteBuffer encryptSync(final CipherTransformation algorithm, final SecretKey key, final byte[] iv,
                            final ByteBuffer buffer);
 
+    /**
+     *
+     * @return
+     */
     default Future<byte[]> nonceAsync() {
         return nonceAsync(getDefaultAlgorithm());
     }
 
+    /**
+     *
+     * @param algorithm
+     * @return
+     */
     Future<byte[]> nonceAsync(final CipherTransformation algorithm);
 
+    /**
+     *
+     * @return
+     */
     default byte[] nonceSync() {
         return nonceSync(getDefaultAlgorithm());
     }
 
+    /**
+     *
+     * @param algorithm
+     * @return
+     */
     byte[] nonceSync(final CipherTransformation algorithm);
 }

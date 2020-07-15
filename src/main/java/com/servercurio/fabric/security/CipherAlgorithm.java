@@ -21,9 +21,7 @@ import java.util.Map;
 
 public enum CipherAlgorithm {
     NONE(0, "NONE", "NONE"),
-    AES_128(1, "AES_128", "AES"),
-    AES_192(2, "AES_192", "AES"),
-    AES_256(3, "AES_256", "AES");
+    AES(1, "AES", "AES");
 
     private static final Map<Integer, CipherAlgorithm> idMap = new HashMap<>();
 
