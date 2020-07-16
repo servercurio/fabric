@@ -131,7 +131,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
 
         try {
             final AlgorithmParameterSpec parameterSpec = deriveParameters(algorithm, iv);
-            cipher.init(Cipher.ENCRYPT_MODE, key, parameterSpec);
+            cipher.init(Cipher.DECRYPT_MODE, key, parameterSpec);
 
             return cipher.doFinal(data);
         } catch (GeneralSecurityException ex) {
@@ -151,7 +151,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
             final ByteBuffer clearText = ByteBuffer.allocate(cipher.getOutputSize(buffer.capacity()));
             cipher.doFinal(buffer, clearText);
 
-            return clearText;
+            return clearText.flip();
         } catch (GeneralSecurityException ex) {
             throw new CryptographyException(ex);
         }
@@ -228,7 +228,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
             final ByteBuffer cipherText = ByteBuffer.allocate(cipher.getOutputSize(buffer.capacity()));
             cipher.doFinal(buffer, cipherText);
 
-            return cipherText;
+            return cipherText.flip();
         } catch (GeneralSecurityException ex) {
             throw new CryptographyException(ex);
         }

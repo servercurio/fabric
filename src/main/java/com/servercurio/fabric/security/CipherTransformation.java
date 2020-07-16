@@ -183,7 +183,7 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
+        return new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
                 .append("algorithm", algorithm)
                 .append("mode", mode)
                 .append("padding", padding)
