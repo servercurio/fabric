@@ -370,6 +370,21 @@
 
     </dependencies>
 
+    <!-- Profiles -->
+    <profiles>
+        <profile>
+            <id>missing-maven-opts</id>
+            <activation>
+                <property>
+                    <name>!env.MAVEN_OPTS</name>
+                </property>
+            </activation>
+            <properties>
+                <env.MAVEN_OPTS/>
+            </properties>
+        </profile>
+    </profiles>
+
     <!-- Project Build Configuration -->
     <build>
         <!-- Build Plugins -->
@@ -378,6 +393,13 @@
                 <groupId>org.sonarsource.scanner.maven</groupId>
                 <artifactId>sonar-maven-plugin</artifactId>
                 <version>${sonar.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm</artifactId>
+                        <version>${ow2.asm.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <groupId>pl.project13.maven</groupId>
@@ -418,6 +440,9 @@
                         <version>${ow2.asm.version}</version>
                     </dependency>
                 </dependencies>
+                <configuration>
+                    <argLine>@{argLine} ${env.MAVEN_OPTS}</argLine>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
