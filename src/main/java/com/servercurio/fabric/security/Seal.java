@@ -140,7 +140,7 @@ public class Seal implements Comparable<Seal> {
             return true;
         }
 
-        if (!(o instanceof Seal)) {
+        if (o == null || (getClass() != o.getClass() && !o.getClass().isAssignableFrom(getClass()))) {
             return false;
         }
 

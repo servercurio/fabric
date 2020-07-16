@@ -168,7 +168,7 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
             return true;
         }
 
-        if (!(o instanceof CipherTransformation)) {
+        if (o == null || (getClass() != o.getClass() && !o.getClass().isAssignableFrom(getClass()))) {
             return false;
         }
 
