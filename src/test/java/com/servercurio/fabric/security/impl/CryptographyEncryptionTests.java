@@ -69,9 +69,9 @@ public class CryptographyEncryptionTests {
 
     private static final int AES_KEY_SIZE = 256;
 
-    private static final String LARGE_FILE_NAME = "cbad3520af182b5d23b60412dff6ea5fa754c82c.bin";
-    private static final String ENCRYPTED_LARGE_FILE_NAME = "cbad3520af182b5d23b60412dff6ea5fa754c82c.enc";
-    private static final String DECRYPTED_LARGE_FILE_NAME = "cbad3520af182b5d23b60412dff6ea5fa754c82c.dec";
+    private static final String LARGE_FILE_NAME = "8b3b606bb5cc9e6e4a05ee6091bb0fbb55d419d414189346e200b7cd240db4a58143bf32fcdea79bf8d71f04aae7adcb.bin";
+    private static final String ENCRYPTED_LARGE_FILE_NAME = "8b3b606bb5cc9e6e4a05ee6091bb0fbb55d419d414189346e200b7cd240db4a58143bf32fcdea79bf8d71f04aae7adcb.enc";
+    private static final String DECRYPTED_LARGE_FILE_NAME = "8b3b606bb5cc9e6e4a05ee6091bb0fbb55d419d414189346e200b7cd240db4a58143bf32fcdea79bf8d71f04aae7adcb.dec";
 
     public static Stream<CipherTransformation> transformationSource() {
         return Stream.of(

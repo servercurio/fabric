@@ -18,6 +18,7 @@ package com.servercurio.fabric.security;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.Random;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -36,10 +37,10 @@ public class CryptographyEqualsTests {
     @ParameterizedTest
     @Order(50)
     @DisplayName("Cryptography :: SecureEquals -> Basic Byte Array")
-    @ValueSource(ints = {1, 5, 10, 100, 1024})
+    @ValueSource(ints = {1, 5, 10, 76})
     public void testCryptoSecureEqualsByteArray(int length) throws Exception {
         try (final Cryptography crypto = Cryptography.newDefaultInstance()) {
-            final SecureRandom random = crypto.random();
+            final Random random = new Random();
 
             final byte[] originalValue = new byte[length];
             random.nextBytes(originalValue);
@@ -55,10 +56,10 @@ public class CryptographyEqualsTests {
     @ParameterizedTest
     @Order(25)
     @DisplayName("Cryptography :: SecureEquals -> Basic Char Array")
-    @ValueSource(ints = {1, 5, 10, 100, 1024})
+    @ValueSource(ints = {1, 5, 10, 76})
     public void testCryptoSecureEqualsCharArray(int length) throws Exception {
         try (final Cryptography crypto = Cryptography.newDefaultInstance()) {
-            final SecureRandom random = crypto.random();
+            final Random random = new Random();
 
             final char[] originalValue = new char[length];
 
@@ -77,10 +78,10 @@ public class CryptographyEqualsTests {
     @ParameterizedTest
     @Order(75)
     @DisplayName("Cryptography :: SecureEquals -> Basic Int Array")
-    @ValueSource(ints = {1, 5, 10, 100, 1024})
+    @ValueSource(ints = {1, 5, 10, 76})
     public void testCryptoSecureEqualsIntArray(int length) throws Exception {
         try (final Cryptography crypto = Cryptography.newDefaultInstance()) {
-            final SecureRandom random = crypto.random();
+            final Random random = new Random();
 
             final int[] originalValue = new int[length];
 
@@ -99,10 +100,10 @@ public class CryptographyEqualsTests {
     @ParameterizedTest
     @Order(100)
     @DisplayName("Cryptography :: SecureEquals -> Basic Long Array")
-    @ValueSource(ints = {1, 5, 10, 100, 1024})
+    @ValueSource(ints = {1, 5, 10, 76})
     public void testCryptoSecureEqualsLongArray(int length) throws Exception {
         try (final Cryptography crypto = Cryptography.newDefaultInstance()) {
-            final SecureRandom random = crypto.random();
+            final Random random = new Random();
 
             final long[] originalValue = new long[length];
 
