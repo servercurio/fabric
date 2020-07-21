@@ -33,7 +33,7 @@ jobs:
       - run:
           command: |
             tar czvf ~/repo/apidocs.tar.gz target/site/apidocs
-      - run: tar czvf ~/repo/junit-test-results.tar.gz fabric -C ~/repo/junit/
+      - run: cd ~/repo/junit; tar czvf ~/repo/junit-test-results.tar.gz fabric/*
       # Download and cache dependencies
       - restore_cache:
           keys:
