@@ -33,6 +33,7 @@ jobs:
       - run:
           command: |
             tar czvf ~/repo/apidocs.tar.gz target/site/apidocs
+      - run: tar czvf ~/repo/junit-test-results.tar.gz fabric -C ~/repo/junit/
       # Download and cache dependencies
       - restore_cache:
           keys:
@@ -53,6 +54,8 @@ jobs:
 
       - store_artifacts:
           path: ~/repo/apidocs.tar.gz
+      - store_artifacts:
+          path: ~/repo/junit-test-results.tar.gz
 
 workflows:
   version: 2
