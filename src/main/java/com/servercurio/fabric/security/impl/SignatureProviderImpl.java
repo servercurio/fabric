@@ -116,8 +116,8 @@ public class SignatureProviderImpl implements SignatureProvider {
         try {
             signature.initSign(key, crypto.random());
 
-            for (final Hash h : hashes) {
-                signature.update(h.getValue());
+            for (final Hash hash : hashes) {
+                signature.update(hash.getValue());
             }
 
             return new Seal(algorithm, signature.sign());

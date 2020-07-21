@@ -114,9 +114,9 @@ public class MacProviderImpl implements MacProvider {
         try {
             mac.init(key);
 
-            for (final Hash h : hashes) {
-                if (h != null) {
-                    mac.update(h.getValue());
+            for (final Hash hash : hashes) {
+                if (hash != null) {
+                    mac.update(hash.getValue());
                 } else {
                     mac.update(Hash.EMPTY.getValue());
                 }

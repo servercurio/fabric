@@ -103,9 +103,9 @@ public class DigestProviderImpl implements DigestProvider {
     public Hash digestSync(final HashAlgorithm algorithm, final Hash... hashes) {
         final MessageDigest digest = crypto.primitive(algorithm);
 
-        for (final Hash h : hashes) {
-            if (h != null) {
-                digest.update(h.getValue());
+        for (final Hash hash : hashes) {
+            if (hash != null) {
+                digest.update(hash.getValue());
             } else {
                 digest.update(Hash.EMPTY.getValue());
             }
