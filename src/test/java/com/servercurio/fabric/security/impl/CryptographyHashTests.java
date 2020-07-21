@@ -24,10 +24,8 @@ import com.servercurio.fabric.security.HashAlgorithm;
 import com.servercurio.fabric.security.ImmutableHash;
 import com.servercurio.fabric.security.MockHash;
 import com.servercurio.fabric.security.spi.DigestProvider;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -72,35 +70,35 @@ public class CryptographyHashTests {
 
     static {
         WELL_KNOWN_HASH = new MockHash(HashAlgorithm.SHA_384,
-                                       Base64.getDecoder()
-                                             .decode("pKA/NF3xZhm+DOBne5MhXxq41eSYHyom/bAPvyCrrDNT8vt5eODhhtWG7LpQlHEE"));
+                Base64.getDecoder()
+                      .decode("pKA/NF3xZhm+DOBne5MhXxq41eSYHyom/bAPvyCrrDNT8vt5eODhhtWG7LpQlHEE"));
 
         ALTERNATE_WELL_KNOWN_HASH = new MockHash(HashAlgorithm.SHA_384,
-                                                 Base64.getDecoder()
-                                                       .decode("RXzuRQUHOT5zssgipY+PLujP4FrmQJQzVAvni+s52GcwtzkAnq+nRwwmW7noRqvx"));
+                Base64.getDecoder()
+                      .decode("RXzuRQUHOT5zssgipY+PLujP4FrmQJQzVAvni+s52GcwtzkAnq+nRwwmW7noRqvx"));
 
         HASH_OF_WELL_KNOWN_HASHES = new MockHash(HashAlgorithm.SHA_384,
-                                                 Base64.getDecoder()
-                                                       .decode("jJ2gb5dQn1Bxdz0fxLowPxakxynJFajOjm7PBbkIVuznXA/9Cfa4QlFAagSyvDTm"));
+                Base64.getDecoder()
+                      .decode("jJ2gb5dQn1Bxdz0fxLowPxakxynJFajOjm7PBbkIVuznXA/9Cfa4QlFAagSyvDTm"));
 
         HASH_OF_NULL_LEFT_HASHES = new MockHash(HashAlgorithm.SHA_384,
-                                                Base64.getDecoder()
-                                                      .decode("91ToGuzfdK+VDc/57EZUmvBbDaTkOoFcTaR+nXKhsebBYyYzOfW2GQCMHnGVVrik"));
+                Base64.getDecoder()
+                      .decode("91ToGuzfdK+VDc/57EZUmvBbDaTkOoFcTaR+nXKhsebBYyYzOfW2GQCMHnGVVrik"));
 
         HASH_OF_NULL_RIGHT_HASHES = new MockHash(HashAlgorithm.SHA_384,
-                                                 Base64.getDecoder()
-                                                       .decode("1F4jTbdJHows8y3NTinV6PLiwNe9fKCKfOKSZ+eL8vBxErjzdAv5g3JHgAzRZFMc"));
+                Base64.getDecoder()
+                      .decode("1F4jTbdJHows8y3NTinV6PLiwNe9fKCKfOKSZ+eL8vBxErjzdAv5g3JHgAzRZFMc"));
 
         LARGE_FILE_KNOWN_HASH = new MockHash(HashAlgorithm.SHA_384,
-                                             Base64.getDecoder()
-                                                   .decode("iztga7XMnm5KBe5gkbsPu1XUGdQUGJNG4gC3zSQNtKWBQ78y/N6nm/jXHwSq563L"));
+                Base64.getDecoder()
+                      .decode("iztga7XMnm5KBe5gkbsPu1XUGdQUGJNG4gC3zSQNtKWBQ78y/N6nm/jXHwSq563L"));
 
         IN_MEMORY_DATA = Base64.getDecoder()
                                .decode("3K0By4fDo8jHaEoYKK7vtyb5KE1t1uYKG5p+r5ZNcnvNYCYZSTgAB6PpvHmsSGTwWov+42iTjzg9Eu4DBHtAdw==");
 
         IN_MEMORY_DATA_KNOWN_HASH = new MockHash(HashAlgorithm.SHA_384,
-                                                 Base64.getDecoder()
-                                                       .decode("AhmB45prgDLfSo23+TqTa3U231O85iO424sEe+lgxVhPbyviG23klX+VRcNOAOMj"));
+                Base64.getDecoder()
+                      .decode("AhmB45prgDLfSo23+TqTa3U231O85iO424sEe+lgxVhPbyviG23klX+VRcNOAOMj"));
     }
 
     @AfterAll
@@ -141,26 +139,28 @@ public class CryptographyHashTests {
     @Test
     @Order(176)
     @DisplayName("Hash :: SHA_384 -> Async Byte Buffer")
-    public void testCryptoSha384AsyncByteBuffer() throws ExecutionException, InterruptedException {
-        final DigestProvider provider = Cryptography.newDefaultInstance().digest();
+    public void testCryptoSha384AsyncByteBuffer() throws Exception {
+        try (final Cryptography crypto = Cryptography.newDefaultInstance()) {
+            final DigestProvider provider = crypto.digest();
 
-        final ByteBuffer defaultBuffer = ByteBuffer.allocateDirect(IN_MEMORY_DATA.length);
-        defaultBuffer.put(IN_MEMORY_DATA).rewind();
+            final ByteBuffer defaultBuffer = ByteBuffer.allocateDirect(IN_MEMORY_DATA.length);
+            defaultBuffer.put(IN_MEMORY_DATA).rewind();
 
-        final ByteBuffer explicitBuffer = ByteBuffer.allocateDirect(IN_MEMORY_DATA.length);
-        explicitBuffer.put(IN_MEMORY_DATA).rewind();
+            final ByteBuffer explicitBuffer = ByteBuffer.allocateDirect(IN_MEMORY_DATA.length);
+            explicitBuffer.put(IN_MEMORY_DATA).rewind();
 
-        final Future<Hash> defaultBufferHash = provider
-                .digestAsync(defaultBuffer);
+            final Future<Hash> defaultBufferHash = provider
+                    .digestAsync(defaultBuffer);
 
-        final Future<Hash> explicitBufferHash = provider
-                .digestAsync(HashAlgorithm.SHA_384, explicitBuffer);
+            final Future<Hash> explicitBufferHash = provider
+                    .digestAsync(HashAlgorithm.SHA_384, explicitBuffer);
 
-        assertEquals(IN_MEMORY_DATA_KNOWN_HASH, defaultBufferHash.get());
-        assertArrayEquals(IN_MEMORY_DATA_KNOWN_HASH.getValue(), defaultBufferHash.get().getValue());
+            assertEquals(IN_MEMORY_DATA_KNOWN_HASH, defaultBufferHash.get());
+            assertArrayEquals(IN_MEMORY_DATA_KNOWN_HASH.getValue(), defaultBufferHash.get().getValue());
 
-        assertEquals(IN_MEMORY_DATA_KNOWN_HASH, explicitBufferHash.get());
-        assertArrayEquals(IN_MEMORY_DATA_KNOWN_HASH.getValue(), explicitBufferHash.get().getValue());
+            assertEquals(IN_MEMORY_DATA_KNOWN_HASH, explicitBufferHash.get());
+            assertArrayEquals(IN_MEMORY_DATA_KNOWN_HASH.getValue(), explicitBufferHash.get().getValue());
+        }
     }
 
     @Test
@@ -194,53 +194,57 @@ public class CryptographyHashTests {
     @Test
     @Order(151)
     @DisplayName("Hash :: SHA_384 -> Async In Memory Data")
-    public void testCryptoSha384AsyncInMemoryData() throws ExecutionException, InterruptedException {
-        final DigestProvider provider = Cryptography.newDefaultInstance().digest();
+    public void testCryptoSha384AsyncInMemoryData() throws Exception {
+        try (final Cryptography crypto = Cryptography.newDefaultInstance()) {
+            final DigestProvider provider = crypto.digest();
 
-        final Future<Hash> defaultMemoryDataHash = provider.digestAsync(IN_MEMORY_DATA);
+            final Future<Hash> defaultMemoryDataHash = provider.digestAsync(IN_MEMORY_DATA);
 
-        final Future<Hash> explicitMemoryDataHash = provider
-                .digestAsync(HashAlgorithm.SHA_384, IN_MEMORY_DATA);
+            final Future<Hash> explicitMemoryDataHash = provider
+                    .digestAsync(HashAlgorithm.SHA_384, IN_MEMORY_DATA);
 
 
-        assertEquals(IN_MEMORY_DATA_KNOWN_HASH, defaultMemoryDataHash.get());
-        assertArrayEquals(IN_MEMORY_DATA_KNOWN_HASH.getValue(), defaultMemoryDataHash.get().getValue());
+            assertEquals(IN_MEMORY_DATA_KNOWN_HASH, defaultMemoryDataHash.get());
+            assertArrayEquals(IN_MEMORY_DATA_KNOWN_HASH.getValue(), defaultMemoryDataHash.get().getValue());
 
-        assertEquals(IN_MEMORY_DATA_KNOWN_HASH, explicitMemoryDataHash.get());
-        assertArrayEquals(IN_MEMORY_DATA_KNOWN_HASH.getValue(), explicitMemoryDataHash.get().getValue());
+            assertEquals(IN_MEMORY_DATA_KNOWN_HASH, explicitMemoryDataHash.get());
+            assertArrayEquals(IN_MEMORY_DATA_KNOWN_HASH.getValue(), explicitMemoryDataHash.get().getValue());
+        }
     }
 
     @Test
     @Order(126)
     @DisplayName("Hash :: SHA_384 -> Async Large File")
-    public void testCryptoSha384AsyncLargeFile() throws IOException, ExecutionException, InterruptedException {
-        final DigestProvider provider = Cryptography.newDefaultInstance().digest();
-        final ClassLoader classLoader = getClass().getClassLoader();
+    public void testCryptoSha384AsyncLargeFile() throws Exception {
+        try (final Cryptography crypto = Cryptography.newDefaultInstance()) {
+            final DigestProvider provider = crypto.digest();
+            final ClassLoader classLoader = getClass().getClassLoader();
 
-        try (final InputStream stream = classLoader.getResourceAsStream(LARGE_FILE_NAME)) {
-            final Future<Hash> defaultFileHash = provider.digestAsync(stream);
+            try (final InputStream stream = classLoader.getResourceAsStream(LARGE_FILE_NAME)) {
+                final Future<Hash> defaultFileHash = provider.digestAsync(stream);
 
-            assertNotNull(defaultFileHash);
-            assertEquals(LARGE_FILE_KNOWN_HASH, defaultFileHash.get());
-            assertArrayEquals(LARGE_FILE_KNOWN_HASH.getValue(), defaultFileHash.get().getValue());
-        }
+                assertNotNull(defaultFileHash);
+                assertEquals(LARGE_FILE_KNOWN_HASH, defaultFileHash.get());
+                assertArrayEquals(LARGE_FILE_KNOWN_HASH.getValue(), defaultFileHash.get().getValue());
+            }
 
-        try (final InputStream stream = classLoader.getResourceAsStream(LARGE_FILE_NAME)) {
-            final Future<Hash> explicitFileHash = provider.digestAsync(HashAlgorithm.SHA_384, stream);
+            try (final InputStream stream = classLoader.getResourceAsStream(LARGE_FILE_NAME)) {
+                final Future<Hash> explicitFileHash = provider.digestAsync(HashAlgorithm.SHA_384, stream);
 
-            assertNotNull(explicitFileHash);
-            assertEquals(LARGE_FILE_KNOWN_HASH, explicitFileHash.get());
-            assertArrayEquals(LARGE_FILE_KNOWN_HASH.getValue(), explicitFileHash.get().getValue());
-        }
+                assertNotNull(explicitFileHash);
+                assertEquals(LARGE_FILE_KNOWN_HASH, explicitFileHash.get());
+                assertArrayEquals(LARGE_FILE_KNOWN_HASH.getValue(), explicitFileHash.get().getValue());
+            }
 
 
-        try (
-                final InputStream stream = classLoader.getResourceAsStream(LARGE_FILE_NAME);
-                final ThrowingInputStream throwingStream = new ThrowingInputStream(stream)
-        ) {
-            assertThrows(ExecutionException.class, () -> {
-                provider.digestAsync(HashAlgorithm.SHA_384, throwingStream).get();
-            });
+            try (
+                    final InputStream stream = classLoader.getResourceAsStream(LARGE_FILE_NAME);
+                    final ThrowingInputStream throwingStream = new ThrowingInputStream(stream)
+            ) {
+                assertThrows(ExecutionException.class, () -> {
+                    provider.digestAsync(HashAlgorithm.SHA_384, throwingStream).get();
+                });
+            }
         }
     }
 
@@ -319,25 +323,27 @@ public class CryptographyHashTests {
     @Test
     @Order(175)
     @DisplayName("Hash :: SHA_384 -> Sync Byte Buffer")
-    public void testCryptoSha384SyncByteBuffer() {
-        final DigestProvider provider = Cryptography.newDefaultInstance().digest();
+    public void testCryptoSha384SyncByteBuffer() throws Exception {
+        try (final Cryptography crypto = Cryptography.newDefaultInstance()) {
+            final DigestProvider provider = crypto.digest();
 
-        final ByteBuffer buffer = ByteBuffer.allocateDirect(IN_MEMORY_DATA.length);
-        buffer.put(IN_MEMORY_DATA).rewind();
+            final ByteBuffer buffer = ByteBuffer.allocateDirect(IN_MEMORY_DATA.length);
+            buffer.put(IN_MEMORY_DATA).rewind();
 
-        final Hash defaultBufferHash = provider
-                .digestSync(buffer);
+            final Hash defaultBufferHash = provider
+                    .digestSync(buffer);
 
-        buffer.rewind();
+            buffer.rewind();
 
-        final Hash explicitBufferHash = provider
-                .digestSync(HashAlgorithm.SHA_384, buffer);
+            final Hash explicitBufferHash = provider
+                    .digestSync(HashAlgorithm.SHA_384, buffer);
 
-        assertEquals(IN_MEMORY_DATA_KNOWN_HASH, defaultBufferHash);
-        assertArrayEquals(IN_MEMORY_DATA_KNOWN_HASH.getValue(), defaultBufferHash.getValue());
+            assertEquals(IN_MEMORY_DATA_KNOWN_HASH, defaultBufferHash);
+            assertArrayEquals(IN_MEMORY_DATA_KNOWN_HASH.getValue(), defaultBufferHash.getValue());
 
-        assertEquals(IN_MEMORY_DATA_KNOWN_HASH, explicitBufferHash);
-        assertArrayEquals(IN_MEMORY_DATA_KNOWN_HASH.getValue(), explicitBufferHash.getValue());
+            assertEquals(IN_MEMORY_DATA_KNOWN_HASH, explicitBufferHash);
+            assertArrayEquals(IN_MEMORY_DATA_KNOWN_HASH.getValue(), explicitBufferHash.getValue());
+        }
     }
 
     @Test
@@ -372,53 +378,57 @@ public class CryptographyHashTests {
     @Test
     @Order(150)
     @DisplayName("Hash :: SHA_384 -> Sync In Memory Data")
-    public void testCryptoSha384SyncInMemoryData() {
-        final DigestProvider provider = Cryptography.newDefaultInstance().digest();
+    public void testCryptoSha384SyncInMemoryData() throws Exception {
+        try (final Cryptography crypto = Cryptography.newDefaultInstance()) {
+            final DigestProvider provider = crypto.digest();
 
-        final Hash defaultMemoryDataHash = provider.digestSync(IN_MEMORY_DATA);
+            final Hash defaultMemoryDataHash = provider.digestSync(IN_MEMORY_DATA);
 
-        final Hash explicitMemoryDataHash = provider
-                .digestSync(HashAlgorithm.SHA_384, IN_MEMORY_DATA);
+            final Hash explicitMemoryDataHash = provider
+                    .digestSync(HashAlgorithm.SHA_384, IN_MEMORY_DATA);
 
 
-        assertEquals(IN_MEMORY_DATA_KNOWN_HASH, defaultMemoryDataHash);
-        assertArrayEquals(IN_MEMORY_DATA_KNOWN_HASH.getValue(), defaultMemoryDataHash.getValue());
+            assertEquals(IN_MEMORY_DATA_KNOWN_HASH, defaultMemoryDataHash);
+            assertArrayEquals(IN_MEMORY_DATA_KNOWN_HASH.getValue(), defaultMemoryDataHash.getValue());
 
-        assertEquals(IN_MEMORY_DATA_KNOWN_HASH, explicitMemoryDataHash);
-        assertArrayEquals(IN_MEMORY_DATA_KNOWN_HASH.getValue(), explicitMemoryDataHash.getValue());
+            assertEquals(IN_MEMORY_DATA_KNOWN_HASH, explicitMemoryDataHash);
+            assertArrayEquals(IN_MEMORY_DATA_KNOWN_HASH.getValue(), explicitMemoryDataHash.getValue());
+        }
     }
 
     @Test
     @Order(125)
     @DisplayName("Hash :: SHA_384 -> Sync Large File")
-    public void testCryptoSha384SyncLargeFile() throws IOException {
-        final DigestProvider provider = Cryptography.newDefaultInstance().digest();
-        final ClassLoader classLoader = getClass().getClassLoader();
+    public void testCryptoSha384SyncLargeFile() throws Exception {
+        try (final Cryptography crypto = Cryptography.newDefaultInstance()) {
+            final DigestProvider provider = crypto.digest();
+            final ClassLoader classLoader = getClass().getClassLoader();
 
-        try (final InputStream stream = classLoader.getResourceAsStream(LARGE_FILE_NAME)) {
-            final Hash defaultFileHash = provider.digestSync(stream);
+            try (final InputStream stream = classLoader.getResourceAsStream(LARGE_FILE_NAME)) {
+                final Hash defaultFileHash = provider.digestSync(stream);
 
-            assertNotNull(defaultFileHash);
-            assertEquals(LARGE_FILE_KNOWN_HASH, defaultFileHash);
-            assertArrayEquals(LARGE_FILE_KNOWN_HASH.getValue(), defaultFileHash.getValue());
-        }
+                assertNotNull(defaultFileHash);
+                assertEquals(LARGE_FILE_KNOWN_HASH, defaultFileHash);
+                assertArrayEquals(LARGE_FILE_KNOWN_HASH.getValue(), defaultFileHash.getValue());
+            }
 
-        try (final InputStream stream = classLoader.getResourceAsStream(LARGE_FILE_NAME)) {
-            final Hash explicitFileHash = provider.digestSync(HashAlgorithm.SHA_384, stream);
+            try (final InputStream stream = classLoader.getResourceAsStream(LARGE_FILE_NAME)) {
+                final Hash explicitFileHash = provider.digestSync(HashAlgorithm.SHA_384, stream);
 
-            assertNotNull(explicitFileHash);
-            assertEquals(LARGE_FILE_KNOWN_HASH, explicitFileHash);
-            assertArrayEquals(LARGE_FILE_KNOWN_HASH.getValue(), explicitFileHash.getValue());
-        }
+                assertNotNull(explicitFileHash);
+                assertEquals(LARGE_FILE_KNOWN_HASH, explicitFileHash);
+                assertArrayEquals(LARGE_FILE_KNOWN_HASH.getValue(), explicitFileHash.getValue());
+            }
 
 
-        try (
-                final InputStream stream = classLoader.getResourceAsStream(LARGE_FILE_NAME);
-                final ThrowingInputStream throwingStream = new ThrowingInputStream(stream)
-        ) {
-            assertThrows(CryptographyException.class, () -> {
-                provider.digestSync(HashAlgorithm.SHA_384, throwingStream);
-            });
+            try (
+                    final InputStream stream = classLoader.getResourceAsStream(LARGE_FILE_NAME);
+                    final ThrowingInputStream throwingStream = new ThrowingInputStream(stream)
+            ) {
+                assertThrows(CryptographyException.class, () -> {
+                    provider.digestSync(HashAlgorithm.SHA_384, throwingStream);
+                });
+            }
         }
     }
 }

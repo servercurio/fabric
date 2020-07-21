@@ -70,20 +70,20 @@ public interface SignatureProvider {
 
     /**
      * @param key
-     * @param hash
+     * @param hashes
      * @return
      */
-    default Future<Seal> signAsync(final PrivateKey key, final Hash... hash) {
-        return signAsync(getDefaultAlgorithm(), key, hash);
+    default Future<Seal> signAsync(final PrivateKey key, final Hash... hashes) {
+        return signAsync(getDefaultAlgorithm(), key, hashes);
     }
 
     /**
      * @param algorithm
      * @param key
-     * @param hash
+     * @param hashes
      * @return
      */
-    Future<Seal> signAsync(final SignatureAlgorithm algorithm, final PrivateKey key, final Hash... hash);
+    Future<Seal> signAsync(final SignatureAlgorithm algorithm, final PrivateKey key, final Hash... hashes);
 
     /**
      * @param key
@@ -138,20 +138,20 @@ public interface SignatureProvider {
 
     /**
      * @param key
-     * @param hash
+     * @param hashes
      * @return
      */
-    default Seal signSync(final PrivateKey key, final Hash... hash) {
-        return signSync(getDefaultAlgorithm(), key, hash);
+    default Seal signSync(final PrivateKey key, final Hash... hashes) {
+        return signSync(getDefaultAlgorithm(), key, hashes);
     }
 
     /**
      * @param algorithm
      * @param key
-     * @param hash
+     * @param hashes
      * @return
      */
-    Seal signSync(final SignatureAlgorithm algorithm, final PrivateKey key, final Hash... hash);
+    Seal signSync(final SignatureAlgorithm algorithm, final PrivateKey key, final Hash... hashes);
 
     /**
      * @param key
@@ -189,10 +189,10 @@ public interface SignatureProvider {
     /**
      * @param seal
      * @param key
-     * @param hash
+     * @param hashes
      * @return
      */
-    Future<Boolean> verifyAsync(final Seal seal, final PublicKey key, final Hash... hash);
+    Future<Boolean> verifyAsync(final Seal seal, final PublicKey key, final Hash... hashes);
 
     /**
      * @param seal
@@ -221,10 +221,10 @@ public interface SignatureProvider {
     /**
      * @param seal
      * @param key
-     * @param hash
+     * @param hashes
      * @return
      */
-    boolean verifySync(final Seal seal, final PublicKey key, final Hash... hash);
+    boolean verifySync(final Seal seal, final PublicKey key, final Hash... hashes);
 
     /**
      * @param seal

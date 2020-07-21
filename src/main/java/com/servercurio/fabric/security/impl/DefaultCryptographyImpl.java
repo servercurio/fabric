@@ -44,6 +44,7 @@ import javax.crypto.Mac;
 public final class DefaultCryptographyImpl implements Cryptography {
 
     public static final int STREAM_BUFFER_SIZE = 8192;
+    private static final String SECURE_RANDOM_ALGORITHM = "DRBG";
 
     private static final ThreadLocal<HashMap<HashAlgorithm, MessageDigest>> hashAlgorithmCache = ThreadLocal
             .withInitial(HashMap::new);
@@ -106,8 +107,7 @@ public final class DefaultCryptographyImpl implements Cryptography {
                 DrbgParameters.instantiation(256, DrbgParameters.Capability.PR_AND_RESEED, null);
 
         try {
-            return SecureRandom
-                    .getInstance("DRBG", params);
+            return SecureRandom.getInstance(SECURE_RANDOM_ALGORITHM, params);
         } catch (NoSuchAlgorithmException ex) {
             throw new CryptographyException(ex);
         }
@@ -128,6 +128,21 @@ public final class DefaultCryptographyImpl implements Cryptography {
         cipherAlgorithmCache.remove();
         signatureAlgorithmCache.remove();
         secureRandomCache.remove();
+    }
+
+    @Override
+    public DigestProvider digest() {
+        return new DigestProviderImpl(this);
+    }
+
+    @Override
+    public EncryptionProvider encryption() {
+        return new EncryptionProviderImpl(this);
+    }
+
+    @Override
+    public MacProvider mac() {
+        return new MacProviderImpl(this);
     }
 
     /**
@@ -171,22 +186,7 @@ public final class DefaultCryptographyImpl implements Cryptography {
     }
 
     @Override
-    public DigestProvider digest() {
-        return new DigestProviderImpl(this);
-    }
-
-    @Override
-    public MacProvider mac() {
-        return new MacProviderImpl(this);
-    }
-
-    @Override
     public SignatureProvider signature() {
         return new SignatureProviderImpl(this);
-    }
-
-    @Override
-    public EncryptionProvider encryption() {
-        return new EncryptionProviderImpl(this);
     }
 }

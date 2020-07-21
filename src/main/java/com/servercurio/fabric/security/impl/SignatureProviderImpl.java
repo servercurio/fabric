@@ -117,7 +117,11 @@ public class SignatureProviderImpl implements SignatureProvider {
             signature.initSign(key, crypto.random());
 
             for (final Hash hash : hashes) {
-                signature.update(hash.getValue());
+                if (hash != null) {
+                    signature.update(hash.getValue());
+                } else {
+                    signature.update(Hash.EMPTY.getValue());
+                }
             }
 
             return new Seal(algorithm, signature.sign());
@@ -214,8 +218,12 @@ public class SignatureProviderImpl implements SignatureProvider {
         try {
             signature.initVerify(key);
 
-            for (final Hash h : hashes) {
-                signature.update(h.getValue());
+            for (final Hash hash : hashes) {
+                if (hash != null) {
+                    signature.update(hash.getValue());
+                } else {
+                    signature.update(Hash.EMPTY.getValue());
+                }
             }
 
             return signature.verify(seal.getValue());

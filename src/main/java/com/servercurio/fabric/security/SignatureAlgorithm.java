@@ -25,34 +25,34 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum SignatureAlgorithm implements CryptoPrimitiveSupplier<Signature> {
-    NONE(0, "NONE"),
-    RSA(1, "NONEwithRSA"),
-    RSA_SHA_224(2, "SHA224withRSA"),
-    RSA_SHA_256(3, "SHA256withRSA"),
-    RSA_SHA_384(4, "SHA384withRSA"),
-    RSA_SHA_512(5, "SHA512withRSA"),
-    RSA_SHA3_224(6, "SHA3-224withRSA"),
-    RSA_SHA3_256(7, "SHA3-256withRSA"),
-    RSA_SHA3_384(8, "SHA3-384withRSA"),
-    RSA_SHA3_512(9, "SHA3-512withRSA"),
-    DSA(10, "NONEwithDSA"),
-    DSA_SHA_224(11, "SHA224withDSA"),
-    DSA_SHA_256(12, "SHA256withDSA"),
-    DSA_SHA_384(13, "SHA384withDSA"),
-    DSA_SHA_512(14, "SHA512withDSA"),
-    DSA_SHA3_224(15, "SHA3-224withDSA"),
-    DSA_SHA3_256(16, "SHA3-256withDSA"),
-    DSA_SHA3_384(17, "SHA3-384withDSA"),
-    DSA_SHA3_512(18, "SHA3-512withDSA"),
-    ECDSA(19, "NONEwithECDSA"),
-    ECDSA_SHA_224(20, "SHA224withECDSA"),
-    ECDSA_SHA_256(21, "SHA256withECDSA"),
-    ECDSA_SHA_384(22, "SHA384withECDSA"),
-    ECDSA_SHA_512(23, "SHA512withECDSA"),
-    ECDSA_SHA3_224(24, "SHA3-224withECDSA"),
-    ECDSA_SHA3_256(25, "SHA3-256withECDSA"),
-    ECDSA_SHA3_384(26, "SHA3-384withECDSA"),
-    ECDSA_SHA3_512(27, "SHA3-512withECDSA");
+    NONE(0, "NONE", "NONE"),
+    RSA(1, "NONEwithRSA", "RSA"),
+    RSA_SHA_224(2, "SHA224withRSA", "RSA"),
+    RSA_SHA_256(3, "SHA256withRSA", "RSA"),
+    RSA_SHA_384(4, "SHA384withRSA", "RSA"),
+    RSA_SHA_512(5, "SHA512withRSA", "RSA"),
+    RSA_SHA3_224(6, "SHA3-224withRSA", "RSA"),
+    RSA_SHA3_256(7, "SHA3-256withRSA", "RSA"),
+    RSA_SHA3_384(8, "SHA3-384withRSA", "RSA"),
+    RSA_SHA3_512(9, "SHA3-512withRSA", "RSA"),
+    DSA(10, "NONEwithDSA", "DSA"),
+    DSA_SHA_224(11, "SHA224withDSA", "DSA"),
+    DSA_SHA_256(12, "SHA256withDSA", "DSA"),
+    DSA_SHA_384(13, "SHA384withDSA", "DSA"),
+    DSA_SHA_512(14, "SHA512withDSA", "DSA"),
+    DSA_SHA3_224(15, "SHA3-224withDSA", "DSA"),
+    DSA_SHA3_256(16, "SHA3-256withDSA", "DSA"),
+    DSA_SHA3_384(17, "SHA3-384withDSA", "DSA"),
+    DSA_SHA3_512(18, "SHA3-512withDSA", "DSA"),
+    ECDSA(19, "NONEwithECDSA", "EC"),
+    ECDSA_SHA_224(20, "SHA224withECDSA", "EC"),
+    ECDSA_SHA_256(21, "SHA256withECDSA", "EC"),
+    ECDSA_SHA_384(22, "SHA384withECDSA", "EC"),
+    ECDSA_SHA_512(23, "SHA512withECDSA", "EC"),
+    ECDSA_SHA3_224(24, "SHA3-224withECDSA", "EC"),
+    ECDSA_SHA3_256(25, "SHA3-256withECDSA", "EC"),
+    ECDSA_SHA3_384(26, "SHA3-384withECDSA", "EC"),
+    ECDSA_SHA3_512(27, "SHA3-512withECDSA", "EC");
 
     private static final Map<Integer, SignatureAlgorithm> idMap = new HashMap<>();
 
@@ -66,12 +66,14 @@ public enum SignatureAlgorithm implements CryptoPrimitiveSupplier<Signature> {
         }
     }
 
+    private final String keyAlgorithmName;
     private final String algorithmName;
     private final int id;
 
-    SignatureAlgorithm(final int id, final String algorithmName) {
+    SignatureAlgorithm(final int id, final String algorithmName, final String keyAlgorithmName) {
         this.id = id;
         this.algorithmName = algorithmName;
+        this.keyAlgorithmName = keyAlgorithmName;
     }
 
     public static SignatureAlgorithm valueOf(final int id) {
@@ -86,6 +88,9 @@ public enum SignatureAlgorithm implements CryptoPrimitiveSupplier<Signature> {
         return algorithmName;
     }
 
+    public String keyAlgorithmName() {
+        return keyAlgorithmName;
+    }
 
     public int id() {
         return id;
