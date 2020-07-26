@@ -172,72 +172,72 @@ public enum SignatureAlgorithm implements CryptoPrimitiveSupplier<Signature> {
     /**
      * The ECDSA algorithm as defined by ANSI X9.62.
      *
-     * @see <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&rep=rep1&type=pdf">
-     *         http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&rep=rep1&type=pdf</a>
+     * @see <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&amp;rep=rep1&amp;type=pdf">
+     *         http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&amp;rep=rep1&amp;type=pdf</a>
      */
     ECDSA(19, "NONEwithECDSA", "EC"),
 
     /**
      * The ECDSA with SHA-224 algorithm as defined by ANSI X9.62.
      *
-     * @see <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&rep=rep1&type=pdf">
-     *         http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&rep=rep1&type=pdf</a>
+     * @see <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&amp;rep=rep1&amp;type=pdf">
+     *         http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&amp;rep=rep1&amp;type=pdf</a>
      */
     ECDSA_SHA_224(20, "SHA224withECDSA", "EC"),
 
     /**
      * The ECDSA with SHA-256 algorithm as defined by ANSI X9.62.
      *
-     * @see <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&rep=rep1&type=pdf">
-     *         http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&rep=rep1&type=pdf</a>
+     * @see <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&amp;rep=rep1&amp;type=pdf">
+     *         http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&amp;rep=rep1&amp;type=pdf</a>
      */
     ECDSA_SHA_256(21, "SHA256withECDSA", "EC"),
 
     /**
      * The ECDSA with SHA-384 algorithm as defined by ANSI X9.62.
      *
-     * @see <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&rep=rep1&type=pdf">
-     *         http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&rep=rep1&type=pdf</a>
+     * @see <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&amp;rep=rep1&amp;type=pdf">
+     *         http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&amp;amp;rep=rep1&amp;amp;type=pdf</a>
      */
     ECDSA_SHA_384(22, "SHA384withECDSA", "EC"),
 
     /**
      * The ECDSA with SHA-512 algorithm as defined by ANSI X9.62.
      *
-     * @see <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&rep=rep1&type=pdf">
-     *         http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&rep=rep1&type=pdf</a>
+     * @see <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&amp;amp;rep=rep1&amp;amp;type=pdf">
+     *         http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&amp;rep=rep1&amp;type=pdf</a>
      */
     ECDSA_SHA_512(23, "SHA512withECDSA", "EC"),
 
     /**
      * The ECDSA with SHA3-224 algorithm as defined by ANSI X9.62.
      *
-     * @see <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&rep=rep1&type=pdf">
-     *         http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&rep=rep1&type=pdf</a>
+     * @see <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&amp;rep=rep1&amp;type=pdf">
+     *         http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&amp;rep=rep1&amp;type=pdf</a>
      */
     ECDSA_SHA3_224(24, "SHA3-224withECDSA", "EC"),
 
     /**
      * The ECDSA with SHA3-256 algorithm as defined by ANSI X9.62.
      *
-     * @see <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&rep=rep1&type=pdf">
-     *         http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&rep=rep1&type=pdf</a>
+     * @see <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&amp;rep=rep1&amp;type=pdf">
+     *         http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&amp;rep=rep1&amp;type=pdf</a>
      */
     ECDSA_SHA3_256(25, "SHA3-256withECDSA", "EC"),
 
     /**
      * The ECDSA with SHA3-384 algorithm as defined by ANSI X9.62.
      *
-     * @see <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&rep=rep1&type=pdf">
-     *         http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&rep=rep1&type=pdf</a>
+     * @see <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&amp;rep=rep1&amp;type=pdf">
+     *         http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&amp;rep=rep1&amp;type=pdf</a>
      */
     ECDSA_SHA3_384(26, "SHA3-384withECDSA", "EC"),
 
     /**
      * The ECDSA with SHA3-512 algorithm as defined by ANSI X9.62.
      *
-     * @see <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&rep=rep1&type=pdf">
-     *         http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&rep=rep1&type=pdf</a>
+     * @see <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&amp;rep=rep1&amp;type=pdf">
+     *         http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.202.2977&amp;rep=rep1&amp;type=pdf</a>
      */
     ECDSA_SHA3_512(27, "SHA3-512withECDSA", "EC");
 
