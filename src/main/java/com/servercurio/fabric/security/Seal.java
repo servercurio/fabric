@@ -19,38 +19,100 @@ package com.servercurio.fabric.security;
 import com.servercurio.fabric.lang.ComparableConstants;
 import java.util.Arrays;
 import java.util.Base64;
+import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+/**
+ * Represents a immutable cryptographic signature that includes the algorithm used to perform the original computation.
+ * Acts as a basic wrapper class to simplify basic operations such as making copies, generating string representations,
+ * and comparing for equality. 
+ *
+ * @author Nathan Klick
+ * @see SignatureAlgorithm
+ * @since 1.0
+ */
 public class Seal implements Comparable<Seal> {
 
-    //region Public Constants
+    /**
+     * Constant value representing an empty signature using a zero-length byte array and {@link SignatureAlgorithm#NONE}
+     * as the algorithm.
+     *
+     * @see #Seal()
+     */
     public static final Seal EMPTY = new Seal();
-    //endregion
 
-    //region Private Constants
+    /**
+     * The {@code algorithm} field name represented as a string value.
+     */
     private static final String ALGORITHM_FIELD = "algorithm";
+
+    /**
+     * The {@code value} field name represented as a string value.
+     */
     private static final String VALUE_FIELD = "value";
+
+    /**
+     * The {@code other} parameter name represented as a string value.
+     */
     private static final String OTHER_PARAM = "other";
 
-    //endregion
+    /**
+     * The algorithm used to compute the signature.
+     *
+     * @see SignatureAlgorithm
+     * @see #getAlgorithm()
+     */
+    @NotNull
+    private final SignatureAlgorithm algorithm;
 
-    private SignatureAlgorithm algorithm;
+    /**
+     * The underlying byte array containing the signature.
+     *
+     * @see #getValue()
+     */
+    @NotNull
+    private final byte[] value;
 
-    private byte[] value;
-
+    /**
+     * Constructs an empty {@link Seal} instance using a zero-length byte array and {@link SignatureAlgorithm#NONE} as
+     * the algorithm. This is equivalent to the provided {@link #EMPTY} constant.
+     *
+     * @see SignatureAlgorithm#NONE
+     * @see Seal#EMPTY
+     */
     private Seal() {
         this(SignatureAlgorithm.NONE, new byte[0], false);
     }
 
-    public Seal(final SignatureAlgorithm algorithm, final byte[] value) {
+    /**
+     * Constructs a new {@link Seal} instance using the provided {@link SignatureAlgorithm} and signature. This
+     * constructor copies the provided signature to ensure immutability is preserved.
+     *
+     * @param algorithm
+     *         the hash algorithm used to compute the signature, not null
+     * @param value
+     *         the byte array representing the computed signature, not null
+     * @throws IllegalArgumentException
+     *         if the {@code algorithm} is null or the {@code value} parameter is null or the length of the byte array
+     *         is zero
+     */
+    public Seal(@NotNull final SignatureAlgorithm algorithm, @NotNull final byte[] value) {
         this(algorithm, value, true);
     }
 
-    public Seal(final Seal other) {
+    /**
+     * Copy Constructor. The underlying byte array is copied using the {@link Arrays#copyOf(byte[], int)} method.
+     *
+     * @param other
+     *         the {@link Seal} instance to copy, not null
+     * @throws IllegalArgumentException
+     *         if the {@code other} parameter is null
+     */
+    public Seal(@NotNull final Seal other) {
         if (other == null) {
             throw new IllegalArgumentException(OTHER_PARAM);
         }
@@ -59,7 +121,23 @@ public class Seal implements Comparable<Seal> {
         this.value = Arrays.copyOf(other.value, other.value.length);
     }
 
-    protected Seal(final SignatureAlgorithm algorithm, final byte[] value, final boolean copyValue) {
+    /**
+     * Constructs a new {@link Seal} instance using the provided {@link SignatureAlgorithm} and signature. If the {@code
+     * copyValue} parameter is {@code true} then the supplied byte array is copied using the {@link
+     * Arrays#copyOf(byte[], int)} method.
+     *
+     * @param algorithm
+     *         the hash algorithm used to compute the hash value, not null
+     * @param value
+     *         the byte array representing the computed hash value, not null
+     * @param copyValue
+     *         if {@code true} the {@code value} parameter is copied; otherwise the {@code value} parameter is used as
+     *         the underlying byte array
+     * @throws IllegalArgumentException
+     *         if the {@code algorithm} is null or the {@code value} parameter is null or the length of the byte array
+     *         is zero
+     */
+    protected Seal(@NotNull final SignatureAlgorithm algorithm, @NotNull final byte[] value, final boolean copyValue) {
 
         if (algorithm == null) {
             throw new IllegalArgumentException(ALGORITHM_FIELD);
@@ -73,10 +151,23 @@ public class Seal implements Comparable<Seal> {
         this.value = (copyValue) ? Arrays.copyOf(value, value.length) : value;
     }
 
+    /**
+     * Returns the algorithm that computed the underlying signature, as specified by the {@link SignatureAlgorithm} enum.
+     *
+     * @return the signature algorithm used to compute the signature, not null
+     * @see SignatureAlgorithm
+     */
     public SignatureAlgorithm getAlgorithm() {
         return algorithm;
     }
 
+    /**
+     * Returns a copy of the underlying byte array containing the signature.
+     *
+     * @return a copy of the underlying byte array representing the computed signature, not null
+     * @see SignatureAlgorithm
+     * @see #getAlgorithm()
+     */
     public byte[] getValue() {
         return Arrays.copyOf(value, value.length);
     }
@@ -105,7 +196,7 @@ public class Seal implements Comparable<Seal> {
      * {@inheritDoc}
      */
     @Override
-    public int compareTo(final Seal that) {
+    public int compareTo(@NotNull final Seal that) {
         if (this == that) {
             return ComparableConstants.EQUAL;
         }
@@ -152,6 +243,9 @@ public class Seal implements Comparable<Seal> {
                 .isEquals();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
