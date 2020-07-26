@@ -146,11 +146,11 @@ public enum HashAlgorithm implements CryptoPrimitiveSupplier<MessageDigest> {
      * @param id
      *         the unique identifier for this algorithm
      * @param algorithmName
-     *         the standard name for this algorithm as specified by the Java Security documentation
+     *         the standard name for this algorithm as specified by the Java Security documentation, not null
      * @param bits
-     *         the number of bits in the hash value produced by this algorithm
+     *         the number of bits in the hash value produced by this algorithm, positive and greater than zero
      */
-    HashAlgorithm(final int id, final String algorithmName, final int bits) {
+    HashAlgorithm(final int id, @NotNull final String algorithmName, @Positive final int bits) {
         this.id = id;
         this.algorithmName = algorithmName;
         this.bits = bits;
@@ -236,14 +236,14 @@ public enum HashAlgorithm implements CryptoPrimitiveSupplier<MessageDigest> {
      * from the specified {@code provider}.
      *
      * @param provider
-     *         the name of the provider from which to request the algorithm implementation
+     *         the name of the provider from which to request the algorithm implementation, not null
      * @return an instance of the algorithm implementation
      * @throws CryptographyException
      *         if an error occurs, the algorithm implementation was not available, or the provider was not available
      * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html">Java
      *         Cryptography Architecture</a>
      */
-    public MessageDigest instance(final String provider) {
+    public MessageDigest instance(@NotNull final String provider) {
         try {
             return MessageDigest.getInstance(algorithmName, provider);
         } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
@@ -256,14 +256,14 @@ public enum HashAlgorithm implements CryptoPrimitiveSupplier<MessageDigest> {
      * from the specified {@code provider}.
      *
      * @param provider
-     *         the provider instance from which to request the algorithm implementation
+     *         the provider instance from which to request the algorithm implementation, not null
      * @return an instance of the algorithm implementation
      * @throws CryptographyException
      *         if an error occurs or the algorithm implementation was not available
      * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html">Java
      *         Cryptography Architecture</a>
      */
-    public MessageDigest instance(final Provider provider) {
+    public MessageDigest instance(@NotNull final Provider provider) {
         try {
             return MessageDigest.getInstance(algorithmName, provider);
         } catch (NoSuchAlgorithmException ex) {
