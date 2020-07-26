@@ -36,65 +36,74 @@ public enum HashAlgorithm implements CryptoPrimitiveSupplier<MessageDigest> {
     NONE(0, "NONE", 0),
 
     /**
-     * The SHA-1 algorithm as defined by RFC-3174.
+     * The SHA-1 algorithm as defined by NIST FIPS 180-4.
      *
-     * @see <a href="https://tools.ietf.org/html/rfc3174">https://tools.ietf.org/html/rfc3174</a>
+     * @see <a href="https://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf">
+     *     https://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf</a>
      */
     SHA1(1, "SHA-1", 160),
 
     /**
-     * The SHA-224 algorithm as defined by RFC-4634.
+     * The SHA-224 algorithm as defined by NIST FIPS 180-4.
      *
-     * @see <a href="https://tools.ietf.org/html/rfc4634">https://tools.ietf.org/html/rfc4634</a>
+     * @see <a href="https://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf">
+     *     https://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf</a>
      */
     SHA_224(2, "SHA-224", 224),
 
     /**
-     * The SHA-256 algorithm as defined by RFC-4634.
+     * The SHA-256 algorithm as defined by NIST FIPS 180-4.
      *
-     * @see <a href="https://tools.ietf.org/html/rfc4634">https://tools.ietf.org/html/rfc4634</a>
+     * @see <a href="https://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf">
+     *     https://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf</a>
      */
     SHA_256(3, "SHA-256", 256),
 
     /**
-     * The SHA-384 algorithm as defined by RFC-4634.
+     * The SHA-384 algorithm as defined by NIST FIPS 180-4.
      *
-     * @see <a href="https://tools.ietf.org/html/rfc4634">https://tools.ietf.org/html/rfc4634</a>
+     * @see <a href="https://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf">
+     *     https://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf</a>
      */
     SHA_384(4, "SHA-384", 384),
 
     /**
-     * The SHA-512 algorithm as defined by RFC-4634.
+     * The SHA-512 algorithm as defined by NIST FIPS 180-4.
      *
-     * @see <a href="https://tools.ietf.org/html/rfc4634">https://tools.ietf.org/html/rfc4634</a>
+     * @see <a href="https://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf">
+     *     https://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf</a>
      */
     SHA_512(5, "SHA-512", 512),
 
     /**
-     * The SHA3-224 algorithm as defined by NIST FIPS-202.
+     * The SHA3-224 algorithm as defined by NIST FIPS 202.
      *
-     * @see <a href="https://doi.org/10.6028/NIST.FIPS.202">https://doi.org/10.6028/NIST.FIPS.202</a>
+     * @see <a href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf">
+     *         https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf</a>
      */
     SHA3_224(6, "SHA3-224", 224),
 
     /**
-     * The SHA3-256 algorithm as defined by NIST FIPS-202.
+     * The SHA3-256 algorithm as defined by NIST FIPS 202.
      *
-     * @see <a href="https://doi.org/10.6028/NIST.FIPS.202">https://doi.org/10.6028/NIST.FIPS.202</a>
+     * @see <a href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf">
+     *         https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf</a>
      */
     SHA3_256(7, "SHA3-256", 256),
 
     /**
-     * The SHA3-384 algorithm as defined by NIST FIPS-202.
+     * The SHA3-384 algorithm as defined by NIST FIPS 202.
      *
-     * @see <a href="https://doi.org/10.6028/NIST.FIPS.202">https://doi.org/10.6028/NIST.FIPS.202</a>
+     * @see <a href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf">
+     *         https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf</a>
      */
     SHA3_384(8, "SHA3-384", 384),
 
     /**
-     * The SHA3-512 algorithm as defined by NIST FIPS-202.
+     * The SHA3-512 algorithm as defined by NIST FIPS 202.
      *
-     * @see <a href="https://doi.org/10.6028/NIST.FIPS.202">https://doi.org/10.6028/NIST.FIPS.202</a>
+     * @see <a href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf">
+     *         https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.202.pdf</a>
      */
     SHA3_512(9, "SHA3-512", 512);
 
@@ -163,8 +172,8 @@ public enum HashAlgorithm implements CryptoPrimitiveSupplier<MessageDigest> {
      *
      * @param id
      *         the unique identifier of the algorithm
-     * @return the enumeration value represented by the identifier or null if no enumeration value could be found for
-     *         this identifier
+     * @return the enumeration value represented by the identifier or {@code null} if no enumeration value could be
+     *         found for this identifier
      */
     public static HashAlgorithm valueOf(final int id) {
         if (!idMap.containsKey(id)) {

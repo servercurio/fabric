@@ -29,7 +29,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 /**
  * Represents a immutable cryptographic signature that includes the algorithm used to perform the original computation.
  * Acts as a basic wrapper class to simplify basic operations such as making copies, generating string representations,
- * and comparing for equality. 
+ * and comparing for equality.
  *
  * @author Nathan Klick
  * @see SignatureAlgorithm

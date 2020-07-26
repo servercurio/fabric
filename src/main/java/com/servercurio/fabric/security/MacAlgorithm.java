@@ -23,19 +23,78 @@ import java.security.Provider;
 import java.util.HashMap;
 import java.util.Map;
 import javax.crypto.Mac;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
+/**
+ * An enumeration of the standard cryptographic hash-based message authentication algorithms along with their
+ * initialization parameters.
+ */
 public enum MacAlgorithm implements CryptoPrimitiveSupplier<Mac> {
+    /**
+     * Represents no algorithm specified or an unknown algorithm was used.
+     */
     NONE(0, "NONE", HashAlgorithm.NONE),
+
+    /**
+     * The HMAC SHA-224 algorithm as defined by RFC-2104.
+     *
+     * @see <a href="https://tools.ietf.org/html/rfc2104">https://tools.ietf.org/html/rfc2104</a>
+     */
     HMAC_SHA_224(1, "HmacSHA224", HashAlgorithm.SHA_224),
+
+    /**
+     * The HMAC SHA-256 algorithm as defined by RFC-2104.
+     *
+     * @see <a href="https://tools.ietf.org/html/rfc2104">https://tools.ietf.org/html/rfc2104</a>
+     */
     HMAC_SHA_256(2, "HmacSHA256", HashAlgorithm.SHA_256),
+
+    /**
+     * The HMAC SHA-384 algorithm as defined by RFC-2104.
+     *
+     * @see <a href="https://tools.ietf.org/html/rfc2104">https://tools.ietf.org/html/rfc2104</a>
+     */
     HMAC_SHA_384(3, "HmacSHA384", HashAlgorithm.SHA_384),
+
+    /**
+     * The HMAC SHA-512 algorithm as defined by RFC-2104.
+     *
+     * @see <a href="https://tools.ietf.org/html/rfc2104">https://tools.ietf.org/html/rfc2104</a>
+     */
     HMAC_SHA_512(4, "HmacSHA512", HashAlgorithm.SHA_512),
+
+    /**
+     * The HMAC SHA3-224 algorithm as defined by RFC-2104.
+     *
+     * @see <a href="https://tools.ietf.org/html/rfc2104">https://tools.ietf.org/html/rfc2104</a>
+     */
     HMAC_SHA3_224(5, "HmacSHA3-224", HashAlgorithm.SHA3_224),
+
+    /**
+     * The HMAC SHA3-256 algorithm as defined by RFC-2104.
+     *
+     * @see <a href="https://tools.ietf.org/html/rfc2104">https://tools.ietf.org/html/rfc2104</a>
+     */
     HMAC_SHA3_256(6, "HmacSHA3-256", HashAlgorithm.SHA3_256),
+
+    /**
+     * The HMAC SHA3-384 algorithm as defined by RFC-2104.
+     *
+     * @see <a href="https://tools.ietf.org/html/rfc2104">https://tools.ietf.org/html/rfc2104</a>
+     */
     HMAC_SHA3_384(7, "HmacSHA3-384", HashAlgorithm.SHA3_384),
+
+    /**
+     * The HMAC SHA3-512 algorithm as defined by RFC-2104.
+     *
+     * @see <a href="https://tools.ietf.org/html/rfc2104">https://tools.ietf.org/html/rfc2104</a>
+     */
     HMAC_SHA3_512(8, "HmacSHA3-512", HashAlgorithm.SHA3_512);
 
-
+    /**
+     * Internal lookup table to provide {@code O(1)} time conversion of {@code id} to enumeration value.
+     */
     private static final Map<Integer, MacAlgorithm> idMap = new HashMap<>();
 
     static {
@@ -48,13 +107,50 @@ public enum MacAlgorithm implements CryptoPrimitiveSupplier<Mac> {
         }
     }
 
+    /**
+     * The number of bits in the hash value produced by the algorithm.
+     */
+    @Positive
     private final int bits;
+
+    /**
+     * The number of bytes in the hash value produced by the algorithm.
+     */
+    @Positive
     private final int bytes;
+
+    /**
+     * The name of the algorithm as specified by the standard Java Security documentation.
+     *
+     * @see <a href="https://docs.oracle.com/en/java/javase/14/docs/specs/security/standard-names.html">Java
+     *         Security Standard Algorithm Names</a>
+     */
+    @NotNull
     private final String algorithmName;
+
+    /**
+     * A unique identifier for this algorithm. This identifier must remain constant for a given algorithm and must never
+     * be reused by another algorithm.
+     */
     private final int id;
+
+    /**
+     * The underlying hash algorithm used by this message authentication algorithm.
+     */
+    @NotNull
     private final HashAlgorithm hashAlgorithm;
 
-    MacAlgorithm(final int id, final String algorithmName, final HashAlgorithm hashAlgorithm) {
+    /**
+     * Enumeration Constructor.
+     *
+     * @param id
+     *         the unique identifier for this algorithm
+     * @param algorithmName
+     *         the standard name for this algorithm as specified by the Java Security documentation, not null
+     * @param hashAlgorithm
+     *         the underlying hash algorithm used by this message authentication algorithm
+     */
+    MacAlgorithm(final int id, @NotNull final String algorithmName, @NotNull final HashAlgorithm hashAlgorithm) {
         this.id = id;
         this.algorithmName = algorithmName;
         this.hashAlgorithm = hashAlgorithm;
@@ -62,6 +158,15 @@ public enum MacAlgorithm implements CryptoPrimitiveSupplier<Mac> {
         this.bytes = bits / Byte.SIZE;
     }
 
+    /**
+     * Lookup the enumeration value for the identifier specified by the {@code id} parameter. If no enumeration value
+     * exists for the specified identifier then {@code null} will be returned.
+     *
+     * @param id
+     *         the unique identifier of the algorithm
+     * @return the enumeration value represented by the identifier or {@code null} if no enumeration value could be
+     *         found for this identifier
+     */
     public static MacAlgorithm valueOf(final int id) {
         if (!idMap.containsKey(id)) {
             return null;
@@ -70,26 +175,64 @@ public enum MacAlgorithm implements CryptoPrimitiveSupplier<Mac> {
         return idMap.get(id);
     }
 
-    public HashAlgorithm hashAlgorithm() {
-        return hashAlgorithm;
-    }
-
+    /**
+     * Gets the standard name of the algorithm as specified by the Java Security Standard Algorithm Names
+     * documentation.
+     *
+     * @return the standard algorithm name
+     * @see <a href="https://docs.oracle.com/en/java/javase/14/docs/specs/security/standard-names.html">Java
+     *         Security Standard Algorithm Names</a>
+     */
     public String algorithmName() {
         return algorithmName;
     }
 
+    /**
+     * Gets the number of bits in the hash value produced by this algorithm.
+     *
+     * @return the number of bits in the hash value
+     */
     public int bits() {
         return bits;
     }
 
+    /**
+     * Gets the number of bytes in the hash value produced by this algorithm.
+     *
+     * @return the number of bytes in the hash value
+     */
     public int bytes() {
         return bytes;
     }
 
+    /**
+     * Gets the underlying hash algorithm used by this message authentication algorithm.
+     *
+     * @return the underlying hash algorithm
+     */
+    public HashAlgorithm hashAlgorithm() {
+        return hashAlgorithm;
+    }
+
+    /**
+     * Gets the unique identifier of this algorithm.
+     *
+     * @return the unique identifier
+     */
     public int id() {
         return id;
     }
 
+    /**
+     * Creates an instance of the algorithm using the Java Cryptography Architecture and the default {@link Provider}
+     * implementation.
+     *
+     * @return an instance of the algorithm implementation
+     * @throws CryptographyException
+     *         if an error occurs or the algorithm implementation was not available
+     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html">Java
+     *         Cryptography Architecture</a>
+     */
     public Mac instance() {
         try {
             return Mac.getInstance(algorithmName);
@@ -98,7 +241,19 @@ public enum MacAlgorithm implements CryptoPrimitiveSupplier<Mac> {
         }
     }
 
-    public Mac instance(final String provider) {
+    /**
+     * Creates an instance of the algorithm using the Java Cryptography Architecture and requesting the implementation
+     * from the specified {@code provider}.
+     *
+     * @param provider
+     *         the name of the provider from which to request the algorithm implementation, not null
+     * @return an instance of the algorithm implementation
+     * @throws CryptographyException
+     *         if an error occurs, the algorithm implementation was not available, or the provider was not available
+     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html">Java
+     *         Cryptography Architecture</a>
+     */
+    public Mac instance(@NotNull final String provider) {
         try {
             return Mac.getInstance(algorithmName, provider);
         } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
@@ -106,7 +261,19 @@ public enum MacAlgorithm implements CryptoPrimitiveSupplier<Mac> {
         }
     }
 
-    public Mac instance(final Provider provider) {
+    /**
+     * Creates an instance of the algorithm using the Java Cryptography Architecture and requesting the implementation
+     * from the specified {@code provider}.
+     *
+     * @param provider
+     *         the provider instance from which to request the algorithm implementation, not null
+     * @return an instance of the algorithm implementation
+     * @throws CryptographyException
+     *         if an error occurs or the algorithm implementation was not available
+     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html">Java
+     *         Cryptography Architecture</a>
+     */
+    public Mac instance(@NotNull final Provider provider) {
         try {
             return Mac.getInstance(algorithmName, provider);
         } catch (NoSuchAlgorithmException ex) {
