@@ -17,24 +17,43 @@
 package com.servercurio.fabric.security;
 
 import java.util.Arrays;
+import javax.validation.constraints.NotNull;
 
 /**
+ * Represents an immutable cryptographic hash value that includes the algorithm used to perform the original
+ * computation. Acts as a basic wrapper class to simplify basic operations such as making copies, generating string
+ * representations, and comparing for equality.
+ *
  * @author Nathan Klick
+ * @see HashAlgorithm
  * @see Hash
  * @since 1.0
  */
 public class ImmutableHash extends Hash {
 
     /**
+     * Constructs a new {@link ImmutableHash} instance using the provided {@link HashAlgorithm} and computed hash value.
+     * This constructor copies the {@code value} parameter to ensure immutability.
+     *
      * @param algorithm
+     *         the hash algorithm used to compute the hash value, not null
      * @param value
+     *         the byte array representing the computed hash value, not null
+     * @throws IllegalArgumentException
+     *         if the {@code algorithm} is null or the {@code value} parameter is null or the length of the byte array
+     *         does not equal the {@link HashAlgorithm#bytes()} length
      */
-    public ImmutableHash(final HashAlgorithm algorithm, final byte[] value) {
-        super(algorithm, value);
+    public ImmutableHash(@NotNull final HashAlgorithm algorithm, @NotNull final byte[] value) {
+        super(algorithm, value, true);
     }
 
     /**
+     * Copy Constructor. The underlying byte array is copied using the {@link Arrays#copyOf(byte[], int)} method.
+     *
      * @param other
+     *         the {@link Hash} instance to copy, not null
+     * @throws IllegalArgumentException
+     *         if the {@code other} parameter is null
      */
     public ImmutableHash(final Hash other) {
         super(other);
@@ -80,4 +99,13 @@ public class ImmutableHash extends Hash {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Converts this {@link ImmutableHash} instance to a mutable {@link Hash} instance.
+     *
+     * @return an instance of {@link Hash}
+     * @see Hash
+     */
+    public Hash mutable() {
+        return new Hash(this);
+    }
 }

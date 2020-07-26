@@ -19,6 +19,8 @@ package com.servercurio.fabric.security;
 import com.servercurio.fabric.lang.ComparableConstants;
 import java.util.Arrays;
 import java.util.Base64;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -26,46 +28,113 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
+ * Represents a mutable cryptographic hash value that includes the algorithm used to perform the original computation.
+ * Acts as a basic wrapper class to simplify basic operations such as making copies, generating string representations,
+ * and comparing for equality. An {@link ImmutableHash} variant is provided as a subclass for convenience.
+ *
  * @author Nathan Klick
- * @see java.lang.Comparable
+ * @see HashAlgorithm
+ * @see ImmutableHash
  * @since 1.0
  */
 public class Hash implements Comparable<Hash> {
 
-    //region Public Constants
+    /**
+     * Constant value representing an empty hash using a zero-length byte array and {@link HashAlgorithm#NONE} as the
+     * algorithm.
+     *
+     * @see #Hash()
+     */
     public static final Hash EMPTY = new Hash().immutable();
-    //endregion
 
-    //region Private Constants
+    /**
+     * The {@code algorithm} field name represented as a string value.
+     */
     private static final String ALGORITHM_FIELD = "algorithm";
+
+    /**
+     * The {@code value} field name represented as a string value.
+     */
     private static final String VALUE_FIELD = "value";
+
+    /**
+     * The {@code other} parameter name represented as a string value.
+     */
     private static final String OTHER_PARAM = "other";
 
-    private static final int DEFAULT_PREFIX_LEN = 4;
-    //endregion
-
-    //region Private Instance Variables
     /**
+     * The default length of the hex prefix returned by the {@link #toPrefix()} method.
      *
+     * @see #toPrefix()
+     * @see #toPrefix(int)
      */
+    private static final int DEFAULT_PREFIX_LEN = 4;
+
+
+    /**
+     * The hash algorithm used to compute the hash value.
+     *
+     * @see HashAlgorithm
+     * @see #getAlgorithm()
+     * @see #setAlgorithm(HashAlgorithm)
+     */
+    @NotNull
     private HashAlgorithm algorithm;
 
     /**
+     * The underlying byte array containing the hash value.
      *
+     * @see #getValue()
+     * @see #setValue(byte[])
      */
+    @NotNull
     private byte[] value;
-    //endregion
 
-    //region Constructors
+    /**
+     * Constructs an empty {@link Hash} instance using a zero-length byte array and {@link HashAlgorithm#NONE} as the
+     * algorithm. This is equivalent to the provided {@link #EMPTY} constant.
+     *
+     * @see HashAlgorithm#NONE
+     * @see Hash#EMPTY
+     */
     public Hash() {
         this(HashAlgorithm.NONE, new byte[0], false);
     }
 
-    public Hash(final HashAlgorithm algorithm, final byte[] value) {
+    /**
+     * Constructs a new {@link Hash} instance using the provided {@link HashAlgorithm} and computed hash value. This
+     * constructor does not copy the provided hash value and instead uses the {@code value} parameter as the underlying
+     * byte array. Care must be taken to not reuse the byte array supplied to the {@code value} parameter.
+     *
+     * @param algorithm
+     *         the hash algorithm used to compute the hash value, not null
+     * @param value
+     *         the byte array representing the computed hash value, not null
+     * @throws IllegalArgumentException
+     *         if the {@code algorithm} is null or the {@code value} parameter is null or the length of the byte array
+     *         does not equal the {@link HashAlgorithm#bytes()} length
+     */
+    public Hash(@NotNull final HashAlgorithm algorithm, @NotNull final byte[] value) {
         this(algorithm, value, false);
     }
 
-    public Hash(final HashAlgorithm algorithm, final byte[] value, final boolean copyValue) {
+    /**
+     * Constructs a new {@link Hash} instance using the provided {@link HashAlgorithm} and computed hash value. If the
+     * {@code copyValue} parameter is {@code true} then the supplied byte array is copied using the {@link
+     * Arrays#copyOf(byte[], int)} method.
+     *
+     * @param algorithm
+     *         the hash algorithm used to compute the hash value, not null
+     * @param value
+     *         the byte array representing the computed hash value, not null
+     * @param copyValue
+     *         if {@code true} the {@code value} parameter is copied; otherwise the {@code value} parameter is used as
+     *         the underlying byte array
+     * @throws IllegalArgumentException
+     *         if the {@code algorithm} is null or the {@code value} parameter is null or the length of the byte array
+     *         does not equal the {@link HashAlgorithm#bytes()} length
+     */
+    public Hash(@NotNull final HashAlgorithm algorithm, @NotNull final byte[] value, final boolean copyValue) {
         if (algorithm == null) {
             throw new IllegalArgumentException(ALGORITHM_FIELD);
         }
@@ -78,7 +147,15 @@ public class Hash implements Comparable<Hash> {
         this.value = (copyValue) ? Arrays.copyOf(value, value.length) : value;
     }
 
-    public Hash(final Hash other) {
+    /**
+     * Copy Constructor. The underlying byte array is copied using the {@link Arrays#copyOf(byte[], int)} method.
+     *
+     * @param other
+     *         the {@link Hash} instance to copy, not null
+     * @throws IllegalArgumentException
+     *         if the {@code other} parameter is null
+     */
+    public Hash(@NotNull final Hash other) {
         if (other == null) {
             throw new IllegalArgumentException(OTHER_PARAM);
         }
@@ -89,14 +166,13 @@ public class Hash implements Comparable<Hash> {
             this.value = Arrays.copyOf(other.value, other.value.length);
         }
     }
-    //endregion
 
-    //region Getters & Setters
 
     /**
-     * Returns the algorithm that created the underlying hash value, as specified by the {@code HashAlgorithm} enum.
+     * Returns the algorithm that computed the underlying hash value, as specified by the {@link HashAlgorithm} enum.
      *
-     * @return the type of algorithm, not null
+     * @return the hash algorithm used to compute the hash value, not null
+     * @see HashAlgorithm
      */
     public HashAlgorithm getAlgorithm() {
         return algorithm;
@@ -104,14 +180,15 @@ public class Hash implements Comparable<Hash> {
 
     /**
      * Changes the algorithm type and allocates a new underlying zero-filled byte array of the appropriate length. Any
-     * previous value represented by this instance will be discarded.
+     * previous hash value represented by this instance will be discarded.
      *
      * @param algorithm
-     *         the type of the algorithm
+     *         the hash algorithm used to compute the hash value, not null
      * @throws IllegalArgumentException
      *         if the {@code algorithm} parameter is null
+     * @see HashAlgorithm
      */
-    public void setAlgorithm(final HashAlgorithm algorithm) {
+    public void setAlgorithm(@NotNull final HashAlgorithm algorithm) {
         if (algorithm == null) {
             throw new IllegalArgumentException(ALGORITHM_FIELD);
         }
@@ -124,7 +201,7 @@ public class Hash implements Comparable<Hash> {
      * Returns the underlying byte array containing the hash value. This method allows for direct modification of the
      * underlying pre-allocated buffer of the length specified by configured algorithm type.
      *
-     * @return the underlying byte array, not null
+     * @return the underlying byte array representing the computed hash value, not null
      * @see HashAlgorithm
      * @see Hash#getAlgorithm()
      */
@@ -133,9 +210,21 @@ public class Hash implements Comparable<Hash> {
     }
 
     /**
+     * Replaces the underlying byte array containing the hash value. This method will validate the length of the
+     * provided byte array and will throw an {@link IllegalArgumentException} if the length does not match the hash size
+     * of the specified algorithm. This method does not make a copy of the provided byte array and therefore care must
+     * be taken to avoid reusing the byte array supplied to this method.
+     *
      * @param value
+     *         the new underlying byte array representing the computed hash value, not null
+     * @throws IllegalArgumentException
+     *         if the {@code value} parameter is null or the length is not equal to the {@link HashAlgorithm#bytes()}
+     *         length
+     * @see HashAlgorithm
+     * @see #getAlgorithm()
+     * @see #getValue()
      */
-    public void setValue(final byte[] value) {
+    public void setValue(@NotNull final byte[] value) {
         if (value == null || value.length != getAlgorithm().bytes()) {
             throw new IllegalArgumentException(VALUE_FIELD);
         }
@@ -148,6 +237,7 @@ public class Hash implements Comparable<Hash> {
      * HashAlgorithm#NONE}.
      *
      * @return true if the underlying byte array contains all zeros; otherwise false
+     * @see HashAlgorithm
      */
     public boolean isEmpty() {
         if (getAlgorithm() == HashAlgorithm.NONE) {
@@ -162,20 +252,22 @@ public class Hash implements Comparable<Hash> {
 
         return true;
     }
-    //endregion
-
-    //region Member Methods
 
     /**
-     * Returns the first four (4) bytes represented as a hexadecimal string.
+     * Converts this mutable {@link Hash} instance to an {@link ImmutableHash} instance. If {@code this} instance is
+     * already an {@link ImmutableHash} then the method will return the current instance without creating an additional
+     * copy.
      *
-     * @return the hexadecimal string representation of the first four (4) bytes
-     * @throws IndexOutOfBoundsException
-     *         if the total length of the hash is less than four (4) bytes, such as a hash of type {@link
-     *         HashAlgorithm#NONE}
+     * @return an instance of {@link ImmutableHash} or {@code this} if the current instance is already an {@link
+     *         ImmutableHash}
+     * @see ImmutableHash
      */
-    public String toPrefix() {
-        return toPrefix(DEFAULT_PREFIX_LEN);
+    public Hash immutable() {
+        if (this.getClass() == ImmutableHash.class) {
+            return this;
+        }
+
+        return new ImmutableHash(this);
     }
 
     /**
@@ -183,13 +275,14 @@ public class Hash implements Comparable<Hash> {
      * greater than zero and less than the total size of the hash in bytes.
      *
      * @param count
-     *         the number of bytes to include in the prefix
+     *         the number of bytes to include in the prefix, positive and greater than zero
      * @return the hexadecimal string representation of the first {@code count} bytes
      * @throws IndexOutOfBoundsException
      *         if the {@code count} parameter is less than zero, equals zero, or is greater than the length of the
      *         underlying byte array
+     * @see HashAlgorithm
      */
-    public String toPrefix(final int count) {
+    public String toPrefix(@Positive final int count) {
         if (count <= 0 || count > value.length) {
             throw new IndexOutOfBoundsException(count);
         }
@@ -203,18 +296,25 @@ public class Hash implements Comparable<Hash> {
         return sb.toString();
     }
 
-    public Hash immutable() {
-        return new ImmutableHash(this);
+    /**
+     * Returns the first four (4) bytes represented as a hexadecimal string. Uses the {@link #toPrefix(int)}
+     * implementation.
+     *
+     * @return the hexadecimal string representation of the first four (4) bytes
+     * @throws IndexOutOfBoundsException
+     *         if the total length of the hash is less than four (4) bytes, such as a hash of type {@link
+     *         HashAlgorithm#NONE}
+     * @see #toPrefix(int)
+     */
+    public String toPrefix() {
+        return toPrefix(DEFAULT_PREFIX_LEN);
     }
-    //endregion
-
-    //region ToString, Equals, HashCode, & CompareTo
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int compareTo(final Hash other) {
+    public int compareTo(@NotNull final Hash other) {
         if (this == other) {
             return ComparableConstants.EQUAL;
         }
@@ -271,6 +371,4 @@ public class Hash implements Comparable<Hash> {
                 .append(VALUE_FIELD, Base64.getEncoder().encodeToString(value))
                 .build();
     }
-    //endregion
-
 }

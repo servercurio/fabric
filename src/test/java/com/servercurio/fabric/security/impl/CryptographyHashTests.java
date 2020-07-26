@@ -41,15 +41,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 import static com.servercurio.fabric.lang.ComparableConstants.EQUAL;
 import static com.servercurio.fabric.lang.ComparableConstants.GREATER_THAN;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Cryptography: Hashing")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -267,8 +259,8 @@ public class CryptographyHashTests {
             final Hash emptyCopy = new Hash(Hash.EMPTY);
             final Hash emptyRef = Hash.EMPTY;
             final Hash validCopy = new Hash(WELL_KNOWN_HASH);
-            final Hash immutableCopy = new ImmutableHash(validCopy);
-            final Hash immutable = new ImmutableHash(validCopy.getAlgorithm(), validCopy.getValue());
+            final ImmutableHash immutableCopy = new ImmutableHash(validCopy);
+            final ImmutableHash immutable = new ImmutableHash(validCopy.getAlgorithm(), validCopy.getValue());
 
             // isEmpty Validations
             assertTrue(emptyCopy.isEmpty());
@@ -317,6 +309,14 @@ public class CryptographyHashTests {
             // immutable getValue Validations
             assertNotSame(validCopy.getValue(), immutableCopy.getValue());
             assertNotSame(validCopy.getValue(), immutable.getValue());
+
+            // immutable cast method Validations
+            assertNotSame(validCopy, validCopy.immutable());
+            assertSame(immutable, immutable.immutable());
+
+            // immutable hash to mutable Validations
+            assertNotSame(immutable, immutable.mutable());
+            assertEquals(immutable, immutable.mutable());
         }
     }
 

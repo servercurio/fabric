@@ -33,24 +33,25 @@ import javax.crypto.Mac;
 public interface Cryptography extends AutoCloseable {
 
     /**
-     * @return
+     *
+     * @return a new {@link Cryptography} instance using the default implementation
      */
     static Cryptography newDefaultInstance() {
         return DefaultCryptographyImpl.newInstance();
     }
 
     /**
-     * @return
+     * @return the provider associated with this {@link Cryptography} instance
      */
     DigestProvider digest();
 
     /**
-     * @return
+     * @return the provider associated with this {@link Cryptography} instance
      */
     EncryptionProvider encryption();
 
     /**
-     * @return
+     * @return the provider associated with this {@link Cryptography} instance
      */
     MacProvider mac();
 
@@ -136,7 +137,7 @@ public interface Cryptography extends AutoCloseable {
     }
 
     /**
-     * @return
+     * @return the provider associated with this {@link Cryptography} instance
      */
     SignatureProvider signature();
 

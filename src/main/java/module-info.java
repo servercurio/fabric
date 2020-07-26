@@ -15,16 +15,24 @@
  */
 
 module com.servercurio.fabric {
+    // General Purpose Exports
     exports com.servercurio.fabric.io;
     exports com.servercurio.fabric.lang;
 
+    // Security Exports
     exports com.servercurio.fabric.security;
     exports com.servercurio.fabric.security.spi;
 
 
+    // Apache Commons
     requires org.apache.commons.lang3;
 
+    // Bouncy Castle
     requires org.bouncycastle.provider;
 
+    // JSR-380 Validation
+    requires java.validation;
+
+    // JDK Components
     requires java.desktop;
 }

@@ -27,7 +27,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("Cryptography: Hashable")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -70,6 +72,9 @@ public class CryptographyHashableTests {
         final MockHashable threeArgCtorHashable =
                 new MockHashable(HashAlgorithm.SHA_384, crypto, IN_MEMORY_DATA);
 
+        final MockHashable emptyHashHashable = new MockHashable(IN_MEMORY_DATA);
+        emptyHashHashable.setHash(Hash.EMPTY);
+
         // Basic getter checks
         assertEquals(HashAlgorithm.SHA_384, singleArgCtorHashable.getAlgorithm());
         assertEquals(crypto, threeArgCtorHashable.getCryptography());
@@ -89,6 +94,13 @@ public class CryptographyHashableTests {
         // Check it twice to double check caching
         assertEquals(IN_MEMORY_DATA_KNOWN_HASH, threeArgCtorHashable.getHash());
         assertEquals(IN_MEMORY_DATA_KNOWN_HASH, threeArgCtorHashable.getHash());
+
+        // Test the hasHash methods
+        assertFalse(emptyHashHashable.hasHash());
+        assertTrue(singleArgCtorHashable.hasHash());
+
+        emptyHashHashable.setHash(null);
+        assertFalse(emptyHashHashable.hasHash());
 
     }
 

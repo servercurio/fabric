@@ -95,6 +95,9 @@
         <!-- Cryptography & Security Libraries -->
         <bouncycastle.version>1.64</bouncycastle.version>
 
+        <!-- JSR-380 Bean Validation -->
+        <javax.validation.version>2.0.1.Final</javax.validation.version>
+
         <!-- Test Libraries -->
         <junit.jupiter.version>5.6.2</junit.jupiter.version>
         <junit.platform.version>1.6.2</junit.platform.version>
@@ -290,6 +293,13 @@
                 </exclusions>
             </dependency>
 
+            <!-- JSR-380 Bean Validation -->
+            <dependency>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
+                <version>${javax.validation.version}</version>
+            </dependency>
+
             <!-- JUnit 5 -->
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
@@ -340,6 +350,12 @@
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
+        </dependency>
+
+        <!-- JSR-380 Bean Validation -->
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
         </dependency>
 
 

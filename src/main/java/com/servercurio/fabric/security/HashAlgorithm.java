@@ -23,19 +23,84 @@ import java.security.NoSuchProviderException;
 import java.security.Provider;
 import java.util.HashMap;
 import java.util.Map;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
+/**
+ * An enumeration of the standard cryptographic hash algorithms along with their initialization parameters.
+ */
 public enum HashAlgorithm implements CryptoPrimitiveSupplier<MessageDigest> {
+    /**
+     * Represents no algorithm specified or an unknown algorithm was used.
+     */
     NONE(0, "NONE", 0),
-    SHA_224(1, "SHA-224", 224),
-    SHA_256(2, "SHA-256", 256),
-    SHA_384(3, "SHA-384", 384),
-    SHA_512(4, "SHA-512", 512),
-    SHA3_224(5, "SHA3-224", 224),
-    SHA3_256(6, "SHA3-256", 256),
-    SHA3_384(7, "SHA3-384", 384),
-    SHA3_512(8, "SHA3-512", 512),
-    SHA1(9, "SHA-1", 160);
 
+    /**
+     * The SHA-1 algorithm as defined by RFC-3174.
+     *
+     * @see <a href="https://tools.ietf.org/html/rfc3174">https://tools.ietf.org/html/rfc3174</a>
+     */
+    SHA1(1, "SHA-1", 160),
+
+    /**
+     * The SHA-224 algorithm as defined by RFC-4634.
+     *
+     * @see <a href="https://tools.ietf.org/html/rfc4634">https://tools.ietf.org/html/rfc4634</a>
+     */
+    SHA_224(2, "SHA-224", 224),
+
+    /**
+     * The SHA-256 algorithm as defined by RFC-4634.
+     *
+     * @see <a href="https://tools.ietf.org/html/rfc4634">https://tools.ietf.org/html/rfc4634</a>
+     */
+    SHA_256(3, "SHA-256", 256),
+
+    /**
+     * The SHA-384 algorithm as defined by RFC-4634.
+     *
+     * @see <a href="https://tools.ietf.org/html/rfc4634">https://tools.ietf.org/html/rfc4634</a>
+     */
+    SHA_384(4, "SHA-384", 384),
+
+    /**
+     * The SHA-512 algorithm as defined by RFC-4634.
+     *
+     * @see <a href="https://tools.ietf.org/html/rfc4634">https://tools.ietf.org/html/rfc4634</a>
+     */
+    SHA_512(5, "SHA-512", 512),
+
+    /**
+     * The SHA3-224 algorithm as defined by NIST FIPS-202.
+     *
+     * @see <a href="https://doi.org/10.6028/NIST.FIPS.202">https://doi.org/10.6028/NIST.FIPS.202</a>
+     */
+    SHA3_224(6, "SHA3-224", 224),
+
+    /**
+     * The SHA3-256 algorithm as defined by NIST FIPS-202.
+     *
+     * @see <a href="https://doi.org/10.6028/NIST.FIPS.202">https://doi.org/10.6028/NIST.FIPS.202</a>
+     */
+    SHA3_256(7, "SHA3-256", 256),
+
+    /**
+     * The SHA3-384 algorithm as defined by NIST FIPS-202.
+     *
+     * @see <a href="https://doi.org/10.6028/NIST.FIPS.202">https://doi.org/10.6028/NIST.FIPS.202</a>
+     */
+    SHA3_384(8, "SHA3-384", 384),
+
+    /**
+     * The SHA3-512 algorithm as defined by NIST FIPS-202.
+     *
+     * @see <a href="https://doi.org/10.6028/NIST.FIPS.202">https://doi.org/10.6028/NIST.FIPS.202</a>
+     */
+    SHA3_512(9, "SHA3-512", 512);
+
+    /**
+     * Internal lookup table to provide {@code O(1)} time conversion of {@code id} to enumeration value.
+     */
     private static final Map<Integer, HashAlgorithm> idMap = new HashMap<>();
 
     static {
@@ -48,11 +113,43 @@ public enum HashAlgorithm implements CryptoPrimitiveSupplier<MessageDigest> {
         }
     }
 
+    /**
+     * The number of bits in the hash value produced by the algorithm.
+     */
+    @Positive
     private final int bits;
+
+    /**
+     * The number of bytes in the hash value produced by the algorithm.
+     */
+    @Positive
     private final int bytes;
+
+    /**
+     * The name of the algorithm as specified by the standard Java Security documentation.
+     *
+     * @see <a href="https://docs.oracle.com/en/java/javase/14/docs/specs/security/standard-names.html">Java
+     *         Security Standard Algorithm Names</a>
+     */
+    @NotNull
     private final String algorithmName;
+
+    /**
+     * A unique identifier for this algorithm. This identifier must remain constant for a given algorithm and must never
+     * be reused by another algorithm.
+     */
     private final int id;
 
+    /**
+     * Enumeration Constructor.
+     *
+     * @param id
+     *         the unique identifier for this algorithm
+     * @param algorithmName
+     *         the standard name for this algorithm as specified by the Java Security documentation
+     * @param bits
+     *         the number of bits in the hash value produced by this algorithm
+     */
     HashAlgorithm(final int id, final String algorithmName, final int bits) {
         this.id = id;
         this.algorithmName = algorithmName;
@@ -60,6 +157,15 @@ public enum HashAlgorithm implements CryptoPrimitiveSupplier<MessageDigest> {
         this.bytes = bits / Byte.SIZE;
     }
 
+    /**
+     * Lookup the enumeration value for the identifier specified by the {@code id} parameter. If no enumeration value
+     * exists for the specified identifier then {@code null} will be returned.
+     *
+     * @param id
+     *         the unique identifier of the algorithm
+     * @return the enumeration value represented by the identifier or null if no enumeration value could be found for
+     *         this identifier
+     */
     public static HashAlgorithm valueOf(final int id) {
         if (!idMap.containsKey(id)) {
             return null;
@@ -68,22 +174,55 @@ public enum HashAlgorithm implements CryptoPrimitiveSupplier<MessageDigest> {
         return idMap.get(id);
     }
 
+    /**
+     * Gets the standard name of the algorithm as specified by the Java Security Standard Algorithm Names
+     * documentation.
+     *
+     * @return the standard algorithm name
+     * @see <a href="https://docs.oracle.com/en/java/javase/14/docs/specs/security/standard-names.html">Java
+     *         Security Standard Algorithm Names</a>
+     */
     public String algorithmName() {
         return algorithmName;
     }
 
+    /**
+     * Gets the number of bits in the hash value produced by this algorithm.
+     *
+     * @return the number of bits in the hash value
+     */
     public int bits() {
         return bits;
     }
 
+    /**
+     * Gets the number of bytes in the hash value produced by this algorithm.
+     *
+     * @return the number of bytes in the hash value
+     */
     public int bytes() {
         return bytes;
     }
 
+    /**
+     * Gets the unique identifier of this algorithm.
+     *
+     * @return the unique identifier
+     */
     public int id() {
         return id;
     }
 
+    /**
+     * Creates an instance of the algorithm using the Java Cryptography Architecture and the default {@link Provider}
+     * implementation.
+     *
+     * @return an instance of the algorithm implementation
+     * @throws CryptographyException
+     *         if an error occurs or the algorithm implementation was not available
+     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html">Java
+     *         Cryptography Architecture</a>
+     */
     public MessageDigest instance() {
         try {
             return MessageDigest.getInstance(algorithmName);
@@ -92,6 +231,18 @@ public enum HashAlgorithm implements CryptoPrimitiveSupplier<MessageDigest> {
         }
     }
 
+    /**
+     * Creates an instance of the algorithm using the Java Cryptography Architecture and requesting the implementation
+     * from the specified {@code provider}.
+     *
+     * @param provider
+     *         the name of the provider from which to request the algorithm implementation
+     * @return an instance of the algorithm implementation
+     * @throws CryptographyException
+     *         if an error occurs, the algorithm implementation was not available, or the provider was not available
+     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html">Java
+     *         Cryptography Architecture</a>
+     */
     public MessageDigest instance(final String provider) {
         try {
             return MessageDigest.getInstance(algorithmName, provider);
@@ -100,6 +251,18 @@ public enum HashAlgorithm implements CryptoPrimitiveSupplier<MessageDigest> {
         }
     }
 
+    /**
+     * Creates an instance of the algorithm using the Java Cryptography Architecture and requesting the implementation
+     * from the specified {@code provider}.
+     *
+     * @param provider
+     *         the provider instance from which to request the algorithm implementation
+     * @return an instance of the algorithm implementation
+     * @throws CryptographyException
+     *         if an error occurs or the algorithm implementation was not available
+     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html">Java
+     *         Cryptography Architecture</a>
+     */
     public MessageDigest instance(final Provider provider) {
         try {
             return MessageDigest.getInstance(algorithmName, provider);
