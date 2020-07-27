@@ -22,6 +22,7 @@ import java.security.NoSuchProviderException;
 import java.security.Provider;
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
+import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -30,28 +31,30 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import static com.servercurio.fabric.lang.ComparableConstants.EQUAL;
 import static com.servercurio.fabric.lang.ComparableConstants.GREATER_THAN;
-import static com.servercurio.fabric.lang.ComparableConstants.LESS_THAN;
 
 public class CipherTransformation implements Comparable<CipherTransformation>, CryptoPrimitiveSupplier<Cipher> {
 
+    @NotNull
     private CipherAlgorithm algorithm;
+
     private CipherMode mode;
+
     private CipherPadding padding;
 
-    //region Constructors
+
     public CipherTransformation() {
         this(CipherAlgorithm.AES);
     }
 
-    public CipherTransformation(final CipherAlgorithm algorithm) {
+    public CipherTransformation(@NotNull final CipherAlgorithm algorithm) {
         this(algorithm, CipherMode.GCM);
     }
 
-    public CipherTransformation(final CipherAlgorithm algorithm, final CipherMode mode) {
+    public CipherTransformation(@NotNull final CipherAlgorithm algorithm, final CipherMode mode) {
         this(algorithm, mode, CipherPadding.NONE);
     }
 
-    public CipherTransformation(final CipherAlgorithm algorithm, final CipherMode mode,
+    public CipherTransformation(@NotNull final CipherAlgorithm algorithm, final CipherMode mode,
                                 final CipherPadding padding) {
         if (algorithm == null) {
             throw new IllegalArgumentException("algorithm");
@@ -61,14 +64,12 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
         this.mode = mode;
         this.padding = padding;
     }
-    //endregion
 
-    //region Getters & Setters
     public CipherAlgorithm getAlgorithm() {
         return algorithm;
     }
 
-    public void setAlgorithm(final CipherAlgorithm algorithm) {
+    public void setAlgorithm(@NotNull final CipherAlgorithm algorithm) {
         if (algorithm == null) {
             throw new IllegalArgumentException("algorithm");
         }
@@ -92,34 +93,12 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
         this.padding = padding;
     }
 
-    //endregion
-
-
-    //region Member Methods
-    public Cipher instance() {
-        try {
-            return Cipher.getInstance(toCipherTransform());
-        } catch (NoSuchPaddingException | NoSuchAlgorithmException ex) {
-            throw new CryptographyException(ex);
-        }
-    }
-
-    public Cipher instance(final String provider) {
-        try {
-            return Cipher.getInstance(toCipherTransform(), provider);
-        } catch (NoSuchPaddingException | NoSuchAlgorithmException | NoSuchProviderException ex) {
-            throw new CryptographyException(ex);
-        }
-    }
-
-    public Cipher instance(final Provider provider) {
-        try {
-            return Cipher.getInstance(toCipherTransform(), provider);
-        } catch (NoSuchPaddingException | NoSuchAlgorithmException ex) {
-            throw new CryptographyException(ex);
-        }
-    }
-
+    /**
+     * Gets the string representation of the algorithm name, mode, and padding in the format required by the {@link
+     * Cipher#getInstance(String)} method and it's related variants.
+     *
+     * @return a fully formed {@link Cipher} name including mode and padding (if specified)
+     */
     private String toCipherTransform() {
         if (mode == null || padding == null) {
             return algorithm.algorithmName();
@@ -127,15 +106,12 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
 
         return String.format("%s/%s/%s", algorithm.algorithmName(), mode.modeName(), padding.paddingName());
     }
-    //endregion
-
-    //region ToString, Equals, HashCode, & CompareTo
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int compareTo(final CipherTransformation that) {
+    public int compareTo(@NotNull final CipherTransformation that) {
 
         if (this == that) {
             return EQUAL;
@@ -152,6 +128,9 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
                 .build();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
@@ -161,7 +140,9 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
                 .toHashCode();
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -181,6 +162,9 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
                 .isEquals();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
@@ -189,5 +173,62 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
                 .append("padding", padding)
                 .toString();
     }
-    //endregion
+
+    /**
+     * Creates an instance of the algorithm using the Java Cryptography Architecture and the default {@link Provider}
+     * implementation.
+     *
+     * @return an instance of the algorithm implementation
+     * @throws CryptographyException
+     *         if an error occurs or the algorithm implementation was not available
+     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html">Java
+     *         Cryptography Architecture</a>
+     */
+    public Cipher instance() {
+        try {
+            return Cipher.getInstance(toCipherTransform());
+        } catch (NoSuchPaddingException | NoSuchAlgorithmException ex) {
+            throw new CryptographyException(ex);
+        }
+    }
+
+    /**
+     * Creates an instance of the algorithm using the Java Cryptography Architecture and requesting the implementation
+     * from the specified {@code provider}.
+     *
+     * @param provider
+     *         the name of the provider from which to request the algorithm implementation, not null
+     * @return an instance of the algorithm implementation
+     * @throws CryptographyException
+     *         if an error occurs, the algorithm implementation was not available, or the provider was not available
+     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html">Java
+     *         Cryptography Architecture</a>
+     */
+    public Cipher instance(@NotNull final String provider) {
+        try {
+            return Cipher.getInstance(toCipherTransform(), provider);
+        } catch (NoSuchPaddingException | NoSuchAlgorithmException | NoSuchProviderException ex) {
+            throw new CryptographyException(ex);
+        }
+    }
+
+    /**
+     * Creates an instance of the algorithm using the Java Cryptography Architecture and requesting the implementation
+     * from the specified {@code provider}.
+     *
+     * @param provider
+     *         the provider instance from which to request the algorithm implementation, not null
+     * @return an instance of the algorithm implementation
+     * @throws CryptographyException
+     *         if an error occurs or the algorithm implementation was not available
+     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html">Java
+     *         Cryptography Architecture</a>
+     */
+    public Cipher instance(@NotNull final Provider provider) {
+        try {
+            return Cipher.getInstance(toCipherTransform(), provider);
+        } catch (NoSuchPaddingException | NoSuchAlgorithmException ex) {
+            throw new CryptographyException(ex);
+        }
+    }
 }
