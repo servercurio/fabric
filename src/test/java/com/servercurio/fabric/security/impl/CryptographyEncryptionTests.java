@@ -98,7 +98,7 @@ public class CryptographyEncryptionTests {
         assertEquals(CipherMode.GCM, CipherMode.valueOf(CipherMode.GCM.id()));
         assertNull(CipherMode.valueOf(-1));
 
-        assertEquals(1, CipherPadding.ISO10126.id());
+        assertEquals(1, CipherPadding.OAEP.id());
         assertEquals("PKCS5Padding", CipherPadding.PKCS5.paddingName());
         assertEquals(CipherPadding.PKCS5, CipherPadding.valueOf("PKCS5"));
         assertEquals(CipherPadding.PKCS5, CipherPadding.valueOf(CipherPadding.PKCS5.id()));
@@ -108,7 +108,7 @@ public class CryptographyEncryptionTests {
     @ParameterizedTest
     @Order(150)
     @DisplayName("Encryption :: Cipher -> Async Byte Array Encryption")
-    @ValueSource(ints = {8, 10, 12, 16, 32, 48, 64, 100, 128, 1023, 7421})
+    @ValueSource(ints = {8, 10, 12, 16, 32, 48, 64, 100, 123})
     public void testCryptoCipherAsyncByteArrayEncryption(int bufferSize) throws Exception {
 
         try (final Cryptography provider = Cryptography.newDefaultInstance()) {
@@ -155,7 +155,7 @@ public class CryptographyEncryptionTests {
     @ParameterizedTest
     @Order(200)
     @DisplayName("Encryption :: Cipher -> Async Byte Buffer Encryption")
-    @ValueSource(ints = {8, 10, 12, 16, 32, 48, 64, 100, 128, 1023, 7421})
+    @ValueSource(ints = {8, 10, 12, 16, 32, 48, 64, 100, 123})
     public void testCryptoCipherAsyncByteBufferEncryption(int bufferSize) throws Exception {
 
         try (final Cryptography provider = Cryptography.newDefaultInstance()) {
@@ -356,7 +356,7 @@ public class CryptographyEncryptionTests {
     @ParameterizedTest
     @Order(125)
     @DisplayName("Encryption :: Cipher -> Sync Byte Array Encryption")
-    @ValueSource(ints = {8, 10, 12, 16, 32, 48, 64, 100, 128, 1023, 7421})
+    @ValueSource(ints = {8, 10, 12, 16, 32, 48, 64, 100, 123})
     public void testCryptoCipherSyncByteArrayEncryption(int bufferSize) throws Exception {
 
         try (final Cryptography provider = Cryptography.newDefaultInstance()) {
@@ -399,7 +399,7 @@ public class CryptographyEncryptionTests {
     @ParameterizedTest
     @Order(175)
     @DisplayName("Encryption :: Cipher -> Sync Byte Buffer Encryption")
-    @ValueSource(ints = {8, 10, 12, 16, 32, 48, 64, 100, 128, 1023, 7421})
+    @ValueSource(ints = {8, 10, 12, 16, 32, 48, 64, 100, 123})
     public void testCryptoCipherSyncByteBufferEncryption(int bufferSize) throws Exception {
 
         try (final Cryptography provider = Cryptography.newDefaultInstance()) {
@@ -610,11 +610,11 @@ public class CryptographyEncryptionTests {
 
         defaultTransform.setAlgorithm(CipherAlgorithm.NONE);
         defaultTransform.setMode(CipherMode.ECB);
-        defaultTransform.setPadding(CipherPadding.ISO10126);
+        defaultTransform.setPadding(CipherPadding.OAEP);
 
         assertEquals(CipherAlgorithm.NONE, defaultTransform.getAlgorithm());
         assertEquals(CipherMode.ECB, defaultTransform.getMode());
-        assertEquals(CipherPadding.ISO10126, defaultTransform.getPadding());
+        assertEquals(CipherPadding.OAEP, defaultTransform.getPadding());
 
         defaultTransform.setAlgorithm(CipherAlgorithm.AES);
         defaultTransform.setMode(CipherMode.GCM);
