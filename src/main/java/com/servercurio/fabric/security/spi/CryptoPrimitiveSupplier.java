@@ -16,14 +16,49 @@
 
 package com.servercurio.fabric.security.spi;
 
+import com.servercurio.fabric.security.CryptographyException;
 import java.security.Provider;
 
 public interface CryptoPrimitiveSupplier<T> {
 
+    /**
+     * Creates an instance of the algorithm using the Java Cryptography Architecture and the default {@link Provider}
+     * implementation.
+     *
+     * @return an instance of the algorithm implementation
+     * @throws CryptographyException
+     *         if an error occurs or the algorithm implementation was not available
+     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html">Java
+     *         Cryptography Architecture</a>
+     */
     T instance();
 
+    /**
+     * Creates an instance of the algorithm using the Java Cryptography Architecture and requesting the implementation
+     * from the specified {@code provider}.
+     *
+     * @param provider
+     *         the name of the provider from which to request the algorithm implementation, not null
+     * @return an instance of the algorithm implementation
+     * @throws CryptographyException
+     *         if an error occurs, the algorithm implementation was not available, or the provider was not available
+     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html">Java
+     *         Cryptography Architecture</a>
+     */
     T instance(final String provider);
 
+    /**
+     * Creates an instance of the algorithm using the Java Cryptography Architecture and requesting the implementation
+     * from the specified {@code provider}.
+     *
+     * @param provider
+     *         the provider instance from which to request the algorithm implementation, not null
+     * @return an instance of the algorithm implementation
+     * @throws CryptographyException
+     *         if an error occurs or the algorithm implementation was not available
+     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html">Java
+     *         Cryptography Architecture</a>
+     */
     T instance(final Provider provider);
 
 }

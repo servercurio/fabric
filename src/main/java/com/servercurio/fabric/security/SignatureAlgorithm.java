@@ -349,15 +349,9 @@ public enum SignatureAlgorithm implements CryptoPrimitiveSupplier<Signature> {
     }
 
     /**
-     * Creates an instance of the algorithm using the Java Cryptography Architecture and the default {@link Provider}
-     * implementation.
-     *
-     * @return an instance of the algorithm implementation
-     * @throws CryptographyException
-     *         if an error occurs or the algorithm implementation was not available
-     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html">Java
-     *         Cryptography Architecture</a>
+     * {@inheritDoc}
      */
+    @Override
     public Signature instance() {
         try {
             return Signature.getInstance(algorithmName);
@@ -367,17 +361,9 @@ public enum SignatureAlgorithm implements CryptoPrimitiveSupplier<Signature> {
     }
 
     /**
-     * Creates an instance of the algorithm using the Java Cryptography Architecture and requesting the implementation
-     * from the specified {@code provider}.
-     *
-     * @param provider
-     *         the name of the provider from which to request the algorithm implementation, not null
-     * @return an instance of the algorithm implementation
-     * @throws CryptographyException
-     *         if an error occurs, the algorithm implementation was not available, or the provider was not available
-     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html">Java
-     *         Cryptography Architecture</a>
+     * {@inheritDoc}
      */
+    @Override
     public Signature instance(final String provider) {
         try {
             return Signature.getInstance(algorithmName, provider);
@@ -387,17 +373,9 @@ public enum SignatureAlgorithm implements CryptoPrimitiveSupplier<Signature> {
     }
 
     /**
-     * Creates an instance of the algorithm using the Java Cryptography Architecture and requesting the implementation
-     * from the specified {@code provider}.
-     *
-     * @param provider
-     *         the provider instance from which to request the algorithm implementation, not null
-     * @return an instance of the algorithm implementation
-     * @throws CryptographyException
-     *         if an error occurs or the algorithm implementation was not available
-     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html">Java
-     *         Cryptography Architecture</a>
+     * {@inheritDoc}
      */
+    @Override
     public Signature instance(final Provider provider) {
         try {
             return Signature.getInstance(algorithmName, provider);

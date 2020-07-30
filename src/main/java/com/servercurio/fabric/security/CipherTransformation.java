@@ -32,28 +32,79 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import static com.servercurio.fabric.lang.ComparableConstants.EQUAL;
 import static com.servercurio.fabric.lang.ComparableConstants.GREATER_THAN;
 
+/**
+ * Represents a complete cryptographic encryption transformation that includes the encryption algorithm, operational
+ * mode, and padding mode. 
+ */
 public class CipherTransformation implements Comparable<CipherTransformation>, CryptoPrimitiveSupplier<Cipher> {
 
+    /**
+     * The encryption algorithm for this transformation, not null.
+     */
     @NotNull
     private CipherAlgorithm algorithm;
 
+    /**
+     * The operational mode for this transformation, may be null. If {@code null} then any configured {@link #padding}
+     * is ignored.
+     */
     private CipherMode mode;
 
+    /**
+     * The padding mode for this transformation, may be null. If {@code null} then any configured {@link #mode} is
+     * ignored.
+     */
     private CipherPadding padding;
 
 
+    /**
+     * Constructs a new {@code CipherTransformation} using the defaults of {@link CipherAlgorithm#AES}, {@link
+     * CipherMode#GCM}, and {@link CipherPadding#NONE}.
+     */
     public CipherTransformation() {
         this(CipherAlgorithm.AES);
     }
 
+    /**
+     * Constructs a new {@code CipherTransformation} with the specified algorithm. The operational mode defaults to
+     * {@link CipherMode#GCM} and the padding mode defaults to {@link CipherPadding#NONE}.
+     *
+     * @param algorithm
+     *         the encryption algorithm, not null
+     * @throws IllegalArgumentException
+     *         if the {@code algorithm} parameter is {@code null}
+     */
     public CipherTransformation(@NotNull final CipherAlgorithm algorithm) {
         this(algorithm, CipherMode.GCM);
     }
 
+    /**
+     * Constructs a new {@code CipherTransformation} with the specified algorithm and operational mode. The padding mode
+     * defaults to {@link CipherPadding#NONE}.
+     *
+     * @param algorithm
+     *         the encryption algorithm, not null
+     * @param mode
+     *         the operational mode, may be null
+     * @throws IllegalArgumentException
+     *         if the {@code algorithm} parameter is {@code null}
+     */
     public CipherTransformation(@NotNull final CipherAlgorithm algorithm, final CipherMode mode) {
         this(algorithm, mode, CipherPadding.NONE);
     }
 
+    /**
+     * Constructs a new {@code CipherTransformation} with the specified algorithm, operational mode, and padding.
+     *
+     * @param algorithm
+     *         the encryption algorithm, not null
+     * @param mode
+     *         the operational mode, may be null
+     * @param padding
+     *         the padding mode, may be null
+     * @throws IllegalArgumentException
+     *         if the {@code algorithm} parameter is {@code null}
+     */
     public CipherTransformation(@NotNull final CipherAlgorithm algorithm, final CipherMode mode,
                                 final CipherPadding padding) {
         if (algorithm == null) {
@@ -65,10 +116,23 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
         this.padding = padding;
     }
 
+    /**
+     * Gets the encryption algorithm currently configured.
+     *
+     * @return the current encryption algorithm, not null
+     * @see CipherAlgorithm
+     */
     public CipherAlgorithm getAlgorithm() {
         return algorithm;
     }
 
+    /**
+     * Sets the encryption algorithm to be used for the transformation.
+     *
+     * @param algorithm
+     *         the encryption algorithm, not null
+     * @see CipherAlgorithm
+     */
     public void setAlgorithm(@NotNull final CipherAlgorithm algorithm) {
         if (algorithm == null) {
             throw new IllegalArgumentException("algorithm");
@@ -77,24 +141,54 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
         this.algorithm = algorithm;
     }
 
+    /**
+     * Gets the operational mode used by the encryption algorithm.
+     *
+     * @return the current operational mode, may be null
+     * @see CipherMode
+     */
     public CipherMode getMode() {
         return mode;
     }
 
+    /**
+     * Sets the operational mode to be used by the encryption algorithm. If {@code null} is supplied for the operational
+     * mode then any configured {@code padding} will also be ignored.
+     *
+     * @param mode
+     *         the operational mode, may be null
+     * @see CipherMode
+     * @see #getPadding()
+     */
     public void setMode(final CipherMode mode) {
         this.mode = mode;
     }
 
+    /**
+     * Gets the padding mode used by the encryption algorithm.
+     *
+     * @return the current padding mode, may be null
+     * @see CipherPadding
+     */
     public CipherPadding getPadding() {
         return padding;
     }
 
+    /**
+     * Sets the padding mode to be used by the encryption algorithm. If {@code null} is supplied for the padding then
+     * any configured {@code mode} will also be ignored.
+     *
+     * @param padding
+     *         the padding mode, may be null
+     * @see 3CipherPadding
+     * @see #getMode()
+     */
     public void setPadding(final CipherPadding padding) {
         this.padding = padding;
     }
 
     /**
-     * Gets the string representation of the algorithm name, mode, and padding in the format required by the {@link
+     * Generates a string representation of the algorithm name, mode, and padding in the format required by the {@link
      * Cipher#getInstance(String)} method and it's related variants.
      *
      * @return a fully formed {@link Cipher} name including mode and padding (if specified)
@@ -175,15 +269,9 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
     }
 
     /**
-     * Creates an instance of the algorithm using the Java Cryptography Architecture and the default {@link Provider}
-     * implementation.
-     *
-     * @return an instance of the algorithm implementation
-     * @throws CryptographyException
-     *         if an error occurs or the algorithm implementation was not available
-     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html">Java
-     *         Cryptography Architecture</a>
+     * {@inheritDoc}
      */
+    @Override
     public Cipher instance() {
         try {
             return Cipher.getInstance(toCipherTransform());
@@ -193,17 +281,9 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
     }
 
     /**
-     * Creates an instance of the algorithm using the Java Cryptography Architecture and requesting the implementation
-     * from the specified {@code provider}.
-     *
-     * @param provider
-     *         the name of the provider from which to request the algorithm implementation, not null
-     * @return an instance of the algorithm implementation
-     * @throws CryptographyException
-     *         if an error occurs, the algorithm implementation was not available, or the provider was not available
-     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html">Java
-     *         Cryptography Architecture</a>
+     * {@inheritDoc}
      */
+    @Override
     public Cipher instance(@NotNull final String provider) {
         try {
             return Cipher.getInstance(toCipherTransform(), provider);
@@ -212,18 +292,11 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
         }
     }
 
+
     /**
-     * Creates an instance of the algorithm using the Java Cryptography Architecture and requesting the implementation
-     * from the specified {@code provider}.
-     *
-     * @param provider
-     *         the provider instance from which to request the algorithm implementation, not null
-     * @return an instance of the algorithm implementation
-     * @throws CryptographyException
-     *         if an error occurs or the algorithm implementation was not available
-     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html">Java
-     *         Cryptography Architecture</a>
+     * {@inheritDoc}
      */
+    @Override
     public Cipher instance(@NotNull final Provider provider) {
         try {
             return Cipher.getInstance(toCipherTransform(), provider);
