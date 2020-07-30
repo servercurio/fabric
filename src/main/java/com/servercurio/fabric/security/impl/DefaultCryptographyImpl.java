@@ -91,8 +91,9 @@ public final class DefaultCryptographyImpl implements Cryptography {
         return new DefaultCryptographyImpl();
     }
 
-    private static <T, E extends CryptoPrimitiveSupplier<T>> T acquireAlgorithm(final E algorithm,
-                                                                                final ThreadLocal<HashMap<E, T>> threadLocal) {
+    private static <T, E extends CryptoPrimitiveSupplier<T>>
+    T acquireAlgorithm(final E algorithm,
+                       final ThreadLocal<HashMap<E, T>> threadLocal) {
         final HashMap<E, T> cache = threadLocal.get();
 
         if (!cache.containsKey(algorithm)) {
@@ -115,19 +116,6 @@ public final class DefaultCryptographyImpl implements Cryptography {
 
     public ExecutorService executorService() {
         return executorService;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void close() {
-        executorService.shutdownNow();
-        hashAlgorithmCache.remove();
-        macAlgorithmCache.remove();
-        cipherAlgorithmCache.remove();
-        signatureAlgorithmCache.remove();
-        secureRandomCache.remove();
     }
 
     @Override
@@ -188,5 +176,18 @@ public final class DefaultCryptographyImpl implements Cryptography {
     @Override
     public SignatureProvider signature() {
         return new SignatureProviderImpl(this);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() {
+        executorService.shutdownNow();
+        hashAlgorithmCache.remove();
+        macAlgorithmCache.remove();
+        cipherAlgorithmCache.remove();
+        signatureAlgorithmCache.remove();
+        secureRandomCache.remove();
     }
 }

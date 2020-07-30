@@ -20,6 +20,7 @@ package com.servercurio.fabric.security;
  * Standard interface for classes that need to carry their own cryptographic {@link Hash} and may compute their own
  * hash. If the class does not compute it's own {@link Hash} then it should clearly document either how the hash should
  * be computed or reference an external utility used to compute the {@link Hash}.
+ *
  * <p>
  * Classes that compute their own {@link Hash} values can either implement this interface directly or extend {@link
  * AbstractHashable} which provides a reasonable default implementation of this interface.

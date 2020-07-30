@@ -33,7 +33,6 @@ public interface EncryptionProvider {
     }
 
     /**
-     *
      * @param key
      * @param iv
      * @param cipherStream
@@ -41,12 +40,11 @@ public interface EncryptionProvider {
      * @return
      */
     default Future<?> decryptAsync(final SecretKey key, final byte[] iv, final InputStream cipherStream,
-                                      final OutputStream clearStream) {
+                                   final OutputStream clearStream) {
         return decryptAsync(getDefaultAlgorithm(), key, iv, cipherStream, clearStream);
     }
 
     /**
-     *
      * @param algorithm
      * @param key
      * @param iv
@@ -55,10 +53,9 @@ public interface EncryptionProvider {
      * @return
      */
     Future<?> decryptAsync(final CipherTransformation algorithm, final SecretKey key, final byte[] iv,
-                              final InputStream cipherStream, final OutputStream clearStream);
+                           final InputStream cipherStream, final OutputStream clearStream);
 
     /**
-     *
      * @param key
      * @param iv
      * @param data
@@ -69,7 +66,6 @@ public interface EncryptionProvider {
     }
 
     /**
-     *
      * @param algorithm
      * @param key
      * @param iv
@@ -82,7 +78,6 @@ public interface EncryptionProvider {
                                 final byte[] data);
 
     /**
-     *
      * @param key
      * @param iv
      * @param buffer
@@ -93,7 +88,6 @@ public interface EncryptionProvider {
     }
 
     /**
-     *
      * @param algorithm
      * @param key
      * @param iv
@@ -106,7 +100,6 @@ public interface EncryptionProvider {
                                     final ByteBuffer buffer);
 
     /**
-     *
      * @param key
      * @param iv
      * @param cipherStream
@@ -118,7 +111,6 @@ public interface EncryptionProvider {
     }
 
     /**
-     *
      * @param algorithm
      * @param key
      * @param iv
@@ -132,7 +124,6 @@ public interface EncryptionProvider {
                      final OutputStream clearStream);
 
     /**
-     *
      * @param key
      * @param iv
      * @param data
@@ -143,7 +134,6 @@ public interface EncryptionProvider {
     }
 
     /**
-     *
      * @param algorithm
      * @param key
      * @param iv
@@ -153,7 +143,6 @@ public interface EncryptionProvider {
     byte[] decryptSync(final CipherTransformation algorithm, final SecretKey key, final byte[] iv, final byte[] data);
 
     /**
-     *
      * @param key
      * @param iv
      * @param buffer
@@ -164,7 +153,6 @@ public interface EncryptionProvider {
     }
 
     /**
-     *
      * @param algorithm
      * @param key
      * @param iv
@@ -177,7 +165,6 @@ public interface EncryptionProvider {
                            final ByteBuffer buffer);
 
     /**
-     *
      * @param key
      * @param iv
      * @param clearStream
@@ -185,12 +172,11 @@ public interface EncryptionProvider {
      * @return
      */
     default Future<?> encryptAsync(final SecretKey key, final byte[] iv, final InputStream clearStream,
-                                      final OutputStream cipherStream) {
+                                   final OutputStream cipherStream) {
         return encryptAsync(getDefaultAlgorithm(), key, iv, clearStream, cipherStream);
     }
 
     /**
-     *
      * @param algorithm
      * @param key
      * @param iv
@@ -199,10 +185,9 @@ public interface EncryptionProvider {
      * @return
      */
     Future<?> encryptAsync(final CipherTransformation algorithm, final SecretKey key, final byte[] iv,
-                              final InputStream clearStream, final OutputStream cipherStream);
+                           final InputStream clearStream, final OutputStream cipherStream);
 
     /**
-     *
      * @param key
      * @param iv
      * @param data
@@ -213,7 +198,6 @@ public interface EncryptionProvider {
     }
 
     /**
-     *
      * @param algorithm
      * @param key
      * @param iv
@@ -224,7 +208,6 @@ public interface EncryptionProvider {
                                 final byte[] data);
 
     /**
-     *
      * @param key
      * @param iv
      * @param buffer
@@ -235,7 +218,6 @@ public interface EncryptionProvider {
     }
 
     /**
-     *
      * @param algorithm
      * @param key
      * @param iv
@@ -246,7 +228,6 @@ public interface EncryptionProvider {
                                     final ByteBuffer buffer);
 
     /**
-     *
      * @param key
      * @param iv
      * @param clearStream
@@ -258,7 +239,6 @@ public interface EncryptionProvider {
     }
 
     /**
-     *
      * @param algorithm
      * @param key
      * @param iv
@@ -269,7 +249,6 @@ public interface EncryptionProvider {
                      final InputStream clearStream, final OutputStream cipherStream);
 
     /**
-     *
      * @param key
      * @param iv
      * @param data
@@ -280,7 +259,6 @@ public interface EncryptionProvider {
     }
 
     /**
-     *
      * @param algorithm
      * @param key
      * @param iv
@@ -290,7 +268,6 @@ public interface EncryptionProvider {
     byte[] encryptSync(final CipherTransformation algorithm, final SecretKey key, final byte[] iv, final byte[] data);
 
     /**
-     *
      * @param key
      * @param iv
      * @param buffer
@@ -301,7 +278,6 @@ public interface EncryptionProvider {
     }
 
     /**
-     *
      * @param algorithm
      * @param key
      * @param iv
@@ -312,7 +288,6 @@ public interface EncryptionProvider {
                            final ByteBuffer buffer);
 
     /**
-     *
      * @return
      */
     default Future<byte[]> nonceAsync() {
@@ -320,14 +295,12 @@ public interface EncryptionProvider {
     }
 
     /**
-     *
      * @param algorithm
      * @return
      */
     Future<byte[]> nonceAsync(final CipherTransformation algorithm);
 
     /**
-     *
      * @return
      */
     default byte[] nonceSync() {
@@ -335,7 +308,6 @@ public interface EncryptionProvider {
     }
 
     /**
-     *
      * @param algorithm
      * @return
      */

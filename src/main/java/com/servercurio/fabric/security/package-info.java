@@ -23,6 +23,7 @@
  * to eliminate the need for users to maintain magic strings and constant value in order to access cryptographic
  * functions; therefore, this module provides enumerations for the most common secure cryptographic algorithms as
  * outlined below:
+ *
  * <p>
  * <ul>
  *     <li>{@link com.servercurio.fabric.security.HashAlgorithm}</li>

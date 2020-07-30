@@ -59,6 +59,16 @@ public class ImmutableHash extends Hash {
     }
 
     /**
+     * Converts this {@link ImmutableHash} instance to a mutable {@link Hash} instance.
+     *
+     * @return an instance of {@link Hash}
+     * @see Hash
+     */
+    public Hash mutable() {
+        return new Hash(this);
+    }
+
+    /**
      * {@inheritDoc}
      *
      * @param algorithm
@@ -96,15 +106,5 @@ public class ImmutableHash extends Hash {
     @Override
     public void setValue(final byte[] value) {
         throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Converts this {@link ImmutableHash} instance to a mutable {@link Hash} instance.
-     *
-     * @return an instance of {@link Hash}
-     * @see Hash
-     */
-    public Hash mutable() {
-        return new Hash(this);
     }
 }

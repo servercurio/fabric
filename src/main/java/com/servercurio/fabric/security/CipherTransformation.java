@@ -45,6 +45,21 @@ import static com.servercurio.fabric.lang.ComparableConstants.GREATER_THAN;
 public class CipherTransformation implements Comparable<CipherTransformation>, CryptoPrimitiveSupplier<Cipher> {
 
     /**
+     * The {@code algorithm} field name represented as a string value.
+     */
+    private static final String ALGORITHM_FIELD = "algorithm";
+
+    /**
+     * The {@code mode} field name represented as a string value.
+     */
+    private static final String MODE_FIELD = "mode";
+
+    /**
+     * The {@code padding} field name represented as a string value.
+     */
+    private static final String PADDING_FIELD = "padding";
+
+    /**
      * The encryption algorithm for this transformation, not null.
      */
     @NotNull
@@ -114,7 +129,7 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
     public CipherTransformation(@NotNull final CipherAlgorithm algorithm, final CipherMode mode,
                                 final CipherPadding padding) {
         if (algorithm == null) {
-            throw new IllegalArgumentException("algorithm");
+            throw new IllegalArgumentException(ALGORITHM_FIELD);
         }
 
         this.algorithm = algorithm;
@@ -141,7 +156,7 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
      */
     public void setAlgorithm(@NotNull final CipherAlgorithm algorithm) {
         if (algorithm == null) {
-            throw new IllegalArgumentException("algorithm");
+            throw new IllegalArgumentException(ALGORITHM_FIELD);
         }
 
         this.algorithm = algorithm;
@@ -268,9 +283,9 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
-                .append("algorithm", algorithm)
-                .append("mode", mode)
-                .append("padding", padding)
+                .append(ALGORITHM_FIELD, algorithm)
+                .append(MODE_FIELD, mode)
+                .append(PADDING_FIELD, padding)
                 .toString();
     }
 
