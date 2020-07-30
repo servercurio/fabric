@@ -29,6 +29,8 @@ import javax.validation.constraints.Positive;
 /**
  * An enumeration of the standard cryptographic hash-based message authentication algorithms along with their
  * initialization parameters.
+ *
+ * @author Nathan Klick
  */
 public enum MacAlgorithm implements CryptoPrimitiveSupplier<Mac> {
     /**

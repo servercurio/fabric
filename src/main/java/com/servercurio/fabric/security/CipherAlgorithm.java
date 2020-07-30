@@ -21,8 +21,9 @@ import java.util.Map;
 import javax.validation.constraints.NotNull;
 
 /**
- * An enumeration of the standard cryptographic encryption algorithms along with their initialization
- * parameters.
+ * An enumeration of the standard cryptographic encryption algorithms along with their initialization parameters.
+ *
+ * @author Nathan Klick
  */
 public enum CipherAlgorithm {
     /**
@@ -34,7 +35,7 @@ public enum CipherAlgorithm {
      * The AES algorithm as defined by NIST FIPS 197.
      *
      * @see <a href="https://csrc.nist.gov/publications/fips/fips197/fips-197.pdf">
-     *     https://csrc.nist.gov/publications/fips/fips197/fips-197.pdf</a>
+     *         https://csrc.nist.gov/publications/fips/fips197/fips-197.pdf</a>
      */
     AES(1, "AES", "AES"),
 
@@ -42,7 +43,7 @@ public enum CipherAlgorithm {
      * The ChaCha20 algorithm as defined by RFC-7539.
      *
      * @see <a href="https://tools.ietf.org/html/rfc7539">
-     *     https://tools.ietf.org/html/rfc7539</a>
+     *         https://tools.ietf.org/html/rfc7539</a>
      */
     CHACHA20(2, "ChaCha20", "ChaCha20"),
 
@@ -50,7 +51,7 @@ public enum CipherAlgorithm {
      * The ChaCha20 with Poly1305 AEAD algorithm as defined by RFC-7539.
      *
      * @see <a href="https://tools.ietf.org/html/rfc7539">
-     *     https://tools.ietf.org/html/rfc7539</a>
+     *         https://tools.ietf.org/html/rfc7539</a>
      */
     CHACHA20_POLY1305(3, "ChaCha20-Poly1305", "ChaCha20"),
 
@@ -58,7 +59,7 @@ public enum CipherAlgorithm {
      * The RSA algorithm as defined by RFC-8017.
      *
      * @see <a href="https://tools.ietf.org/html/rfc8017">
-     *     https://tools.ietf.org/html/rfc8017</a>
+     *         https://tools.ietf.org/html/rfc8017</a>
      */
     RSA(4, "RSA", "RSA");
 

@@ -22,6 +22,8 @@ import javax.validation.constraints.NotNull;
 
 /**
  * An enumeration of the standard cryptographic encryption padding modes along with their initialization parameters.
+ *
+ * @author Nathan Klick
  */
 public enum CipherPadding {
     /**

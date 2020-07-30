@@ -34,7 +34,13 @@ import static com.servercurio.fabric.lang.ComparableConstants.GREATER_THAN;
 
 /**
  * Represents a complete cryptographic encryption transformation that includes the encryption algorithm, operational
- * mode, and padding mode. 
+ * mode, and padding mode.
+ *
+ * @author Nathan Klick
+ * @see CipherAlgorithm
+ * @see CipherMode
+ * @see CipherPadding
+ * @see Cryptography
  */
 public class CipherTransformation implements Comparable<CipherTransformation>, CryptoPrimitiveSupplier<Cipher> {
 
@@ -180,7 +186,7 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
      *
      * @param padding
      *         the padding mode, may be null
-     * @see 3CipherPadding
+     * @see CipherPadding
      * @see #getMode()
      */
     public void setPadding(final CipherPadding padding) {

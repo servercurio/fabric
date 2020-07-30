@@ -35,7 +35,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @author Nathan Klick
  * @see HashAlgorithm
  * @see ImmutableHash
- * @since 1.0
  */
 public class Hash implements Comparable<Hash> {
 

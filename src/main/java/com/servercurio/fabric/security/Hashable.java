@@ -16,12 +16,41 @@
 
 package com.servercurio.fabric.security;
 
+/**
+ * Standard interface for classes that need to carry their own cryptographic {@link Hash} and may compute their own
+ * hash. If the class does not compute it's own {@link Hash} then it should clearly document either how the hash should
+ * be computed or reference an external utility used to compute the {@link Hash}.
+ * <p>
+ * Classes that compute their own {@link Hash} values can either implement this interface directly or extend {@link
+ * AbstractHashable} which provides a reasonable default implementation of this interface.
+ *
+ * @author Nathan Klick
+ * @see AbstractHashable
+ */
 public interface Hashable {
 
+    /**
+     * Gets the hash value or null if no hash value has been computed.
+     *
+     * @return the current hash value or null if no hash value has been computed
+     */
     Hash getHash();
 
+    /**
+     * Sets the hash value to the one provided or clears the hash if the {@code hash} parameter is {@code null}.
+     *
+     * @param hash
+     *         the hash value, may be null
+     */
     void setHash(final Hash hash);
 
+    /**
+     * Returns true if this object has a valid hash. A valid hash is defined as a non-null reference that is not an
+     * empty hash as defined by the {@link Hash#isEmpty()} method.
+     *
+     * @return true if this object has a valid, non-empty hash; otherwise false
+     * @see Hash#isEmpty()
+     */
     boolean hasHash();
 
 }

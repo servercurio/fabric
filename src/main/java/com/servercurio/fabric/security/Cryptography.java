@@ -26,70 +26,147 @@ import java.security.SecureRandom;
 import java.security.Signature;
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
+import javax.validation.constraints.NotNull;
 
 /**
+ * Provides the unified Cryptography API for the {@code Fabric} library. The core API is broken down into multiple
+ * provider interfaces. The providers encapsulate the discrete cryptographic functions. All implementors of the {@link
+ * Cryptography} interface must provide implementations for the providers listed below:
  *
+ * <p>
+ * <ul>
+ *     <li>{@link DigestProvider}</li>
+ *     <li>{@link MacProvider}</li>
+ *     <li>{@link EncryptionProvider}</li>
+ *     <li>{@link SignatureProvider}</li>
+ * </ul>
+ *
+ * @author Nathan Klick
+ * @see DigestProvider
+ * @see MacProvider
+ * @see EncryptionProvider
+ * @see SignatureProvider
+ * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html">Java
+ *         Cryptography Architecture</a>
  */
 public interface Cryptography extends AutoCloseable {
 
     /**
+     * Factory method for new instances of the default cryptography implementation.
      *
-     * @return a new {@link Cryptography} instance using the default implementation
+     * @return a new {@link Cryptography} instance using the default implementation, not null
      */
     static Cryptography newDefaultInstance() {
         return DefaultCryptographyImpl.newInstance();
     }
 
     /**
-     * @return the provider associated with this {@link Cryptography} instance
+     * Provides all the cryptographic hash functionality.
+     *
+     * @return the provider associated with this {@link Cryptography} instance, not null
      */
     DigestProvider digest();
 
     /**
-     * @return the provider associated with this {@link Cryptography} instance
+     * Provides all the cryptographic encryption functionality.
+     *
+     * @return the provider associated with this {@link Cryptography} instance, not null
      */
     EncryptionProvider encryption();
 
     /**
-     * @return the provider associated with this {@link Cryptography} instance
+     * Provides all the cryptographic message authentication functionality.
+     *
+     * @return the provider associated with this {@link Cryptography} instance, not null
      */
     MacProvider mac();
 
     /**
+     * Acquires a cryptographic primitive from the underlying Java Cryptography Architecture provider. Implementations
+     * may return a new primitive on every request or may return a cached instance. If returning cached instances then
+     * care must be taken to ensure thread safety and that cached instances are only used by a single caller at a time.
+     *
      * @param algorithm
-     * @return
+     *         the cryptographic algorithm, not null
+     * @return the cryptographic primitive, not null
+     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html">Java
+     *         Cryptography Architecture</a>
      */
-    Cipher primitive(final CipherTransformation algorithm);
+    Cipher primitive(@NotNull final CipherTransformation algorithm);
 
     /**
+     * Acquires a cryptographic primitive from the underlying Java Cryptography Architecture provider. Implementations
+     * may return a new primitive on every request or may return a cached instance. If returning cached instances then
+     * care must be taken to ensure thread safety and that cached instances are only used by a single caller at a time.
+     *
      * @param algorithm
-     * @return
+     *         the cryptographic algorithm, not null
+     * @return the cryptographic primitive, not null
+     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html">Java
+     *         Cryptography Architecture</a>
      */
-    Signature primitive(final SignatureAlgorithm algorithm);
+    Signature primitive(@NotNull final SignatureAlgorithm algorithm);
 
     /**
+     * Acquires a cryptographic primitive from the underlying Java Cryptography Architecture provider. Implementations
+     * may return a new primitive on every request or may return a cached instance. If returning cached instances then
+     * care must be taken to ensure thread safety and that cached instances are only used by a single caller at a time.
+     *
      * @param algorithm
-     * @return
+     *         the cryptographic algorithm, not null
+     * @return the cryptographic primitive, not null
+     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html">Java
+     *         Cryptography Architecture</a>
      */
-    MessageDigest primitive(final HashAlgorithm algorithm);
+    MessageDigest primitive(@NotNull final HashAlgorithm algorithm);
 
     /**
+     * Acquires a cryptographic primitive from the underlying Java Cryptography Architecture provider. Implementations
+     * may return a new primitive on every request or may return a cached instance. If returning cached instances then
+     * care must be taken to ensure thread safety and that cached instances are only used by a single caller at a time.
+     *
      * @param algorithm
-     * @return
+     *         the cryptographic algorithm, not null
+     * @return the cryptographic primitive, not null
+     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html">Java
+     *         Cryptography Architecture</a>
      */
-    Mac primitive(final MacAlgorithm algorithm);
+    Mac primitive(@NotNull final MacAlgorithm algorithm);
 
     /**
-     * @return
+     * Acquires an instance of a cryptographically secure PRNG. It is strongly recommended that all implementations use
+     * the DRBG secure random algorithm with reseeding enabled and no less than a 128-bit strength parameter.
+     *
+     * @return a cryptographically secure PRNG implementation, not null
+     * @see java.security.DrbgParameters
+     * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html">Java
+     *         Cryptography Architecture</a>
      */
     SecureRandom random();
 
     /**
+     * Secure equality comparison that uses a constant time comparison operation. This implementation uses XOR based
+     * operations to provide the constant time comparisons. The use of constant time operations are critical to help
+     * mitigate processor timing attacks.
+     *
      * @param left
+     *         the first array being compared, not null
      * @param right
-     * @return
+     *         the second array being compared, not null
+     * @return true if both arrays are the same length and contain the same elements in the same order; otherwise false
+     *         if the arrays are not equal
+     * @throws IllegalArgumentException
+     *         if the {@code left} or {@code right} parameters are {@code null}
      */
-    default boolean secureEquals(final char[] left, final char[] right) {
+    default boolean secureEquals(@NotNull final char[] left, @NotNull final char[] right) {
+        if (left == null) {
+            throw new IllegalArgumentException("left");
+        }
+
+        if (right == null) {
+            throw new IllegalArgumentException("right");
+        }
+
         int diff = left.length ^ right.length;
         for (int i = 0; i < left.length && i < right.length; i++) {
             diff |= left[i] ^ right[i];
@@ -98,11 +175,28 @@ public interface Cryptography extends AutoCloseable {
     }
 
     /**
+     * Secure equality comparison that uses a constant time comparison operation. This implementation uses XOR based
+     * operations to provide the constant time comparisons. The use of constant time operations are critical to help
+     * mitigate processor timing attacks.
+     *
      * @param left
+     *         the first array being compared, not null
      * @param right
-     * @return
+     *         the second array being compared, not null
+     * @return true if both arrays are the same length and contain the same elements in the same order; otherwise false
+     *         if the arrays are not equal
+     * @throws IllegalArgumentException
+     *         if the {@code left} or {@code right} parameters are {@code null}
      */
-    default boolean secureEquals(final byte[] left, final byte[] right) {
+    default boolean secureEquals(@NotNull final byte[] left, @NotNull final byte[] right) {
+        if (left == null) {
+            throw new IllegalArgumentException("left");
+        }
+
+        if (right == null) {
+            throw new IllegalArgumentException("right");
+        }
+
         int diff = left.length ^ right.length;
         for (int i = 0; i < left.length && i < right.length; i++) {
             diff |= left[i] ^ right[i];
@@ -111,11 +205,28 @@ public interface Cryptography extends AutoCloseable {
     }
 
     /**
+     * Secure equality comparison that uses a constant time comparison operation. This implementation uses XOR based
+     * operations to provide the constant time comparisons. The use of constant time operations are critical to help
+     * mitigate processor timing attacks.
+     *
      * @param left
+     *         the first array being compared, not null
      * @param right
-     * @return
+     *         the second array being compared, not null
+     * @return true if both arrays are the same length and contain the same elements in the same order; otherwise false
+     *         if the arrays are not equal
+     * @throws IllegalArgumentException
+     *         if the {@code left} or {@code right} parameters are {@code null}
      */
-    default boolean secureEquals(final int[] left, final int[] right) {
+    default boolean secureEquals(@NotNull final int[] left, @NotNull final int[] right) {
+        if (left == null) {
+            throw new IllegalArgumentException("left");
+        }
+
+        if (right == null) {
+            throw new IllegalArgumentException("right");
+        }
+
         int diff = left.length ^ right.length;
         for (int i = 0; i < left.length && i < right.length; i++) {
             diff |= left[i] ^ right[i];
@@ -124,11 +235,28 @@ public interface Cryptography extends AutoCloseable {
     }
 
     /**
+     * Secure equality comparison that uses a constant time comparison operation. This implementation uses XOR based
+     * operations to provide the constant time comparisons. The use of constant time operations are critical to help
+     * mitigate processor timing attacks.
+     *
      * @param left
+     *         the first array being compared, not null
      * @param right
-     * @return
+     *         the second array being compared, not null
+     * @return true if both arrays are the same length and contain the same elements in the same order; otherwise false
+     *         if the arrays are not equal
+     * @throws IllegalArgumentException
+     *         if the {@code left} or {@code right} parameters are {@code null}
      */
-    default boolean secureEquals(final long[] left, final long[] right) {
+    default boolean secureEquals(@NotNull final long[] left, @NotNull final long[] right) {
+        if (left == null) {
+            throw new IllegalArgumentException("left");
+        }
+
+        if (right == null) {
+            throw new IllegalArgumentException("right");
+        }
+
         int diff = left.length ^ right.length;
         for (int i = 0; i < left.length && i < right.length; i++) {
             diff |= left[i] ^ right[i];
@@ -137,8 +265,15 @@ public interface Cryptography extends AutoCloseable {
     }
 
     /**
-     * @return the provider associated with this {@link Cryptography} instance
+     * Provides all the cryptographic digital signature functionality.
+     *
+     * @return the provider associated with this {@link Cryptography} instance, not null
      */
     SignatureProvider signature();
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    void close();
 }

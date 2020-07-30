@@ -33,7 +33,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  *
  * @author Nathan Klick
  * @see SignatureAlgorithm
- * @since 1.0
  */
 public class Seal implements Comparable<Seal> {
 
@@ -152,7 +151,8 @@ public class Seal implements Comparable<Seal> {
     }
 
     /**
-     * Returns the algorithm that computed the underlying signature, as specified by the {@link SignatureAlgorithm} enum.
+     * Returns the algorithm that computed the underlying signature, as specified by the {@link SignatureAlgorithm}
+     * enum.
      *
      * @return the signature algorithm used to compute the signature, not null
      * @see SignatureAlgorithm

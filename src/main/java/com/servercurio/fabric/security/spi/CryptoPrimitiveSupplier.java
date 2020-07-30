@@ -19,6 +19,17 @@ package com.servercurio.fabric.security.spi;
 import com.servercurio.fabric.security.CryptographyException;
 import java.security.Provider;
 
+/**
+ * Provides a common supplier model for accessing cryptographic primitives. Implementations may return a new primitive
+ * on every request or may return a cached instance. If returning cached instances then care must be taken to ensure
+ * thread safety and that cached instances are only used by a single caller at a time.
+ *
+ * @param <T>
+ *         the type of the cryptographic primitive
+ * @author Nathan Klick
+ * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html">Java
+ *         Cryptography Architecture</a>
+ */
 public interface CryptoPrimitiveSupplier<T> {
 
     /**

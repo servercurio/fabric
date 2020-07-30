@@ -27,6 +27,8 @@ import javax.validation.constraints.NotNull;
 
 /**
  * An enumeration of the standard cryptographic signature algorithms along with their initialization parameters.
+ *
+ * @author Nathan Klick
  */
 public enum SignatureAlgorithm implements CryptoPrimitiveSupplier<Signature> {
     /**

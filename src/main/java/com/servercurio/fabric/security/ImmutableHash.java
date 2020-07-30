@@ -27,7 +27,6 @@ import javax.validation.constraints.NotNull;
  * @author Nathan Klick
  * @see HashAlgorithm
  * @see Hash
- * @since 1.0
  */
 public class ImmutableHash extends Hash {
 

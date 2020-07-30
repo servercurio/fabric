@@ -28,6 +28,8 @@ import javax.validation.constraints.Positive;
 
 /**
  * An enumeration of the standard cryptographic hash algorithms along with their initialization parameters.
+ *
+ * @author Nathan Klick
  */
 public enum HashAlgorithm implements CryptoPrimitiveSupplier<MessageDigest> {
     /**
@@ -39,7 +41,7 @@ public enum HashAlgorithm implements CryptoPrimitiveSupplier<MessageDigest> {
      * The SHA-1 algorithm as defined by NIST FIPS 180-4.
      *
      * @see <a href="https://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf">
-     *     https://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf</a>
+     *         https://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf</a>
      */
     SHA1(1, "SHA-1", 160),
 
@@ -47,7 +49,7 @@ public enum HashAlgorithm implements CryptoPrimitiveSupplier<MessageDigest> {
      * The SHA-224 algorithm as defined by NIST FIPS 180-4.
      *
      * @see <a href="https://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf">
-     *     https://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf</a>
+     *         https://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf</a>
      */
     SHA_224(2, "SHA-224", 224),
 
@@ -55,7 +57,7 @@ public enum HashAlgorithm implements CryptoPrimitiveSupplier<MessageDigest> {
      * The SHA-256 algorithm as defined by NIST FIPS 180-4.
      *
      * @see <a href="https://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf">
-     *     https://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf</a>
+     *         https://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf</a>
      */
     SHA_256(3, "SHA-256", 256),
 
@@ -63,7 +65,7 @@ public enum HashAlgorithm implements CryptoPrimitiveSupplier<MessageDigest> {
      * The SHA-384 algorithm as defined by NIST FIPS 180-4.
      *
      * @see <a href="https://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf">
-     *     https://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf</a>
+     *         https://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf</a>
      */
     SHA_384(4, "SHA-384", 384),
 
@@ -71,7 +73,7 @@ public enum HashAlgorithm implements CryptoPrimitiveSupplier<MessageDigest> {
      * The SHA-512 algorithm as defined by NIST FIPS 180-4.
      *
      * @see <a href="https://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf">
-     *     https://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf</a>
+     *         https://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf</a>
      */
     SHA_512(5, "SHA-512", 512),
 
