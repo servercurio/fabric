@@ -88,7 +88,7 @@
         <slf4j.version>2.0.0-alpha1</slf4j.version>
 
         <!-- Apache Commons Libraries -->
-        <commons.lang3.version>3.9</commons.lang3.version>
+        <commons.lang3.version>3.11</commons.lang3.version>
         <commons.collections4.version>4.4</commons.collections4.version>
         <commons.io.version>2.7</commons.io.version>
 
@@ -465,6 +465,13 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
                     <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
+                    <detectLinks>true</detectLinks>
+                    <detectJavaApiLink>true</detectJavaApiLink>
+                    <doctitle>ServerCurio Fabric</doctitle>
+                    <windowtitle>Fabric API</windowtitle>
+                    <links>
+                        <link>https://docs.oracle.com/en/java/javase/14/docs/api</link>
+                    </links>
                 </configuration>
             </plugin>
             <plugin>

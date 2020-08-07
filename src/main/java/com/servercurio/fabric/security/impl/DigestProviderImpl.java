@@ -16,6 +16,7 @@
 
 package com.servercurio.fabric.security.impl;
 
+import com.servercurio.fabric.security.Cryptography;
 import com.servercurio.fabric.security.CryptographyException;
 import com.servercurio.fabric.security.Hash;
 import com.servercurio.fabric.security.HashAlgorithm;
@@ -26,14 +27,25 @@ import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.util.concurrent.Future;
+import javax.validation.constraints.NotNull;
 
 import static com.servercurio.fabric.security.impl.DefaultCryptographyImpl.applyToStream;
 
 public class DigestProviderImpl implements DigestProvider {
 
+    /**
+     * The {@link Cryptography} implementation to which this provider is bound.
+     */
+    @NotNull
     private final DefaultCryptographyImpl crypto;
 
-    public DigestProviderImpl(final DefaultCryptographyImpl crypto) {
+    /**
+     * Constructs a new provider instance bound to the given {@link Cryptography} implementation.
+     *
+     * @param crypto
+     *         the {@link DefaultCryptographyImpl} to which this provider is bound, not null
+     */
+    public DigestProviderImpl(@NotNull final DefaultCryptographyImpl crypto) {
         this.crypto = crypto;
     }
 

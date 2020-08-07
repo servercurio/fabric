@@ -44,6 +44,7 @@ import javax.crypto.Mac;
 public final class DefaultCryptographyImpl implements Cryptography {
 
     public static final int STREAM_BUFFER_SIZE = 8192;
+
     private static final String SECURE_RANDOM_ALGORITHM = "DRBG";
 
     private static final ThreadLocal<HashMap<HashAlgorithm, MessageDigest>> hashAlgorithmCache = ThreadLocal
@@ -118,19 +119,49 @@ public final class DefaultCryptographyImpl implements Cryptography {
         return executorService;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public DigestProvider digest() {
         return new DigestProviderImpl(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public EncryptionProvider encryption() {
         return new EncryptionProviderImpl(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MacProvider mac() {
         return new MacProviderImpl(this);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SignatureProvider signature() {
+        return new SignatureProviderImpl(this);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() {
+        executorService.shutdownNow();
+        hashAlgorithmCache.remove();
+        macAlgorithmCache.remove();
+        cipherAlgorithmCache.remove();
+        signatureAlgorithmCache.remove();
+        secureRandomCache.remove();
     }
 
     /**
@@ -171,23 +202,5 @@ public final class DefaultCryptographyImpl implements Cryptography {
     @Override
     public SecureRandom random() {
         return secureRandomCache.get();
-    }
-
-    @Override
-    public SignatureProvider signature() {
-        return new SignatureProviderImpl(this);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void close() {
-        executorService.shutdownNow();
-        hashAlgorithmCache.remove();
-        macAlgorithmCache.remove();
-        cipherAlgorithmCache.remove();
-        signatureAlgorithmCache.remove();
-        secureRandomCache.remove();
     }
 }

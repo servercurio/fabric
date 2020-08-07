@@ -16,35 +16,85 @@
 
 package com.servercurio.fabric.security.spi;
 
+import com.servercurio.fabric.security.Cryptography;
+import com.servercurio.fabric.security.CryptographyException;
 import com.servercurio.fabric.security.Hash;
 import com.servercurio.fabric.security.HashAlgorithm;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.concurrent.Future;
+import javax.validation.constraints.NotNull;
 
+/**
+ * Cryptography Provider definition that encapsulates all of the available message digest functionality. The default
+ * algorithm is {@link HashAlgorithm#SHA_384} which is the minimum recommended algorithm that is C-NSA compliant.
+ * Provider implementations may choose to override the default; however, it is recommended that the default algorithm be
+ * a C-NSA compliant algorithm.
+ *
+ * @author Nathan Klick
+ * @see Cryptography
+ * @see HashAlgorithm
+ */
 public interface DigestProvider {
 
     /**
-     * @return
+     * Returns the default algorithm. This is the algorithm that will be used when calling the overloaded methods that
+     * do not accept the algorithm as a parameter.
+     *
+     * @return the default algorithm, not null
      */
     default HashAlgorithm getDefaultAlgorithm() {
         return HashAlgorithm.SHA_384;
     }
 
     /**
+     * Asynchronously computes the digest of the {@link InputStream} specified by the {@code stream} parameter. This
+     * implementation uses the default algorithm provided by the {@link #getDefaultAlgorithm()} method.
+     *
+     * <p>
+     * This implementation will read the input stream from the current position until the end of the stream is reached
+     * or no more bytes are available.
+     *
+     * <p>
+     * Care must be taken to ensure the provided {@link InputStream} is not closed before the {@link Future} has been
+     * resolved.
+     *
      * @param stream
-     * @return
+     *         the stream to be hashed, not null
+     * @return a {@link Future} that when resolved will return the computed {@link Hash}, not null
+     * @throws IllegalArgumentException
+     *         if the {@code stream} parameter is null
+     * @throws CryptographyException
+     *         if an error occurs while computing the hash value
+     * @see #getDefaultAlgorithm()
      */
-    default Future<Hash> digestAsync(final InputStream stream) {
+    default Future<Hash> digestAsync(@NotNull final InputStream stream) {
         return digestAsync(getDefaultAlgorithm(), stream);
     }
 
     /**
+     * Asynchronously computes the digest of the {@link InputStream} specified by the {@code stream} parameter using the
+     * hash algorithm specified by the {@code algorithm} parameter.
+     *
+     * <p>
+     * This implementation will read the input stream from the current position until the end of the stream is reached
+     * or no more bytes are available.
+     *
+     * <p>
+     * Care must be taken to ensure the provided {@link InputStream} is not closed before the {@link Future} has been
+     * resolved.
+     *
      * @param algorithm
+     *         the algorithm to use, not null
      * @param stream
-     * @return
+     *         the stream to be hashed, not null
+     * @return a {@link Future} that when resolved will return the computed {@link Hash}, not null
+     * @throws IllegalArgumentException
+     *         if the {@code algorithm} or the {@code stream} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while computing the hash value
      */
-    Future<Hash> digestAsync(final HashAlgorithm algorithm, final InputStream stream);
+    Future<Hash> digestAsync(@NotNull final HashAlgorithm algorithm, @NotNull final InputStream stream);
 
     /**
      * @param data
@@ -92,19 +142,45 @@ public interface DigestProvider {
     Future<Hash> digestAsync(final HashAlgorithm algorithm, final ByteBuffer buffer);
 
     /**
+     * Synchronously computes the digest of the {@link InputStream} specified by the {@code stream} parameter. This
+     * implementation uses the default algorithm provided by the {@link #getDefaultAlgorithm()} method.
+     *
+     * <p>
+     * This implementation will read the input stream from the current position until the end of the stream is reached
+     * or no more bytes are available.
+     *
      * @param stream
-     * @return
+     *         the stream to be hashed, not null
+     * @return the computed hash, not null
+     * @throws IllegalArgumentException
+     *         if the {@code stream} parameter is null
+     * @throws CryptographyException
+     *         if an error occurs while computing the hash value
+     * @see #getDefaultAlgorithm()
      */
-    default Hash digestSync(final InputStream stream) {
+    default Hash digestSync(@NotNull final InputStream stream) {
         return digestSync(getDefaultAlgorithm(), stream);
     }
 
     /**
+     * Synchronously computes the digest of the {@link InputStream} specified by the {@code stream} parameter using the
+     * hash algorithm specified by the {@code algorithm} parameter.
+     *
+     * <p>
+     * This implementation will read the input stream from the current position until the end of the stream is reached
+     * or no more bytes are available.
+     *
      * @param algorithm
+     *         the algorithm to use, not null
      * @param stream
-     * @return
+     *         the stream to be hashed, not null
+     * @return the computed hash, not null
+     * @throws IllegalArgumentException
+     *         if the {@code algorithm} or the {@code stream} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while computing the hash value
      */
-    Hash digestSync(final HashAlgorithm algorithm, final InputStream stream);
+    Hash digestSync(@NotNull final HashAlgorithm algorithm, @NotNull final InputStream stream);
 
     /**
      * @param data
