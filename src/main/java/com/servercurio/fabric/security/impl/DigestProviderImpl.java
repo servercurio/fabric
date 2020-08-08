@@ -33,9 +33,9 @@ import javax.validation.constraints.NotNull;
 import static com.servercurio.fabric.security.impl.DefaultCryptographyImpl.applyToStream;
 
 /**
- * Default cryptography provider implementation that encapsulates all of the available message digest functionality. The
- * default algorithm is {@link HashAlgorithm#SHA_384} which is the minimum recommended algorithm that is C-NSA
- * compliant.
+ * Default {@code Fabric Unified Cryptography API} provider implementation that encapsulates all of the available
+ * message digest functionality. The default algorithm is {@link HashAlgorithm#SHA_384} which is the minimum recommended
+ * algorithm that is C-NSA compliant.
  *
  * @author Nathan Klick
  * @see Cryptography

@@ -16,7 +16,11 @@
 
 package com.servercurio.fabric.security.impl;
 
+import com.servercurio.fabric.security.CipherAlgorithm;
+import com.servercurio.fabric.security.CipherMode;
+import com.servercurio.fabric.security.CipherPadding;
 import com.servercurio.fabric.security.CipherTransformation;
+import com.servercurio.fabric.security.Cryptography;
 import com.servercurio.fabric.security.CryptographyException;
 import com.servercurio.fabric.security.spi.EncryptionProvider;
 import java.io.FileOutputStream;
@@ -34,22 +38,41 @@ import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
+/**
+ * Default {@code Fabric Unified Cryptography API} provider implementation that encapsulates all of the available
+ * symmetric and asymmetric encryption functionality. The default algorithm is {@link CipherAlgorithm#AES} using {@link
+ * CipherMode#GCM} mode and {@link CipherPadding#NONE} padding which is the minimum recommended algorithm that is C-NSA
+ * compliant.
+ *
+ * @author Nathan Klick
+ * @see Cryptography
+ * @see CipherTransformation
+ * @see CipherAlgorithm
+ * @see CipherMode
+ * @see CipherPadding
+ */
 public class EncryptionProviderImpl implements EncryptionProvider {
 
     private static final int GCM_NONCE_SIZE = 12;
+
     private static final int GCM_TAG_SIZE = 128;
 
     private static final int CTR_COUNTER_SIZE = 4;
 
 
+    @NotNull
     private final DefaultCryptographyImpl crypto;
 
-    public EncryptionProviderImpl(final DefaultCryptographyImpl crypto) {
+    public EncryptionProviderImpl(@NotNull final DefaultCryptographyImpl crypto) {
         this.crypto = crypto;
     }
 
-    private byte[] deriveCounterIv(final int blockSize, final int counterLen, final byte[] iv) {
+    private static byte[] deriveCounterIv(@Positive final int blockSize, @Positive final int counterLen,
+                                          @NotEmpty final byte[] iv) {
         final int supportedIvLength = blockSize - counterLen;
         final byte[] counterIv = new byte[blockSize];
 
@@ -57,7 +80,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
         return counterIv;
     }
 
-    private int deriveNonceSize(final CipherTransformation algorithm) {
+    private int deriveNonceSize(@NotNull final CipherTransformation algorithm) {
         final Cipher cipher = crypto.primitive(algorithm);
 
         switch (algorithm.getMode()) {
@@ -70,7 +93,8 @@ public class EncryptionProviderImpl implements EncryptionProvider {
         }
     }
 
-    private AlgorithmParameterSpec deriveParameters(final CipherTransformation algorithm, final byte[] iv) {
+    private AlgorithmParameterSpec deriveParameters(@NotNull final CipherTransformation algorithm,
+                                                    @NotEmpty final byte[] iv) {
         final Cipher cipher = crypto.primitive(algorithm);
 
         switch (algorithm.getMode()) {
@@ -83,27 +107,41 @@ public class EncryptionProviderImpl implements EncryptionProvider {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Future<?> decryptAsync(final CipherTransformation algorithm, final Key key, final byte[] iv,
-                                  final InputStream cipherStream, final OutputStream clearStream) {
+    public Future<?> decryptAsync(@NotNull final CipherTransformation algorithm, @NotNull final Key key,
+                                  @NotEmpty final byte[] iv, @NotNull final InputStream cipherStream,
+                                  @NotNull final OutputStream clearStream) {
         return crypto.executorService().submit(() -> decryptSync(algorithm, key, iv, cipherStream, clearStream));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Future<byte[]> decryptAsync(final CipherTransformation algorithm, final Key key, final byte[] iv,
-                                       final byte[] data) {
+    public Future<byte[]> decryptAsync(@NotNull final CipherTransformation algorithm, @NotNull final Key key,
+                                       @NotEmpty final byte[] iv, @NotEmpty final byte[] data) {
         return crypto.executorService().submit(() -> decryptSync(algorithm, key, iv, data));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Future<ByteBuffer> decryptAsync(final CipherTransformation algorithm, final Key key, final byte[] iv,
-                                           final ByteBuffer buffer) {
+    public Future<ByteBuffer> decryptAsync(@NotNull final CipherTransformation algorithm, @NotNull final Key key,
+                                           @NotEmpty final byte[] iv, @NotNull final ByteBuffer buffer) {
         return crypto.executorService().submit(() -> decryptSync(algorithm, key, iv, buffer));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void decryptSync(final CipherTransformation algorithm, final Key key, final byte[] iv,
-                            final InputStream cipherStream, final OutputStream clearStream) {
+    public void decryptSync(@NotNull final CipherTransformation algorithm, @NotNull final Key key,
+                            @NotEmpty final byte[] iv, @NotNull final InputStream cipherStream,
+                            @NotNull final OutputStream clearStream) {
         final Cipher cipher = crypto.primitive(algorithm);
 
         try {
@@ -124,9 +162,12 @@ public class EncryptionProviderImpl implements EncryptionProvider {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public byte[] decryptSync(final CipherTransformation algorithm, final Key key, final byte[] iv,
-                              final byte[] data) {
+    public byte[] decryptSync(@NotNull final CipherTransformation algorithm, @NotNull final Key key,
+                              @NotEmpty final byte[] iv, @NotEmpty final byte[] data) {
         final Cipher cipher = crypto.primitive(algorithm);
 
         try {
@@ -139,9 +180,12 @@ public class EncryptionProviderImpl implements EncryptionProvider {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public ByteBuffer decryptSync(final CipherTransformation algorithm, final Key key, final byte[] iv,
-                                  final ByteBuffer buffer) {
+    public ByteBuffer decryptSync(@NotNull final CipherTransformation algorithm, @NotNull final Key key,
+                                  @NotEmpty final byte[] iv, @NotNull final ByteBuffer buffer) {
         final Cipher cipher = crypto.primitive(algorithm);
 
         try {
@@ -157,27 +201,41 @@ public class EncryptionProviderImpl implements EncryptionProvider {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Future<?> encryptAsync(final CipherTransformation algorithm, final Key key, final byte[] iv,
-                                  final InputStream clearStream, final OutputStream cipherStream) {
+    public Future<?> encryptAsync(@NotNull final CipherTransformation algorithm, @NotNull final Key key,
+                                  @NotEmpty final byte[] iv, @NotNull final InputStream clearStream,
+                                  @NotNull final OutputStream cipherStream) {
         return crypto.executorService().submit(() -> encryptSync(algorithm, key, iv, clearStream, cipherStream));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Future<byte[]> encryptAsync(final CipherTransformation algorithm, final Key key, final byte[] iv,
-                                       final byte[] data) {
+    public Future<byte[]> encryptAsync(@NotNull final CipherTransformation algorithm, @NotNull final Key key,
+                                       @NotEmpty final byte[] iv, @NotEmpty final byte[] data) {
         return crypto.executorService().submit(() -> encryptSync(algorithm, key, iv, data));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Future<ByteBuffer> encryptAsync(final CipherTransformation algorithm, final Key key, final byte[] iv,
-                                           final ByteBuffer buffer) {
+    public Future<ByteBuffer> encryptAsync(@NotNull final CipherTransformation algorithm, @NotNull final Key key,
+                                           @NotEmpty final byte[] iv, @NotNull final ByteBuffer buffer) {
         return crypto.executorService().submit(() -> encryptSync(algorithm, key, iv, buffer));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void encryptSync(final CipherTransformation algorithm, final Key key, final byte[] iv,
-                            final InputStream clearStream, final OutputStream cipherStream) {
+    public void encryptSync(@NotNull final CipherTransformation algorithm, @NotNull final Key key,
+                            @NotEmpty final byte[] iv, @NotNull final InputStream clearStream,
+                            @NotNull final OutputStream cipherStream) {
         final Cipher cipher = crypto.primitive(algorithm);
 
         try {
@@ -201,9 +259,12 @@ public class EncryptionProviderImpl implements EncryptionProvider {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public byte[] encryptSync(final CipherTransformation algorithm, final Key key, final byte[] iv,
-                              final byte[] data) {
+    public byte[] encryptSync(@NotNull final CipherTransformation algorithm, @NotNull final Key key,
+                              @NotEmpty final byte[] iv, @NotEmpty final byte[] data) {
         final Cipher cipher = crypto.primitive(algorithm);
 
         try {
@@ -216,9 +277,12 @@ public class EncryptionProviderImpl implements EncryptionProvider {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public ByteBuffer encryptSync(final CipherTransformation algorithm, final Key key, final byte[] iv,
-                                  final ByteBuffer buffer) {
+    public ByteBuffer encryptSync(@NotNull final CipherTransformation algorithm, @NotNull final Key key,
+                                  @NotEmpty final byte[] iv, @NotNull final ByteBuffer buffer) {
         final Cipher cipher = crypto.primitive(algorithm);
 
         try {
@@ -234,13 +298,19 @@ public class EncryptionProviderImpl implements EncryptionProvider {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Future<byte[]> nonceAsync(final CipherTransformation algorithm) {
+    public Future<byte[]> nonceAsync(@NotNull final CipherTransformation algorithm) {
         return crypto.executorService().submit(() -> nonceSync(algorithm));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public byte[] nonceSync(final CipherTransformation algorithm) {
+    public byte[] nonceSync(@NotNull final CipherTransformation algorithm) {
         final int nonceSize = deriveNonceSize(algorithm);
         final byte[] nonce = new byte[nonceSize];
         final SecureRandom random = crypto.random();
