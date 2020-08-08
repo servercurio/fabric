@@ -108,7 +108,6 @@ public enum CipherAlgorithm {
      * @see <a href="https://docs.oracle.com/en/java/javase/14/security/oracle-providers.html">Orcale JCE
      *         Providers</a>
      */
-    @NotNull
     private final String providerName;
 
     /**
@@ -161,10 +160,10 @@ public enum CipherAlgorithm {
      *         the standard name for the key generation algorithm as specified by the Java Security documentation, not
      *         null
      * @param providerName
-     *         the standard name of the JCE provider that supplies this algorithm implementation, not null
+     *         the standard name of the JCE provider that supplies this algorithm implementation, nullable
      */
     CipherAlgorithm(final int id, @NotNull final String algorithmName, @NotNull final String keyAlgorithmName,
-                    @NotNull final String providerName) {
+                    final String providerName) {
         this.id = id;
         this.algorithmName = algorithmName;
         this.keyAlgorithmName = keyAlgorithmName;
@@ -224,7 +223,7 @@ public enum CipherAlgorithm {
     /**
      * Gets the standard name of the JCE provider that supplies this algorithm implementation.
      *
-     * @return the standard JCE provider name
+     * @return the standard JCE provider name, nullable
      * @see <a href="https://docs.oracle.com/en/java/javase/14/security/oracle-providers.html">Oracle JCE
      *         Providers</a>
      */
