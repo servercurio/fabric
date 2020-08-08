@@ -27,10 +27,20 @@ import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.util.concurrent.Future;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import static com.servercurio.fabric.security.impl.DefaultCryptographyImpl.applyToStream;
 
+/**
+ * Default cryptography provider implementation that encapsulates all of the available message digest functionality. The
+ * default algorithm is {@link HashAlgorithm#SHA_384} which is the minimum recommended algorithm that is C-NSA
+ * compliant.
+ *
+ * @author Nathan Klick
+ * @see Cryptography
+ * @see HashAlgorithm
+ */
 public class DigestProviderImpl implements DigestProvider {
 
     /**
@@ -53,7 +63,7 @@ public class DigestProviderImpl implements DigestProvider {
      * {@inheritDoc}
      */
     @Override
-    public Future<Hash> digestAsync(final HashAlgorithm algorithm, final InputStream stream) {
+    public Future<Hash> digestAsync(@NotNull final HashAlgorithm algorithm, @NotNull final InputStream stream) {
         return crypto.executorService().submit(() -> digestSync(algorithm, stream));
     }
 
@@ -61,7 +71,7 @@ public class DigestProviderImpl implements DigestProvider {
      * {@inheritDoc}
      */
     @Override
-    public Future<Hash> digestAsync(final HashAlgorithm algorithm, final byte[] data) {
+    public Future<Hash> digestAsync(@NotNull final HashAlgorithm algorithm, @NotNull final byte[] data) {
         return crypto.executorService().submit(() -> digestSync(algorithm, data));
     }
 
@@ -69,7 +79,7 @@ public class DigestProviderImpl implements DigestProvider {
      * {@inheritDoc}
      */
     @Override
-    public Future<Hash> digestAsync(final HashAlgorithm algorithm, final Hash... hashes) {
+    public Future<Hash> digestAsync(@NotNull final HashAlgorithm algorithm, @NotEmpty final Hash... hashes) {
         return crypto.executorService().submit(() -> digestSync(algorithm, hashes));
     }
 
@@ -77,7 +87,7 @@ public class DigestProviderImpl implements DigestProvider {
      * {@inheritDoc}
      */
     @Override
-    public Future<Hash> digestAsync(final HashAlgorithm algorithm, final ByteBuffer buffer) {
+    public Future<Hash> digestAsync(@NotNull final HashAlgorithm algorithm, @NotNull final ByteBuffer buffer) {
         return crypto.executorService().submit(() -> digestSync(algorithm, buffer));
     }
 
@@ -85,7 +95,7 @@ public class DigestProviderImpl implements DigestProvider {
      * {@inheritDoc}
      */
     @Override
-    public Hash digestSync(final HashAlgorithm algorithm, final InputStream stream) {
+    public Hash digestSync(@NotNull final HashAlgorithm algorithm, @NotNull final InputStream stream) {
         final MessageDigest digest = crypto.primitive(algorithm);
 
         try {
@@ -101,7 +111,7 @@ public class DigestProviderImpl implements DigestProvider {
      * {@inheritDoc}
      */
     @Override
-    public Hash digestSync(final HashAlgorithm algorithm, final byte[] data) {
+    public Hash digestSync(@NotNull final HashAlgorithm algorithm, @NotNull final byte[] data) {
         final MessageDigest digest = crypto.primitive(algorithm);
 
         digest.update(data);
@@ -112,7 +122,7 @@ public class DigestProviderImpl implements DigestProvider {
      * {@inheritDoc}
      */
     @Override
-    public Hash digestSync(final HashAlgorithm algorithm, final Hash... hashes) {
+    public Hash digestSync(@NotNull final HashAlgorithm algorithm, @NotEmpty final Hash... hashes) {
         final MessageDigest digest = crypto.primitive(algorithm);
 
         for (final Hash hash : hashes) {
@@ -130,7 +140,7 @@ public class DigestProviderImpl implements DigestProvider {
      * {@inheritDoc}
      */
     @Override
-    public Hash digestSync(final HashAlgorithm algorithm, final ByteBuffer buffer) {
+    public Hash digestSync(@NotNull final HashAlgorithm algorithm, @NotNull final ByteBuffer buffer) {
         final MessageDigest digest = crypto.primitive(algorithm);
 
         digest.update(buffer);

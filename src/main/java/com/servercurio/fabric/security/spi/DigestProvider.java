@@ -23,6 +23,7 @@ import com.servercurio.fabric.security.HashAlgorithm;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.concurrent.Future;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -97,49 +98,141 @@ public interface DigestProvider {
     Future<Hash> digestAsync(@NotNull final HashAlgorithm algorithm, @NotNull final InputStream stream);
 
     /**
+     * Asynchronously computes the digest of the byte array specified by the {@code data} parameter. This implementation
+     * uses the default algorithm provided by the {@link #getDefaultAlgorithm()} method.
+     *
+     * <p>
+     * This implementation will compute the hash of the entire byte array provided by the {@code data} parameter.
+     *
+     * <p>
+     * Care must be taken to ensure the provided byte array is not modified before the {@link Future} has been
+     * resolved.
+     *
      * @param data
-     * @return
+     *         the byte array to be hashed, not null
+     * @return a {@link Future} that when resolved will return the computed {@link Hash}, not null
+     * @throws IllegalArgumentException
+     *         if the {@code data} parameter is null
+     * @throws CryptographyException
+     *         if an error occurs while computing the hash value
+     * @see #getDefaultAlgorithm()
      */
-    default Future<Hash> digestAsync(final byte[] data) {
+    default Future<Hash> digestAsync(@NotNull final byte[] data) {
         return digestAsync(getDefaultAlgorithm(), data);
     }
 
     /**
+     * Asynchronously computes the digest of the byte array specified by the {@code data} parameter using the hash
+     * algorithm specified by the {@code algorithm} parameter.
+     *
+     * <p>
+     * This implementation will compute the hash of the entire byte array provided by the {@code data} parameter.
+     *
+     * <p>
+     * Care must be taken to ensure the provided byte array is not modified before the {@link Future} has been
+     * resolved.
+     *
      * @param algorithm
+     *         the algorithm to use, not null
      * @param data
-     * @return
+     *         the byte array to be hashed, not null
+     * @return a {@link Future} that when resolved will return the computed {@link Hash}, not null
+     * @throws IllegalArgumentException
+     *         if the {@code algorithm} or the {@code data} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while computing the hash value
      */
-    Future<Hash> digestAsync(final HashAlgorithm algorithm, final byte[] data);
+    Future<Hash> digestAsync(@NotNull final HashAlgorithm algorithm, @NotNull final byte[] data);
 
     /**
+     * Asynchronously computes the digest of the {@link Hash} array specified by the {@code hashes} parameter. This
+     * implementation uses the default algorithm provided by the {@link #getDefaultAlgorithm()} method.
+     *
+     * <p>
+     * Care must be taken to ensure the provided {@link Hash} array is not modified before the {@link Future} has been
+     * resolved.
+     *
      * @param hashes
-     * @return
+     *         the {@link Hash} array to be hashed, not null
+     * @return a {@link Future} that when resolved will return the computed {@link Hash}, not null
+     * @throws IllegalArgumentException
+     *         if the {@code hashes} parameter is null
+     * @throws CryptographyException
+     *         if an error occurs while computing the hash value
+     * @see #getDefaultAlgorithm()
      */
-    default Future<Hash> digestAsync(final Hash... hashes) {
+    default Future<Hash> digestAsync(@NotEmpty final Hash... hashes) {
         return digestAsync(getDefaultAlgorithm(), hashes);
     }
 
     /**
+     * Asynchronously computes the digest of the {@link Hash} array specified by the {@code hashes} parameter using the
+     * hash algorithm specified by the {@code algorithm} parameter.
+     *
+     * <p>
+     * Care must be taken to ensure the provided byte array is not modified before the {@link Future} has been
+     * resolved.
+     *
      * @param algorithm
+     *         the algorithm to use, not null
      * @param hashes
-     * @return
+     *         the {@link Hash} array to be hashed, not null
+     * @return a {@link Future} that when resolved will return the computed {@link Hash}, not null
+     * @throws IllegalArgumentException
+     *         if the {@code algorithm} or the {@code hashes} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while computing the hash value
      */
-    Future<Hash> digestAsync(final HashAlgorithm algorithm, final Hash... hashes);
+    Future<Hash> digestAsync(@NotNull final HashAlgorithm algorithm, @NotEmpty final Hash... hashes);
 
     /**
+     * Asynchronously computes the digest of the {@link ByteBuffer} specified by the {@code buffer} parameter. This
+     * implementation uses the default algorithm provided by the {@link #getDefaultAlgorithm()} method.
+     *
+     * <p>
+     * This implementation will read the {@link ByteBuffer} from the current position until the end of the buffer is
+     * reached.
+     *
+     * <p>
+     * Care must be taken to ensure the provided {@link ByteBuffer} is not modified before the {@link Future} has been
+     * resolved.
+     *
      * @param buffer
-     * @return
+     *         the {@link ByteBuffer} to be hashed, not null
+     * @return a {@link Future} that when resolved will return the computed {@link Hash}, not null
+     * @throws IllegalArgumentException
+     *         if the {@code buffer} parameter is null
+     * @throws CryptographyException
+     *         if an error occurs while computing the hash value
+     * @see #getDefaultAlgorithm()
      */
-    default Future<Hash> digestAsync(final ByteBuffer buffer) {
+    default Future<Hash> digestAsync(@NotNull final ByteBuffer buffer) {
         return digestAsync(getDefaultAlgorithm(), buffer);
     }
 
     /**
+     * Asynchronously computes the digest of the {@link ByteBuffer} specified by the {@code buffer} parameter using the
+     * hash algorithm specified by the {@code algorithm} parameter.
+     *
+     * <p>
+     * This implementation will read the {@link ByteBuffer} from the current position until the end of the buffer is
+     * reached.
+     *
+     * <p>
+     * Care must be taken to ensure the provided byte array is not modified before the {@link Future} has been
+     * resolved.
+     *
      * @param algorithm
+     *         the algorithm to use, not null
      * @param buffer
-     * @return
+     *         the {@link ByteBuffer} to be hashed, not null
+     * @return a {@link Future} that when resolved will return the computed {@link Hash}, not null
+     * @throws IllegalArgumentException
+     *         if the {@code algorithm} or the {@code buffer} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while computing the hash value
      */
-    Future<Hash> digestAsync(final HashAlgorithm algorithm, final ByteBuffer buffer);
+    Future<Hash> digestAsync(@NotNull final HashAlgorithm algorithm, @NotNull final ByteBuffer buffer);
 
     /**
      * Synchronously computes the digest of the {@link InputStream} specified by the {@code stream} parameter. This
@@ -183,47 +276,115 @@ public interface DigestProvider {
     Hash digestSync(@NotNull final HashAlgorithm algorithm, @NotNull final InputStream stream);
 
     /**
+     * Synchronously computes the digest of the byte array specified by the {@code data} parameter. This implementation
+     * uses the default algorithm provided by the {@link #getDefaultAlgorithm()} method.
+     *
+     * <p>
+     * This implementation will compute the hash of the entire byte array provided by the {@code data} parameter.
+     *
      * @param data
-     * @return
+     *         the byte array to be hashed, not null
+     * @return the computed hash, not null
+     * @throws IllegalArgumentException
+     *         if the {@code data} parameter is null
+     * @throws CryptographyException
+     *         if an error occurs while computing the hash value
+     * @see #getDefaultAlgorithm()
      */
-    default Hash digestSync(final byte[] data) {
+    default Hash digestSync(@NotNull final byte[] data) {
         return digestSync(getDefaultAlgorithm(), data);
     }
 
     /**
+     * Synchronously computes the digest of the byte array specified by the {@code data} parameter using the hash
+     * algorithm specified by the {@code algorithm} parameter.
+     *
+     * <p>
+     * This implementation will compute the hash of the entire byte array provided by the {@code data} parameter.
+     *
      * @param algorithm
+     *         the algorithm to use, not null
      * @param data
-     * @return
+     *         the byte array to be hashed, not null
+     * @return the computed hash, not null
+     * @throws IllegalArgumentException
+     *         if the {@code algorithm} or the {@code data} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while computing the hash value
      */
-    Hash digestSync(final HashAlgorithm algorithm, final byte[] data);
+    Hash digestSync(@NotNull final HashAlgorithm algorithm, @NotNull final byte[] data);
 
     /**
+     * Synchronously computes the digest of the {@link Hash} array specified by the {@code hashes} parameter. This
+     * implementation uses the default algorithm provided by the {@link #getDefaultAlgorithm()} method.
+     *
      * @param hashes
-     * @return
+     *         the {@link Hash} array to be hashed, not null
+     * @return the computed hash, not null
+     * @throws IllegalArgumentException
+     *         if the {@code hashes} parameter is null
+     * @throws CryptographyException
+     *         if an error occurs while computing the hash value
+     * @see #getDefaultAlgorithm()
      */
-    default Hash digestSync(final Hash... hashes) {
+    default Hash digestSync(@NotEmpty final Hash... hashes) {
         return digestSync(getDefaultAlgorithm(), hashes);
     }
 
     /**
+     * Synchronously computes the digest of the {@link Hash} array specified by the {@code hashes} parameter using the
+     * hash algorithm specified by the {@code algorithm} parameter.
+     *
      * @param algorithm
+     *         the algorithm to use, not null
      * @param hashes
-     * @return
+     *         the {@link Hash} array to be hashed, not null
+     * @return the computed hash, not null
+     * @throws IllegalArgumentException
+     *         if the {@code algorithm} or the {@code hashes} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while computing the hash value
      */
-    Hash digestSync(final HashAlgorithm algorithm, final Hash... hashes);
+    Hash digestSync(@NotNull final HashAlgorithm algorithm, @NotEmpty final Hash... hashes);
 
     /**
+     * Synchronously computes the digest of the {@link ByteBuffer} specified by the {@code buffer} parameter. This
+     * implementation uses the default algorithm provided by the {@link #getDefaultAlgorithm()} method.
+     *
+     * <p>
+     * This implementation will read the {@link ByteBuffer} from the current position until the end of the buffer is
+     * reached.
+     *
      * @param buffer
-     * @return
+     *         the {@link ByteBuffer} to be hashed, not null
+     * @return the computed hash, not null
+     * @throws IllegalArgumentException
+     *         if the {@code buffer} parameter is null
+     * @throws CryptographyException
+     *         if an error occurs while computing the hash value
+     * @see #getDefaultAlgorithm()
      */
-    default Hash digestSync(final ByteBuffer buffer) {
+    default Hash digestSync(@NotNull final ByteBuffer buffer) {
         return digestSync(getDefaultAlgorithm(), buffer);
     }
 
     /**
+     * Synchronously computes the digest of the {@link ByteBuffer} specified by the {@code buffer} parameter using the
+     * hash algorithm specified by the {@code algorithm} parameter.
+     *
+     * <p>
+     * This implementation will read the {@link ByteBuffer} from the current position until the end of the buffer is
+     * reached.
+     *
      * @param algorithm
+     *         the algorithm to use, not null
      * @param buffer
-     * @return
+     *         the {@link ByteBuffer} to be hashed, not null
+     * @return the computed hash, not null
+     * @throws IllegalArgumentException
+     *         if the {@code algorithm} or the {@code buffer} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while computing the hash value
      */
-    Hash digestSync(final HashAlgorithm algorithm, final ByteBuffer buffer);
+    Hash digestSync(@NotNull final HashAlgorithm algorithm, @NotNull final ByteBuffer buffer);
 }
