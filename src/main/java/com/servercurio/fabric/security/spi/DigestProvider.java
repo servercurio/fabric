@@ -27,10 +27,10 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 /**
- * Cryptography Provider definition that encapsulates all of the available message digest functionality. The default
- * algorithm is {@link HashAlgorithm#SHA_384} which is the minimum recommended algorithm that is C-NSA compliant.
- * Provider implementations may choose to override the default; however, it is recommended that the default algorithm be
- * a C-NSA compliant algorithm.
+ * {@code Fabric Unified Cryptography API} provider definition that encapsulates all of the available message digest
+ * functionality. The default algorithm is {@link HashAlgorithm#SHA_384} which is the minimum recommended algorithm that
+ * is C-NSA compliant. Provider implementations may choose to override the default; however, it is recommended that the
+ * default algorithm be a C-NSA compliant algorithm.
  *
  * @author Nathan Klick
  * @see Cryptography

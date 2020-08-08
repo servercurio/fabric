@@ -23,6 +23,7 @@ import java.security.Provider;
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;

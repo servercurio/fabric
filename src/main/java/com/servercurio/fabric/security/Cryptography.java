@@ -24,7 +24,7 @@ import com.servercurio.fabric.security.spi.PrimitiveProvider;
 import com.servercurio.fabric.security.spi.SignatureProvider;
 
 /**
- * Provides the unified Cryptography API for the {@code Fabric} library. The core API is broken down into multiple
+ * Provides the {@code Fabric Unified Cryptography API} primary entry-point. The core API is broken down into multiple
  * provider interfaces. The providers encapsulate the discrete cryptographic functions. All implementors of the {@link
  * Cryptography} interface must provide implementations for the providers listed below:
  *

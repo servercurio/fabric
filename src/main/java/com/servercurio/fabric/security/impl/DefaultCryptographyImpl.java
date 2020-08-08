@@ -39,10 +39,12 @@ import java.security.Signature;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 /**
@@ -58,6 +60,12 @@ public final class DefaultCryptographyImpl implements Cryptography {
      * The default buffer size to use when reading/writing blocks of data from streams.
      */
     public static final int STREAM_BUFFER_SIZE = 8192;
+
+    /**
+     * The number of times a thread may acquire a cached {@link SecureRandom} instance before a reseed operation is
+     * required.
+     */
+    private static final int RESEED_INTERVAL = 100;
 
     /**
      * The default {@link SecureRandom} implementation to use for all instances.
@@ -91,7 +99,7 @@ public final class DefaultCryptographyImpl implements Cryptography {
     /**
      * The thread local instance for the {@link SecureRandom} cache.
      */
-    private static final ThreadLocal<SecureRandom> secureRandomCache =
+    private static final ThreadLocal<Pair<AtomicInteger, SecureRandom>> secureRandomCache =
             ThreadLocal.withInitial(DefaultCryptographyImpl::acquireRandom);
 
     static {
@@ -176,9 +184,9 @@ public final class DefaultCryptographyImpl implements Cryptography {
      * from the {@code threadLocal} cache.
      *
      * @param algorithm
-     *         the type of the algorithm to instantiate
+     *         the type of the algorithm to instantiate, not null
      * @param threadLocal
-     *         the thread local cache
+     *         the thread local cache, not null
      * @param <T>
      *         the type of the JCE algorithm primitive
      * @param <E>
@@ -186,8 +194,8 @@ public final class DefaultCryptographyImpl implements Cryptography {
      * @return the primitive instance, not null
      */
     private static <T, E extends CryptoPrimitiveSupplier<T>>
-    T acquireAlgorithm(final E algorithm,
-                       final ThreadLocal<HashMap<E, T>> threadLocal) {
+    T acquireAlgorithm(@NotNull final E algorithm,
+                       @NotNull final ThreadLocal<HashMap<E, T>> threadLocal) {
         final HashMap<E, T> cache = threadLocal.get();
 
         if (!cache.containsKey(algorithm)) {
@@ -203,12 +211,12 @@ public final class DefaultCryptographyImpl implements Cryptography {
      *
      * @return a new {@link SecureRandom} instance, not null
      */
-    private static SecureRandom acquireRandom() {
+    private static Pair<AtomicInteger, SecureRandom> acquireRandom() {
         DrbgParameters.Instantiation params =
                 DrbgParameters.instantiation(256, DrbgParameters.Capability.PR_AND_RESEED, null);
 
         try {
-            return SecureRandom.getInstance(SECURE_RANDOM_ALGORITHM, params);
+            return Pair.of(new AtomicInteger(), SecureRandom.getInstance(SECURE_RANDOM_ALGORITHM, params));
         } catch (NoSuchAlgorithmException ex) {
             throw new CryptographyException(ex);
         }
@@ -272,7 +280,7 @@ public final class DefaultCryptographyImpl implements Cryptography {
      * {@inheritDoc}
      */
     @Override
-    public Cipher primitive(final CipherTransformation algorithm) {
+    public Cipher primitive(@NotNull final CipherTransformation algorithm) {
         return acquireAlgorithm(algorithm, cipherAlgorithmCache);
     }
 
@@ -280,7 +288,7 @@ public final class DefaultCryptographyImpl implements Cryptography {
      * {@inheritDoc}
      */
     @Override
-    public Signature primitive(final SignatureAlgorithm algorithm) {
+    public Signature primitive(@NotNull final SignatureAlgorithm algorithm) {
         return acquireAlgorithm(algorithm, signatureAlgorithmCache);
     }
 
@@ -288,7 +296,7 @@ public final class DefaultCryptographyImpl implements Cryptography {
      * {@inheritDoc}
      */
     @Override
-    public MessageDigest primitive(final HashAlgorithm algorithm) {
+    public MessageDigest primitive(@NotNull final HashAlgorithm algorithm) {
         return acquireAlgorithm(algorithm, hashAlgorithmCache);
     }
 
@@ -296,7 +304,7 @@ public final class DefaultCryptographyImpl implements Cryptography {
      * {@inheritDoc}
      */
     @Override
-    public Mac primitive(final MacAlgorithm algorithm) {
+    public Mac primitive(@NotNull final MacAlgorithm algorithm) {
         return acquireAlgorithm(algorithm, macAlgorithmCache);
     }
 
@@ -305,6 +313,17 @@ public final class DefaultCryptographyImpl implements Cryptography {
      */
     @Override
     public SecureRandom random() {
-        return secureRandomCache.get();
+        final Pair<AtomicInteger, SecureRandom> randomPair = secureRandomCache.get();
+        final AtomicInteger reseedCounter = randomPair.getLeft();
+        final SecureRandom random = randomPair.getRight();
+
+        final int counterValue = reseedCounter.incrementAndGet();
+
+        if (counterValue >= RESEED_INTERVAL) {
+            random.reseed(DrbgParameters.reseed(true, null));
+            reseedCounter.set(0);
+        }
+
+        return random;
     }
 }

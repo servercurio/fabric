@@ -16,7 +16,6 @@
 
 package com.servercurio.fabric.security;
 
-import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Random;
 import org.junit.jupiter.api.DisplayName;
@@ -30,9 +29,20 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DisplayName("Cryptography: Secure Equals")
+@DisplayName("Cryptography: General")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class CryptographyEqualsTests {
+public class CryptographyTests {
+
+    @Test
+    @Order(10)
+    @DisplayName("Cryptography :: Random -> Reseed")
+    public void testCryptoRandomReseed() {
+        try (final Cryptography crypto = Cryptography.newDefaultInstance()) {
+            for (int i = 0; i < 101; i++) {
+                crypto.random();
+            }
+        }
+    }
 
     @ParameterizedTest
     @Order(50)
@@ -64,7 +74,7 @@ public class CryptographyEqualsTests {
             final char[] originalValue = new char[length];
 
             for (int i = 0; i < originalValue.length; i++) {
-                originalValue[i] = (char)random.nextInt();
+                originalValue[i] = (char) random.nextInt();
             }
 
             final char[] copiedValue = Arrays.copyOf(originalValue, originalValue.length);

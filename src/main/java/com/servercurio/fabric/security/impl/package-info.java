@@ -15,6 +15,6 @@
  */
 
 /**
- *
+ * Default implementation of the {@code Fabric Unified Cryptography API} provider interfaces.
  */
 package com.servercurio.fabric.security.impl;
