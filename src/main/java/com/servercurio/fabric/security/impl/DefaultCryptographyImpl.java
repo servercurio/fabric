@@ -104,19 +104,22 @@ public final class DefaultCryptographyImpl implements Cryptography {
      * The thread local instance for the {@link HashAlgorithm} cache.
      */
     private static final ThreadLocal<HashMap<HashAlgorithm, MessageDigest>> hashAlgorithmCache = ThreadLocal
-            .withInitial(HashMap::new);
+            .withInitial(
+                    HashMap::new);
 
     /**
      * The thread local instance for the {@link SignatureAlgorithm} cache.
      */
     private static final ThreadLocal<HashMap<SignatureAlgorithm, Signature>> signatureAlgorithmCache = ThreadLocal
-            .withInitial(HashMap::new);
+            .withInitial(
+                    HashMap::new);
 
     /**
      * The thread local instance for the {@link CipherTransformation} cache.
      */
     private static final ThreadLocal<HashMap<CipherTransformation, Cipher>> cipherAlgorithmCache = ThreadLocal
-            .withInitial(HashMap::new);
+            .withInitial(
+                    HashMap::new);
 
     /**
      * The thread local instance for the {@link MacAlgorithm} cache.
@@ -163,7 +166,9 @@ public final class DefaultCryptographyImpl implements Cryptography {
      *         if the {@code stream} or the {@code fn} parameters are null
      */
     public static void applyToStream(@NotNull final InputStream stream,
-                                     @NotNull final TriConsumer<byte[], Integer, Integer> fn) throws IOException, GeneralSecurityException {
+                                     @NotNull final TriConsumer<byte[], Integer, Integer> fn) throws
+                                                                                              IOException,
+                                                                                              GeneralSecurityException {
         applyToStream(stream, STREAM_BUFFER_SIZE, fn);
     }
 
@@ -187,7 +192,9 @@ public final class DefaultCryptographyImpl implements Cryptography {
      *         or equal to zero
      */
     public static void applyToStream(@NotNull final InputStream stream, @Positive final int blockSize,
-                                     @NotNull final TriConsumer<byte[], Integer, Integer> fn) throws IOException, GeneralSecurityException {
+                                     @NotNull final TriConsumer<byte[], Integer, Integer> fn) throws
+                                                                                              IOException,
+                                                                                              GeneralSecurityException {
         throwIfArgumentIsNull(stream, STREAM_PARAM);
         throwIfArgumentIsNotPositive(blockSize, BLOCK_SIZE_PARAM);
         throwIfArgumentIsNull(fn, FN_PARAM);
@@ -226,8 +233,7 @@ public final class DefaultCryptographyImpl implements Cryptography {
      * @return the primitive instance, not null
      */
     private static <T, E extends CryptoPrimitiveSupplier<T>>
-    T acquireAlgorithm(@NotNull final E algorithm,
-                       @NotNull final ThreadLocal<HashMap<E, T>> threadLocal) {
+    T acquireAlgorithm(@NotNull final E algorithm, @NotNull final ThreadLocal<HashMap<E, T>> threadLocal) {
         throwIfArgumentIsNull(algorithm, ALGORITHM_PARAM);
         throwIfArgumentIsNull(threadLocal, THREAD_LOCAL_PARAM);
 
