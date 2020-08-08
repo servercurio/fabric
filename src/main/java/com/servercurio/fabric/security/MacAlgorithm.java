@@ -26,6 +26,8 @@ import javax.crypto.Mac;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
+import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
+
 /**
  * An enumeration of the standard cryptographic hash-based message authentication algorithms along with their
  * initialization parameters.
@@ -95,6 +97,26 @@ public enum MacAlgorithm implements CryptoPrimitiveSupplier<Mac> {
     HMAC_SHA3_512(8, "HmacSHA3-512", HashAlgorithm.SHA3_512);
 
     /**
+     * The {@code algorithmName} field name represented as a string value.
+     */
+    private static final String ALGORITHM_NAME_FIELD = "algorithmName";
+
+    /**
+     * The {@code keyAlgorithmName} field name represented as a string value.
+     */
+    private static final String KEY_ALGORITHM_NAME_FIELD = "keyAlgorithmName";
+
+    /**
+     * The {@code hashAlgorithm} field name represented as a string value.
+     */
+    private static final String HASH_ALGORITHM_FIELD = "hashAlgorithm";
+
+    /**
+     * The {@code provider} parameter name represented as a string value.
+     */
+    private static final String PROVIDER_PARAM = "provider";
+
+    /**
      * Internal lookup table to provide {@code O(1)} time conversion of {@code id} to enumeration value.
      */
     private static final Map<Integer, MacAlgorithm> idMap = new HashMap<>();
@@ -153,6 +175,9 @@ public enum MacAlgorithm implements CryptoPrimitiveSupplier<Mac> {
      *         the underlying hash algorithm used by this message authentication algorithm
      */
     MacAlgorithm(final int id, @NotNull final String algorithmName, @NotNull final HashAlgorithm hashAlgorithm) {
+        throwIfArgumentIsNull(algorithmName, ALGORITHM_NAME_FIELD);
+        throwIfArgumentIsNull(hashAlgorithm, HASH_ALGORITHM_FIELD);
+
         this.id = id;
         this.algorithmName = algorithmName;
         this.hashAlgorithm = hashAlgorithm;
@@ -242,6 +267,8 @@ public enum MacAlgorithm implements CryptoPrimitiveSupplier<Mac> {
      */
     @Override
     public Mac instance(@NotNull final String provider) {
+        throwIfArgumentIsNull(provider, PROVIDER_PARAM);
+
         try {
             return Mac.getInstance(algorithmName, provider);
         } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
@@ -254,6 +281,8 @@ public enum MacAlgorithm implements CryptoPrimitiveSupplier<Mac> {
      */
     @Override
     public Mac instance(@NotNull final Provider provider) {
+        throwIfArgumentIsNull(provider, PROVIDER_PARAM);
+
         try {
             return Mac.getInstance(algorithmName, provider);
         } catch (NoSuchAlgorithmException ex) {

@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
 
+import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
+
 /**
  * An enumeration of the standard cryptographic encryption padding modes along with their initialization parameters.
  *
@@ -51,6 +53,12 @@ public enum CipherPadding {
      * @see <a href="https://tools.ietf.org/html/rfc8018">https://tools.ietf.org/html/rfc8018</a>
      */
     PKCS5(3, "PKCS5Padding");
+
+    /**
+     * The {@code paddingName} field name represented as a string value.
+     */
+    private static final String PADDING_NAME_FIELD = "paddingName";
+
 
     /**
      * Internal lookup table to provide {@code O(1)} time conversion of {@code id} to enumeration value.
@@ -91,6 +99,8 @@ public enum CipherPadding {
      *         the standard name for this padding mode as specified by the Java Security documentation, not null
      */
     CipherPadding(final int id, @NotNull final String paddingName) {
+        throwIfArgumentIsNull(paddingName, PADDING_NAME_FIELD);
+
         this.id = id;
         this.paddingName = paddingName;
     }

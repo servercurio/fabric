@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
 
+import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
+
 /**
  * An enumeration of the standard cryptographic encryption algorithm modes along with their initialization parameters.
  *
@@ -112,6 +114,11 @@ public enum CipherMode {
     OFB8(10, "OFB8");
 
     /**
+     * The {@code modeName} field name represented as a string value.
+     */
+    private static final String MODE_NAME_FIELD = "modeName";
+
+    /**
      * Internal lookup table to provide {@code O(1)} time conversion of {@code id} to enumeration value.
      */
     private static final Map<Integer, CipherMode> idMap = new HashMap<>();
@@ -150,6 +157,8 @@ public enum CipherMode {
      *         the standard name for this algorithm mode as specified by the Java Security documentation, not null
      */
     CipherMode(final int id, @NotNull final String modeName) {
+        throwIfArgumentIsNull(modeName, MODE_NAME_FIELD);
+
         this.id = id;
         this.modeName = modeName;
     }

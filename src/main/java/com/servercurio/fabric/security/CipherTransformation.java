@@ -31,6 +31,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import static com.servercurio.fabric.lang.ComparableConstants.EQUAL;
 import static com.servercurio.fabric.lang.ComparableConstants.GREATER_THAN;
+import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
 
 /**
  * Represents a complete cryptographic encryption transformation that includes the encryption algorithm, operational
@@ -58,6 +59,11 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
      * The {@code padding} field name represented as a string value.
      */
     private static final String PADDING_FIELD = "padding";
+
+    /**
+     * The {@code provider} parameter name represented as a string value.
+     */
+    private static final String PROVIDER_PARAM = "provider";
 
     /**
      * The encryption algorithm for this transformation, not null.
@@ -128,9 +134,7 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
      */
     public CipherTransformation(@NotNull final CipherAlgorithm algorithm, final CipherMode mode,
                                 final CipherPadding padding) {
-        if (algorithm == null) {
-            throw new IllegalArgumentException(ALGORITHM_FIELD);
-        }
+        throwIfArgumentIsNull(algorithm, ALGORITHM_FIELD);
 
         this.algorithm = algorithm;
         this.mode = mode;
@@ -155,9 +159,7 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
      * @see CipherAlgorithm
      */
     public void setAlgorithm(@NotNull final CipherAlgorithm algorithm) {
-        if (algorithm == null) {
-            throw new IllegalArgumentException(ALGORITHM_FIELD);
-        }
+        throwIfArgumentIsNull(algorithm, ALGORITHM_FIELD);
 
         this.algorithm = algorithm;
     }
@@ -311,6 +313,8 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
      */
     @Override
     public Cipher instance(@NotNull final String provider) {
+        throwIfArgumentIsNull(provider, PROVIDER_PARAM);
+
         try {
             return Cipher.getInstance(toCipherTransform(), provider);
         } catch (NoSuchPaddingException | NoSuchAlgorithmException | NoSuchProviderException ex) {
@@ -324,6 +328,8 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
      */
     @Override
     public Cipher instance(@NotNull final Provider provider) {
+        throwIfArgumentIsNull(provider, PROVIDER_PARAM);
+
         try {
             return Cipher.getInstance(toCipherTransform(), provider);
         } catch (NoSuchPaddingException | NoSuchAlgorithmException ex) {

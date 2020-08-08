@@ -47,6 +47,9 @@ import javax.validation.constraints.Positive;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNotPositive;
+import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
+
 /**
  * Default {@link Cryptography} implementation provided by the base {@code Fabric} library.
  *
@@ -60,6 +63,31 @@ public final class DefaultCryptographyImpl implements Cryptography {
      * The default buffer size to use when reading/writing blocks of data from streams.
      */
     public static final int STREAM_BUFFER_SIZE = 8192;
+
+    /**
+     * The {@code stream} parameter name represented as a string value.
+     */
+    private static final String STREAM_PARAM = "stream";
+
+    /**
+     * The {@code fn} parameter name represented as a string value.
+     */
+    private static final String FN_PARAM = "fn";
+
+    /**
+     * The {@code blockSize} parameter name represented as a string value.
+     */
+    private static final String BLOCK_SIZE_PARAM = "blockSize";
+
+    /**
+     * The {@code threadLocal} parameter name represented as a string value.
+     */
+    private static final String THREAD_LOCAL_PARAM = "threadLocal";
+
+    /**
+     * The {@code algorithm} parameter name represented as a string value.
+     */
+    private static final String ALGORITHM_PARAM = "algorithm";
 
     /**
      * The number of times a thread may acquire a cached {@link SecureRandom} instance before a reseed operation is
@@ -160,6 +188,10 @@ public final class DefaultCryptographyImpl implements Cryptography {
      */
     public static void applyToStream(@NotNull final InputStream stream, @Positive final int blockSize,
                                      @NotNull final TriConsumer<byte[], Integer, Integer> fn) throws IOException, GeneralSecurityException {
+        throwIfArgumentIsNull(stream, STREAM_PARAM);
+        throwIfArgumentIsNotPositive(blockSize, BLOCK_SIZE_PARAM);
+        throwIfArgumentIsNull(fn, FN_PARAM);
+
         final byte[] buffer = new byte[blockSize];
 
         int bytesRead = stream.readNBytes(buffer, 0, buffer.length);
@@ -196,6 +228,9 @@ public final class DefaultCryptographyImpl implements Cryptography {
     private static <T, E extends CryptoPrimitiveSupplier<T>>
     T acquireAlgorithm(@NotNull final E algorithm,
                        @NotNull final ThreadLocal<HashMap<E, T>> threadLocal) {
+        throwIfArgumentIsNull(algorithm, ALGORITHM_PARAM);
+        throwIfArgumentIsNull(threadLocal, THREAD_LOCAL_PARAM);
+
         final HashMap<E, T> cache = threadLocal.get();
 
         if (!cache.containsKey(algorithm)) {

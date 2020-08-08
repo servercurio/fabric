@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
 
+import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
+
 /**
  * An enumeration of the standard cryptographic signature algorithms along with their initialization parameters.
  *
@@ -244,6 +246,21 @@ public enum SignatureAlgorithm implements CryptoPrimitiveSupplier<Signature> {
     ECDSA_SHA3_512(27, "SHA3-512withECDSA", "EC");
 
     /**
+     * The {@code algorithmName} field name represented as a string value.
+     */
+    private static final String ALGORITHM_NAME_FIELD = "algorithmName";
+
+    /**
+     * The {@code keyAlgorithmName} field name represented as a string value.
+     */
+    private static final String KEY_ALGORITHM_NAME_FIELD = "keyAlgorithmName";
+
+    /**
+     * The {@code provider} parameter name represented as a string value.
+     */
+    private static final String PROVIDER_PARAM = "provider";
+
+    /**
      * Internal lookup table to provide {@code O(1)} time conversion of {@code id} to enumeration value.
      */
     private static final Map<Integer, SignatureAlgorithm> idMap = new HashMap<>();
@@ -295,6 +312,9 @@ public enum SignatureAlgorithm implements CryptoPrimitiveSupplier<Signature> {
      *         null
      */
     SignatureAlgorithm(final int id, @NotNull final String algorithmName, @NotNull final String keyAlgorithmName) {
+        throwIfArgumentIsNull(algorithmName, ALGORITHM_NAME_FIELD);
+        throwIfArgumentIsNull(keyAlgorithmName, KEY_ALGORITHM_NAME_FIELD);
+
         this.id = id;
         this.algorithmName = algorithmName;
         this.keyAlgorithmName = keyAlgorithmName;
@@ -366,7 +386,9 @@ public enum SignatureAlgorithm implements CryptoPrimitiveSupplier<Signature> {
      * {@inheritDoc}
      */
     @Override
-    public Signature instance(final String provider) {
+    public Signature instance(@NotNull final String provider) {
+        throwIfArgumentIsNull(provider, PROVIDER_PARAM);
+
         try {
             return Signature.getInstance(algorithmName, provider);
         } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
@@ -378,7 +400,9 @@ public enum SignatureAlgorithm implements CryptoPrimitiveSupplier<Signature> {
      * {@inheritDoc}
      */
     @Override
-    public Signature instance(final Provider provider) {
+    public Signature instance(@NotNull final Provider provider) {
+        throwIfArgumentIsNull(provider, PROVIDER_PARAM);
+
         try {
             return Signature.getInstance(algorithmName, provider);
         } catch (NoSuchAlgorithmException ex) {

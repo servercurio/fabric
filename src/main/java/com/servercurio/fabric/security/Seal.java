@@ -26,6 +26,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsEmpty;
+import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
+
 /**
  * Represents a immutable cryptographic signature that includes the algorithm used to perform the original computation.
  * Acts as a basic wrapper class to simplify basic operations such as making copies, generating string representations,
@@ -112,9 +115,7 @@ public class Seal implements Comparable<Seal> {
      *         if the {@code other} parameter is null
      */
     public Seal(@NotNull final Seal other) {
-        if (other == null) {
-            throw new IllegalArgumentException(OTHER_PARAM);
-        }
+        throwIfArgumentIsNull(other, OTHER_PARAM);
 
         this.algorithm = other.algorithm;
         this.value = Arrays.copyOf(other.value, other.value.length);
@@ -136,19 +137,12 @@ public class Seal implements Comparable<Seal> {
      *         if the {@code algorithm} is null or the {@code value} parameter is null or the length of the byte array
      *         is zero
      */
-    @SuppressWarnings("PMD.UselessParentheses")
     protected Seal(@NotNull final SignatureAlgorithm algorithm, @NotNull final byte[] value, final boolean copyValue) {
-
-        if (algorithm == null) {
-            throw new IllegalArgumentException(ALGORITHM_FIELD);
-        }
-
-        if (value == null || (algorithm != SignatureAlgorithm.NONE && value.length == 0)) {
-            throw new IllegalArgumentException(VALUE_FIELD);
-        }
+        throwIfArgumentIsNull(algorithm, ALGORITHM_FIELD);
+        throwIfArgumentIsEmpty(value, VALUE_FIELD, () -> algorithm != SignatureAlgorithm.NONE);
 
         this.algorithm = algorithm;
-        this.value = (copyValue) ? Arrays.copyOf(value, value.length) : value;
+        this.value = copyValue ? Arrays.copyOf(value, value.length) : value;
     }
 
     /**

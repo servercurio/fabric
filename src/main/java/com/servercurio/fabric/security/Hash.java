@@ -27,6 +27,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNotSized;
+import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
+
 /**
  * Represents a mutable cryptographic hash value that includes the algorithm used to perform the original computation.
  * Acts as a basic wrapper class to simplify basic operations such as making copies, generating string representations,
@@ -133,18 +136,12 @@ public class Hash implements Comparable<Hash> {
      *         if the {@code algorithm} is null or the {@code value} parameter is null or the length of the byte array
      *         does not equal the {@link HashAlgorithm#bytes()} length
      */
-    @SuppressWarnings("PMD.UselessParentheses")
     public Hash(@NotNull final HashAlgorithm algorithm, @NotNull final byte[] value, final boolean copyValue) {
-        if (algorithm == null) {
-            throw new IllegalArgumentException(ALGORITHM_FIELD);
-        }
-
-        if (value == null || (algorithm != HashAlgorithm.NONE && value.length != algorithm.bytes())) {
-            throw new IllegalArgumentException(VALUE_FIELD);
-        }
+        throwIfArgumentIsNull(algorithm, ALGORITHM_FIELD);
+        throwIfArgumentIsNotSized(value, algorithm.bytes(), VALUE_FIELD, () -> algorithm != HashAlgorithm.NONE);
 
         this.algorithm = algorithm;
-        this.value = (copyValue) ? Arrays.copyOf(value, value.length) : value;
+        this.value = copyValue ? Arrays.copyOf(value, value.length) : value;
     }
 
     /**
@@ -156,9 +153,7 @@ public class Hash implements Comparable<Hash> {
      *         if the {@code other} parameter is null
      */
     public Hash(@NotNull final Hash other) {
-        if (other == null) {
-            throw new IllegalArgumentException(OTHER_PARAM);
-        }
+        throwIfArgumentIsNull(other, OTHER_PARAM);
 
         this.algorithm = other.getAlgorithm();
 
@@ -189,9 +184,7 @@ public class Hash implements Comparable<Hash> {
      * @see HashAlgorithm
      */
     public void setAlgorithm(@NotNull final HashAlgorithm algorithm) {
-        if (algorithm == null) {
-            throw new IllegalArgumentException(ALGORITHM_FIELD);
-        }
+        throwIfArgumentIsNull(algorithm, ALGORITHM_FIELD);
 
         this.algorithm = algorithm;
         this.value = new byte[algorithm.bytes()];
@@ -225,9 +218,7 @@ public class Hash implements Comparable<Hash> {
      * @see #getValue()
      */
     public void setValue(@NotNull final byte[] value) {
-        if (value == null || value.length != getAlgorithm().bytes()) {
-            throw new IllegalArgumentException(VALUE_FIELD);
-        }
+        throwIfArgumentIsNotSized(value, getAlgorithm().bytes(), VALUE_FIELD);
 
         this.value = value;
     }

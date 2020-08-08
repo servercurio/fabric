@@ -18,6 +18,8 @@ package com.servercurio.fabric.security;
 
 import javax.validation.constraints.NotNull;
 
+import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
+
 /**
  * Provides a reasonable default {@link Hashable} implementation for classes that should compute their own cryptographic
  * {@link Hash} value.
@@ -27,6 +29,16 @@ import javax.validation.constraints.NotNull;
  * @see Hash
  */
 public abstract class AbstractHashable implements Hashable {
+
+    /**
+     * The {@code algorithm} field name represented as a string value.
+     */
+    private static final String ALGORITHM_FIELD = "algorithm";
+
+    /**
+     * The {@code cryptography} field name represented as a string value.
+     */
+    private static final String CRYPTOGRAPHY_FIELD = "cryptography";
 
     /**
      * The {@link HashAlgorithm} to be used when computing the hash value.
@@ -76,13 +88,8 @@ public abstract class AbstractHashable implements Hashable {
      *         if the {@code algorithm} or {@code cryptography} parameters are null
      */
     public AbstractHashable(@NotNull final HashAlgorithm algorithm, @NotNull final Cryptography cryptography) {
-        if (algorithm == null) {
-            throw new IllegalArgumentException("algorithm");
-        }
-
-        if (cryptography == null) {
-            throw new IllegalArgumentException("cryptography");
-        }
+        throwIfArgumentIsNull(algorithm, ALGORITHM_FIELD);
+        throwIfArgumentIsNull(cryptography, CRYPTOGRAPHY_FIELD);
 
         this.algorithm = algorithm;
         this.cryptography = cryptography;

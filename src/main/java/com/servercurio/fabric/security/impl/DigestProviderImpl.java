@@ -30,6 +30,8 @@ import java.util.concurrent.Future;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsEmpty;
+import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
 import static com.servercurio.fabric.security.impl.DefaultCryptographyImpl.applyToStream;
 
 /**
@@ -44,6 +46,36 @@ import static com.servercurio.fabric.security.impl.DefaultCryptographyImpl.apply
 public class DigestProviderImpl implements DigestProvider {
 
     /**
+     * The {@code crypto} field name represented as a string value.
+     */
+    private static final String CRYPTO_FIELD = "crypto";
+
+    /**
+     * The {@code algorithm} parameter name represented as a string value.
+     */
+    private static final String ALGORITHM_PARAM = "algorithm";
+
+    /**
+     * The {@code stream} parameter name represented as a string value.
+     */
+    private static final String STREAM_PARAM = "stream";
+
+    /**
+     * The {@code hashes} parameter name represented as a string value.
+     */
+    private static final String HASHES_PARAM = "hashes";
+
+    /**
+     * The {@code data} parameter name represented as a string value.
+     */
+    private static final String DATA_PARAM = "data";
+
+    /**
+     * The {@code buffer} parameter name represented as a string value.
+     */
+    private static final String BUFFER_PARAM = "buffer";
+
+    /**
      * The {@link Cryptography} implementation to which this provider is bound.
      */
     @NotNull
@@ -56,6 +88,8 @@ public class DigestProviderImpl implements DigestProvider {
      *         the {@link DefaultCryptographyImpl} to which this provider is bound, not null
      */
     public DigestProviderImpl(@NotNull final DefaultCryptographyImpl crypto) {
+        throwIfArgumentIsNull(crypto, CRYPTO_FIELD);
+
         this.crypto = crypto;
     }
 
@@ -96,6 +130,9 @@ public class DigestProviderImpl implements DigestProvider {
      */
     @Override
     public Hash digestSync(@NotNull final HashAlgorithm algorithm, @NotNull final InputStream stream) {
+        throwIfArgumentIsNull(algorithm, ALGORITHM_PARAM);
+        throwIfArgumentIsNull(stream, STREAM_PARAM);
+
         final MessageDigest digest = crypto.primitive(algorithm);
 
         try {
@@ -112,6 +149,9 @@ public class DigestProviderImpl implements DigestProvider {
      */
     @Override
     public Hash digestSync(@NotNull final HashAlgorithm algorithm, @NotNull final byte[] data) {
+        throwIfArgumentIsNull(algorithm, ALGORITHM_PARAM);
+        throwIfArgumentIsNull(data, DATA_PARAM);
+
         final MessageDigest digest = crypto.primitive(algorithm);
 
         digest.update(data);
@@ -123,6 +163,9 @@ public class DigestProviderImpl implements DigestProvider {
      */
     @Override
     public Hash digestSync(@NotNull final HashAlgorithm algorithm, @NotEmpty final Hash... hashes) {
+        throwIfArgumentIsNull(algorithm, ALGORITHM_PARAM);
+        throwIfArgumentIsEmpty(hashes, HASHES_PARAM);
+
         final MessageDigest digest = crypto.primitive(algorithm);
 
         for (final Hash hash : hashes) {
@@ -141,6 +184,9 @@ public class DigestProviderImpl implements DigestProvider {
      */
     @Override
     public Hash digestSync(@NotNull final HashAlgorithm algorithm, @NotNull final ByteBuffer buffer) {
+        throwIfArgumentIsNull(algorithm, ALGORITHM_PARAM);
+        throwIfArgumentIsNull(buffer, BUFFER_PARAM);
+
         final MessageDigest digest = crypto.primitive(algorithm);
 
         digest.update(buffer);

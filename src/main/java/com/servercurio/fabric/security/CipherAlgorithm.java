@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
 
+import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
+
 /**
  * An enumeration of the standard cryptographic encryption algorithms along with their initialization parameters.
  *
@@ -86,6 +88,17 @@ public enum CipherAlgorithm {
      *         https://tools.ietf.org/html/rfc8017</a>
      */
     RSA(7, "RSA", "RSA");
+
+    /**
+     * The {@code algorithmName} field name represented as a string value.
+     */
+    private static final String ALGORITHM_NAME_FIELD = "algorithmName";
+
+    /**
+     * The {@code keyAlgorithmName} field name represented as a string value.
+     */
+    private static final String KEY_ALGORITHM_NAME_FIELD = "keyAlgorithmName";
+
 
     /**
      * Internal lookup table to provide {@code O(1)} time conversion of {@code id} to enumeration value.
@@ -164,6 +177,9 @@ public enum CipherAlgorithm {
      */
     CipherAlgorithm(final int id, @NotNull final String algorithmName, @NotNull final String keyAlgorithmName,
                     final String providerName) {
+        throwIfArgumentIsNull(algorithmName, ALGORITHM_NAME_FIELD);
+        throwIfArgumentIsNull(keyAlgorithmName, KEY_ALGORITHM_NAME_FIELD);
+
         this.id = id;
         this.algorithmName = algorithmName;
         this.keyAlgorithmName = keyAlgorithmName;

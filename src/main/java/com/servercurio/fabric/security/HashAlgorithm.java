@@ -26,6 +26,9 @@ import java.util.Map;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
+import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNotPositive;
+import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
+
 /**
  * An enumeration of the standard cryptographic hash algorithms along with their initialization parameters.
  *
@@ -110,6 +113,26 @@ public enum HashAlgorithm implements CryptoPrimitiveSupplier<MessageDigest> {
     SHA3_512(9, "SHA3-512", 512);
 
     /**
+     * The {@code NONE} algorithm name represented as a string value.
+     */
+    private static final String NONE_ALGORITHM_NAME = "NONE";
+
+    /**
+     * The {@code algorithmName} field name represented as a string value.
+     */
+    private static final String ALGORITHM_NAME_FIELD = "algorithmName";
+
+    /**
+     * The {@code bits} field name represented as a string value.
+     */
+    private static final String BITS_FIELD = "bits";
+
+    /**
+     * The {@code provider} parameter name represented as a string value.
+     */
+    private static final String PROVIDER_PARAM = "provider";
+
+    /**
      * Internal lookup table to provide {@code O(1)} time conversion of {@code id} to enumeration value.
      */
     private static final Map<Integer, HashAlgorithm> idMap = new HashMap<>();
@@ -162,6 +185,12 @@ public enum HashAlgorithm implements CryptoPrimitiveSupplier<MessageDigest> {
      *         the number of bits in the hash value produced by this algorithm, positive and greater than zero
      */
     HashAlgorithm(final int id, @NotNull final String algorithmName, @Positive final int bits) {
+        throwIfArgumentIsNull(algorithmName, ALGORITHM_NAME_FIELD);
+
+        if (!NONE_ALGORITHM_NAME.equals(algorithmName)) {
+            throwIfArgumentIsNotPositive(bits, BITS_FIELD);
+        }
+
         this.id = id;
         this.algorithmName = algorithmName;
         this.bits = bits;
@@ -241,6 +270,8 @@ public enum HashAlgorithm implements CryptoPrimitiveSupplier<MessageDigest> {
      */
     @Override
     public MessageDigest instance(@NotNull final String provider) {
+        throwIfArgumentIsNull(provider, PROVIDER_PARAM);
+
         try {
             return MessageDigest.getInstance(algorithmName, provider);
         } catch (NoSuchAlgorithmException | NoSuchProviderException ex) {
@@ -253,6 +284,8 @@ public enum HashAlgorithm implements CryptoPrimitiveSupplier<MessageDigest> {
      */
     @Override
     public MessageDigest instance(@NotNull final Provider provider) {
+        throwIfArgumentIsNull(provider, PROVIDER_PARAM);
+
         try {
             return MessageDigest.getInstance(algorithmName, provider);
         } catch (NoSuchAlgorithmException ex) {

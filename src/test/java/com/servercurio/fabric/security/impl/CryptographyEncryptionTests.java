@@ -469,23 +469,23 @@ public class CryptographyEncryptionTests {
 
             try (final ByteArrayInputStream iStream = new ByteArrayInputStream(sourceData);
                  final ByteArrayOutputStream oStream = new ByteArrayOutputStream()) {
-                assertThrows(CryptographyException.class,
+                assertThrows(IllegalArgumentException.class,
                         () -> provider.encryption().encryptSync(secretKey, zeroLengthIv, iStream, oStream));
 
-                assertThrows(CryptographyException.class,
+                assertThrows(IllegalArgumentException.class,
                         () -> provider.encryption().decryptSync(secretKey, zeroLengthIv, iStream, oStream));
             }
 
-            assertThrows(CryptographyException.class,
+            assertThrows(IllegalArgumentException.class,
                     () -> provider.encryption().encryptSync(secretKey, zeroLengthIv, sourceData));
 
-            assertThrows(CryptographyException.class,
+            assertThrows(IllegalArgumentException.class,
                     () -> provider.encryption().decryptSync(secretKey, zeroLengthIv, sourceData));
 
-            assertThrows(CryptographyException.class,
+            assertThrows(IllegalArgumentException.class,
                     () -> provider.encryption().encryptSync(secretKey, zeroLengthIv, ByteBuffer.wrap(sourceData)));
 
-            assertThrows(CryptographyException.class,
+            assertThrows(IllegalArgumentException.class,
                     () -> provider.encryption().decryptSync(secretKey, zeroLengthIv, ByteBuffer.wrap(sourceData)));
         }
 
