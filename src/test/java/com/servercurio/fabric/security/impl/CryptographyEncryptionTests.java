@@ -67,11 +67,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CryptographyEncryptionTests {
 
-    private static final int AES_KEY_SIZE = 256;
+    private static final int AES_KEY_SIZE = 128;
 
-    private static final String LARGE_FILE_NAME = "8b3b606bb5cc9e6e4a05ee6091bb0fbb55d419d414189346e200b7cd240db4a58143bf32fcdea79bf8d71f04aae7adcb.bin";
-    private static final String ENCRYPTED_LARGE_FILE_NAME = "8b3b606bb5cc9e6e4a05ee6091bb0fbb55d419d414189346e200b7cd240db4a58143bf32fcdea79bf8d71f04aae7adcb.enc";
-    private static final String DECRYPTED_LARGE_FILE_NAME = "8b3b606bb5cc9e6e4a05ee6091bb0fbb55d419d414189346e200b7cd240db4a58143bf32fcdea79bf8d71f04aae7adcb.dec";
+    private static final String LARGE_FILE_NAME =
+            "8b3b606bb5cc9e6e4a05ee6091bb0fbb55d419d414189346e200b7cd240db4a58143bf32fcdea79bf8d71f04aae7adcb.bin";
+    private static final String ENCRYPTED_LARGE_FILE_NAME =
+            "8b3b606bb5cc9e6e4a05ee6091bb0fbb55d419d414189346e200b7cd240db4a58143bf32fcdea79bf8d71f04aae7adcb.enc";
+    private static final String DECRYPTED_LARGE_FILE_NAME =
+            "8b3b606bb5cc9e6e4a05ee6091bb0fbb55d419d414189346e200b7cd240db4a58143bf32fcdea79bf8d71f04aae7adcb.dec";
 
     public static Stream<CipherTransformation> transformationSource() {
         return Stream.of(
@@ -372,7 +375,9 @@ public class CryptographyEncryptionTests {
             // Setup OTP structures
             final byte[] iv = provider.encryption().nonceSync();
 
-            final KeyGenerator keyGenerator = KeyGenerator.getInstance(CipherAlgorithm.AES.keyAlgorithmName());
+            final CipherTransformation transform =
+                    new CipherTransformation(CipherAlgorithm.AES_128, CipherMode.GCM, CipherPadding.NONE);
+            final KeyGenerator keyGenerator = KeyGenerator.getInstance(CipherAlgorithm.AES_128.keyAlgorithmName());
             keyGenerator.init(AES_KEY_SIZE, random);
 
             final SecretKey secretKey = keyGenerator.generateKey();
@@ -380,11 +385,11 @@ public class CryptographyEncryptionTests {
 
 
             // Encrypt
-            final byte[] cipherText = provider.encryption().encryptSync(secretKey, iv, sourceData);
+            final byte[] cipherText = provider.encryption().encryptSync(transform, secretKey, iv, sourceData);
             assertNotNull(cipherText);
 
             // Decrypt
-            final byte[] clearText = provider.encryption().decryptSync(secretKey, iv, cipherText);
+            final byte[] clearText = provider.encryption().decryptSync(transform, secretKey, iv, cipherText);
             assertNotNull(clearText);
 
             // Compute decrypted hash

@@ -40,12 +40,36 @@ public enum CipherAlgorithm {
     AES(1, "AES", "AES"),
 
     /**
+     * The AES algorithm as defined by NIST FIPS 197.
+     *
+     * @see <a href="https://csrc.nist.gov/publications/fips/fips197/fips-197.pdf">
+     *         https://csrc.nist.gov/publications/fips/fips197/fips-197.pdf</a>
+     */
+    AES_128(2, "AES_128", "AES"),
+
+    /**
+     * The AES algorithm as defined by NIST FIPS 197.
+     *
+     * @see <a href="https://csrc.nist.gov/publications/fips/fips197/fips-197.pdf">
+     *         https://csrc.nist.gov/publications/fips/fips197/fips-197.pdf</a>
+     */
+    AES_192(3, "AES_192", "AES"),
+
+    /**
+     * The AES algorithm as defined by NIST FIPS 197.
+     *
+     * @see <a href="https://csrc.nist.gov/publications/fips/fips197/fips-197.pdf">
+     *         https://csrc.nist.gov/publications/fips/fips197/fips-197.pdf</a>
+     */
+    AES_256(4, "AES_256", "AES"),
+
+    /**
      * The ChaCha20 algorithm as defined by RFC-7539.
      *
      * @see <a href="https://tools.ietf.org/html/rfc7539">
      *         https://tools.ietf.org/html/rfc7539</a>
      */
-    CHACHA20(2, "ChaCha20", "ChaCha20"),
+    CHACHA20(5, "ChaCha20", "ChaCha20"),
 
     /**
      * The ChaCha20 with Poly1305 AEAD algorithm as defined by RFC-7539.
@@ -53,7 +77,7 @@ public enum CipherAlgorithm {
      * @see <a href="https://tools.ietf.org/html/rfc7539">
      *         https://tools.ietf.org/html/rfc7539</a>
      */
-    CHACHA20_POLY1305(3, "ChaCha20-Poly1305", "ChaCha20"),
+    CHACHA20_POLY1305(6, "ChaCha20-Poly1305", "ChaCha20"),
 
     /**
      * The RSA algorithm as defined by RFC-8017.
@@ -61,7 +85,7 @@ public enum CipherAlgorithm {
      * @see <a href="https://tools.ietf.org/html/rfc8017">
      *         https://tools.ietf.org/html/rfc8017</a>
      */
-    RSA(4, "RSA", "RSA");
+    RSA(7, "RSA", "RSA");
 
     /**
      * Internal lookup table to provide {@code O(1)} time conversion of {@code id} to enumeration value.
@@ -77,6 +101,15 @@ public enum CipherAlgorithm {
             idMap.put(algorithm.id(), algorithm);
         }
     }
+
+    /**
+     * The name of the JCE provider that supplies this algorithm implementation.
+     *
+     * @see <a href="https://docs.oracle.com/en/java/javase/14/security/oracle-providers.html">Orcale JCE
+     *         Providers</a>
+     */
+    @NotNull
+    private final String providerName;
 
     /**
      * The name of the key generation algorithm as specified by the standard Java Security documentation.
@@ -113,10 +146,29 @@ public enum CipherAlgorithm {
      *         the standard name for the key generation algorithm as specified by the Java Security documentation, not
      *         null
      */
-    CipherAlgorithm(final int id, @NotNull final String algorithmName, @NotNull final String keyAlgorithmName) {
+    CipherAlgorithm(final int id, @NotNull final String algorithmName, final @NotNull String keyAlgorithmName) {
+        this(id, algorithmName, keyAlgorithmName, null);
+    }
+
+    /**
+     * Enumeration Constructor.
+     *
+     * @param id
+     *         the unique identifier for this algorithm
+     * @param algorithmName
+     *         the standard name for this algorithm as specified by the Java Security documentation, not null
+     * @param keyAlgorithmName
+     *         the standard name for the key generation algorithm as specified by the Java Security documentation, not
+     *         null
+     * @param providerName
+     *         the standard name of the JCE provider that supplies this algorithm implementation, not null
+     */
+    CipherAlgorithm(final int id, @NotNull final String algorithmName, @NotNull final String keyAlgorithmName,
+                    @NotNull final String providerName) {
         this.id = id;
         this.algorithmName = algorithmName;
         this.keyAlgorithmName = keyAlgorithmName;
+        this.providerName = providerName;
     }
 
     /**
@@ -167,6 +219,17 @@ public enum CipherAlgorithm {
      */
     public String keyAlgorithmName() {
         return keyAlgorithmName;
+    }
+
+    /**
+     * Gets the standard name of the JCE provider that supplies this algorithm implementation.
+     *
+     * @return the standard JCE provider name
+     * @see <a href="https://docs.oracle.com/en/java/javase/14/security/oracle-providers.html">Oracle JCE
+     *         Providers</a>
+     */
+    public String providerName() {
+        return providerName;
     }
 
 }

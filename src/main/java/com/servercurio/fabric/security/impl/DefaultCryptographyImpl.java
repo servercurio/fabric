@@ -34,12 +34,14 @@ import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.Security;
 import java.security.Signature;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public final class DefaultCryptographyImpl implements Cryptography {
 
@@ -63,6 +65,10 @@ public final class DefaultCryptographyImpl implements Cryptography {
             ThreadLocal.withInitial(DefaultCryptographyImpl::acquireRandom);
 
     private final ExecutorService executorService;
+
+    static {
+        Security.addProvider(new BouncyCastleProvider());
+    }
 
     /**
      *

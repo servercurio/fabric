@@ -294,6 +294,10 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
      */
     @Override
     public Cipher instance() {
+        if (algorithm.providerName() != null) {
+            return instance(algorithm.providerName());
+        }
+
         try {
             return Cipher.getInstance(toCipherTransform());
         } catch (NoSuchPaddingException | NoSuchAlgorithmException ex) {
