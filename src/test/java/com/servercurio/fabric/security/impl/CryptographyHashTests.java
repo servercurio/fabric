@@ -126,6 +126,9 @@ public class CryptographyHashTests {
         assertThrows(CryptographyException.class, HashAlgorithm.NONE::instance);
         assertThrows(CryptographyException.class, () -> HashAlgorithm.NONE.instance(bcProv));
         assertThrows(CryptographyException.class, () -> HashAlgorithm.SHA_384.instance("INVALID"));
+
+        assertDoesNotThrow(() -> HashAlgorithm.SHA_384.instance(bcProv));
+        assertDoesNotThrow(() -> HashAlgorithm.SHA_384.instance("SUN"));
     }
 
     @Test

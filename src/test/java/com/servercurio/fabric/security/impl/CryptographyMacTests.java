@@ -47,15 +47,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 import static com.servercurio.fabric.lang.ComparableConstants.EQUAL;
 import static com.servercurio.fabric.lang.ComparableConstants.GREATER_THAN;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Cryptography: Message Authentication")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -228,6 +220,9 @@ public class CryptographyMacTests {
         assertThrows(CryptographyException.class, MacAlgorithm.NONE::instance);
         assertThrows(CryptographyException.class, () -> MacAlgorithm.NONE.instance(bcProv));
         assertThrows(CryptographyException.class, () -> MacAlgorithm.HMAC_SHA_384.instance("INVALID"));
+
+        assertDoesNotThrow(() -> MacAlgorithm.HMAC_SHA_384.instance(bcProv));
+        assertDoesNotThrow(() -> MacAlgorithm.HMAC_SHA_384.instance("SunJCE"));
     }
 
     @Test

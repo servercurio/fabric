@@ -46,6 +46,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 import static com.servercurio.fabric.lang.ComparableConstants.EQUAL;
 import static com.servercurio.fabric.lang.ComparableConstants.GREATER_THAN;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -571,5 +572,8 @@ public class CryptographySignatureTests {
         assertThrows(CryptographyException.class, SignatureAlgorithm.NONE::instance);
         assertThrows(CryptographyException.class, () -> SignatureAlgorithm.NONE.instance(bcProv));
         assertThrows(CryptographyException.class, () -> SignatureAlgorithm.RSA_SHA_384.instance("INVALID"));
+
+        assertDoesNotThrow(() -> SignatureAlgorithm.RSA.instance(bcProv));
+        assertDoesNotThrow(() -> SignatureAlgorithm.RSA_SHA_384.instance("SunRsaSign"));
     }
 }
