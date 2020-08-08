@@ -136,6 +136,7 @@ public class Seal implements Comparable<Seal> {
      *         if the {@code algorithm} is null or the {@code value} parameter is null or the length of the byte array
      *         is zero
      */
+    @SuppressWarnings("PMD.UselessParentheses")
     protected Seal(@NotNull final SignatureAlgorithm algorithm, @NotNull final byte[] value, final boolean copyValue) {
 
         if (algorithm == null) {
@@ -226,6 +227,7 @@ public class Seal implements Comparable<Seal> {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.UselessParentheses")
     public boolean equals(final Object o) {
         if (this == o) {
             return true;

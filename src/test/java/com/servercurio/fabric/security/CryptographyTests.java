@@ -26,6 +26,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -37,11 +38,13 @@ public class CryptographyTests {
     @Order(10)
     @DisplayName("Cryptography :: Random -> Reseed")
     public void testCryptoRandomReseed() {
-        try (final Cryptography crypto = Cryptography.newDefaultInstance()) {
-            for (int i = 0; i < 101; i++) {
-                crypto.random();
+        assertDoesNotThrow(() -> {
+            try (final Cryptography crypto = Cryptography.newDefaultInstance()) {
+                for (int i = 0; i < 101; i++) {
+                    crypto.random();
+                }
             }
-        }
+        });
     }
 
     @ParameterizedTest

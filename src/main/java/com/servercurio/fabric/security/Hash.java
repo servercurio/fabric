@@ -133,6 +133,7 @@ public class Hash implements Comparable<Hash> {
      *         if the {@code algorithm} is null or the {@code value} parameter is null or the length of the byte array
      *         does not equal the {@link HashAlgorithm#bytes()} length
      */
+    @SuppressWarnings("PMD.UselessParentheses")
     public Hash(@NotNull final HashAlgorithm algorithm, @NotNull final byte[] value, final boolean copyValue) {
         if (algorithm == null) {
             throw new IllegalArgumentException(ALGORITHM_FIELD);
@@ -343,6 +344,7 @@ public class Hash implements Comparable<Hash> {
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("PMD.UselessParentheses")
     public boolean equals(final Object o) {
         if (this == o) {
             return true;
