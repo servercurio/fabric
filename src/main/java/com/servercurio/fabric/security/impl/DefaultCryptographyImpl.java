@@ -41,49 +41,117 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+/**
+ * Default {@link Cryptography} implementation provided by the base {@code Fabric} library.
+ *
+ * @author Nathan Klick
+ * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html">Java
+ *         Cryptography Architecture</a>
+ */
 public final class DefaultCryptographyImpl implements Cryptography {
 
+    /**
+     * The default buffer size to use when reading/writing blocks of data from streams.
+     */
     public static final int STREAM_BUFFER_SIZE = 8192;
 
+    /**
+     * The default {@link SecureRandom} implementation to use for all instances.
+     */
     private static final String SECURE_RANDOM_ALGORITHM = "DRBG";
 
+    /**
+     * The thread local instance for the {@link HashAlgorithm} cache.
+     */
     private static final ThreadLocal<HashMap<HashAlgorithm, MessageDigest>> hashAlgorithmCache = ThreadLocal
             .withInitial(HashMap::new);
 
+    /**
+     * The thread local instance for the {@link SignatureAlgorithm} cache.
+     */
     private static final ThreadLocal<HashMap<SignatureAlgorithm, Signature>> signatureAlgorithmCache = ThreadLocal
             .withInitial(HashMap::new);
 
+    /**
+     * The thread local instance for the {@link CipherTransformation} cache.
+     */
     private static final ThreadLocal<HashMap<CipherTransformation, Cipher>> cipherAlgorithmCache = ThreadLocal
             .withInitial(HashMap::new);
 
+    /**
+     * The thread local instance for the {@link MacAlgorithm} cache.
+     */
     private static final ThreadLocal<HashMap<MacAlgorithm, Mac>> macAlgorithmCache = ThreadLocal
             .withInitial(HashMap::new);
 
+    /**
+     * The thread local instance for the {@link SecureRandom} cache.
+     */
     private static final ThreadLocal<SecureRandom> secureRandomCache =
             ThreadLocal.withInitial(DefaultCryptographyImpl::acquireRandom);
-
-    private final ExecutorService executorService;
 
     static {
         Security.addProvider(new BouncyCastleProvider());
     }
 
     /**
-     *
+     * The shared thread pool used by all the provider implementations.
+     */
+    private final ExecutorService executorService;
+
+    /**
+     * Private default constructor.
      */
     private DefaultCryptographyImpl() {
         this.executorService = Executors.newCachedThreadPool();
     }
 
-    public static void applyToStream(final InputStream stream,
-                                     final TriConsumer<byte[], Integer, Integer> fn) throws IOException, GeneralSecurityException {
+    /**
+     * Utility method that applies reads {@link #STREAM_BUFFER_SIZE} blocks from the {@code stream} parameter and
+     * applies the {@code fn} lambda function to each block. This method will read from the stream until it reaches the
+     * end of the stream.
+     *
+     * @param stream
+     *         the input stream from which blocks are read, not null
+     * @param fn
+     *         the lambda function to be applied to each block, not null
+     * @throws IOException
+     *         if an error occurs while reading from the input stream
+     * @throws GeneralSecurityException
+     *         if an errors occurs while performing a cryptographic operation
+     * @throws IllegalArgumentException
+     *         if the {@code stream} or the {@code fn} parameters are null
+     */
+    public static void applyToStream(@NotNull final InputStream stream,
+                                     @NotNull final TriConsumer<byte[], Integer, Integer> fn) throws IOException, GeneralSecurityException {
         applyToStream(stream, STREAM_BUFFER_SIZE, fn);
     }
 
-    public static void applyToStream(final InputStream stream, final int blockSize,
-                                     final TriConsumer<byte[], Integer, Integer> fn) throws IOException, GeneralSecurityException {
+    /**
+     * Utility method that applies reads {@code blockSize} blocks from the {@code stream} parameter and applies the
+     * {@code fn} lambda function to each block. This method will read from the stream until it reaches the end of the
+     * stream.
+     *
+     * @param stream
+     *         the input stream from which blocks are read, not null
+     * @param blockSize
+     *         the maximum size of each block to read, positive integer
+     * @param fn
+     *         the lambda function to be applied to each block, not null
+     * @throws IOException
+     *         if an error occurs while reading from the input stream
+     * @throws GeneralSecurityException
+     *         if an errors occurs while performing a cryptographic operation
+     * @throws IllegalArgumentException
+     *         if the {@code stream} or {@code fn} parameters are null or if the {@code blockSize} paramter is less than
+     *         or equal to zero
+     */
+    public static void applyToStream(@NotNull final InputStream stream, @Positive final int blockSize,
+                                     @NotNull final TriConsumer<byte[], Integer, Integer> fn) throws IOException, GeneralSecurityException {
         final byte[] buffer = new byte[blockSize];
 
         int bytesRead = stream.readNBytes(buffer, 0, buffer.length);
@@ -94,10 +162,29 @@ public final class DefaultCryptographyImpl implements Cryptography {
         }
     }
 
+    /**
+     * Factory method that creates a new instance on every invocation.
+     *
+     * @return a new {@linkplain Cryptography} instance, not null
+     */
     public static Cryptography newInstance() {
         return new DefaultCryptographyImpl();
     }
 
+    /**
+     * Acquires an instance of the cryptographic primitive specified by the {@code algorithm} parameter and retrieved
+     * from the {@code threadLocal} cache.
+     *
+     * @param algorithm
+     *         the type of the algorithm to instantiate
+     * @param threadLocal
+     *         the thread local cache
+     * @param <T>
+     *         the type of the JCE algorithm primitive
+     * @param <E>
+     *         the type of algorithm enumeration
+     * @return the primitive instance, not null
+     */
     private static <T, E extends CryptoPrimitiveSupplier<T>>
     T acquireAlgorithm(final E algorithm,
                        final ThreadLocal<HashMap<E, T>> threadLocal) {
@@ -110,6 +197,12 @@ public final class DefaultCryptographyImpl implements Cryptography {
         return cache.get(algorithm);
     }
 
+    /**
+     * Factory method to create a new {@link SecureRandom} instance using the default algorithm specified by the {@link
+     * #SECURE_RANDOM_ALGORITHM} constant.
+     *
+     * @return a new {@link SecureRandom} instance, not null
+     */
     private static SecureRandom acquireRandom() {
         DrbgParameters.Instantiation params =
                 DrbgParameters.instantiation(256, DrbgParameters.Capability.PR_AND_RESEED, null);
@@ -121,6 +214,11 @@ public final class DefaultCryptographyImpl implements Cryptography {
         }
     }
 
+    /**
+     * Gets the configured {@link ExecutorService} for this {@linkplain Cryptography} instance.
+     *
+     * @return the executor service, not null
+     */
     public ExecutorService executorService() {
         return executorService;
     }
