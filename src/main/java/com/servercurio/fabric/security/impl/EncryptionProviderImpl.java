@@ -57,20 +57,53 @@ import javax.validation.constraints.Positive;
  */
 public class EncryptionProviderImpl implements EncryptionProvider {
 
+    /**
+     * The preferred and largest nonce size in bytes supported by {@link CipherMode#GCM} that does not require an extra
+     * block to be computed.
+     */
     private static final int GCM_NONCE_SIZE = 12;
 
+    /**
+     * The preferred and largest tag size in bits supported by {@link CipherMode#GCM} that does not require an extra to
+     * be computed.
+     */
     private static final int GCM_TAG_SIZE = 128;
 
+    /**
+     * The preferred length in bytes of the counter portion of the IV when using {@link CipherMode#CTR}.
+     */
     private static final int CTR_COUNTER_SIZE = 4;
 
-
+    /**
+     * The {@link Cryptography} implementation to which this provider is bound.
+     */
     @NotNull
     private final DefaultCryptographyImpl crypto;
 
+    /**
+     * Constructs a new provider instance bound to the given {@link Cryptography} implementation.
+     *
+     * @param crypto
+     *         the {@link DefaultCryptographyImpl} to which this provider is bound, not null
+     */
     public EncryptionProviderImpl(@NotNull final DefaultCryptographyImpl crypto) {
         this.crypto = crypto;
     }
 
+    /**
+     * Allocates an IV for {@link CipherMode#CTR} that ensures {@code counterLen} bytes are reserved and zero-filled for
+     * the counter. If the supplied IV is longer than {@code blockSize - counterLen}, then it will be truncated to a
+     * length of {@code blockSize - counterLen}.
+     *
+     * @param blockSize
+     *         the blockSize in bytes of the cipher algorithm, postive integer
+     * @param counterLen
+     *         the desired length in bytes of the zero-filled counter, positive integer
+     * @param iv
+     *         the user-supplied nonce to be used for cipher initialization, not null
+     * @return a byte array containing {@code blockSize - counterLen} bytes of the nonce with a trailing {@code
+     *         counterLen} zero-filled bytes
+     */
     private static byte[] deriveCounterIv(@Positive final int blockSize, @Positive final int counterLen,
                                           @NotEmpty final byte[] iv) {
         final int supportedIvLength = blockSize - counterLen;
@@ -80,6 +113,13 @@ public class EncryptionProviderImpl implements EncryptionProvider {
         return counterIv;
     }
 
+    /**
+     * Computes the appropriate nonce size for the transformation given by the {@code algorithm} parameter.
+     *
+     * @param algorithm
+     *         the chosen transformation, not null
+     * @return a positive integer representing the number of bytes that should be used for the nonce
+     */
     private int deriveNonceSize(@NotNull final CipherTransformation algorithm) {
         final Cipher cipher = crypto.primitive(algorithm);
 
@@ -93,6 +133,16 @@ public class EncryptionProviderImpl implements EncryptionProvider {
         }
     }
 
+    /**
+     * Creates the appropriate initialization parameters for the transformation given by the {@code algorithm} parameter
+     * and the user supplied nonce given by the {@code iv} parameter.
+     *
+     * @param algorithm
+     *         the chosen transformation, not null
+     * @param iv
+     *         the user-supplied nonce to be used for cipher initialization, not null
+     * @return an appropriate {@link AlgorithmParameterSpec} instance that is properly configured, not null
+     */
     private AlgorithmParameterSpec deriveParameters(@NotNull final CipherTransformation algorithm,
                                                     @NotEmpty final byte[] iv) {
         final Cipher cipher = crypto.primitive(algorithm);

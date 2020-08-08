@@ -14,4 +14,8 @@
  * limitations under the License.
  */
 
+/**
+ * Provides highly reusable static utility methods, chiefly concerned with adding value to the {@code java.lang} classes
+ * and further extending the {@code org.apache.commons.lang3} utilities.
+ */
 package com.servercurio.fabric.lang;

@@ -16,6 +16,7 @@
 
 package com.servercurio.fabric.security.impl;
 
+import com.servercurio.fabric.security.Cryptography;
 import com.servercurio.fabric.security.CryptographyException;
 import com.servercurio.fabric.security.Hash;
 import com.servercurio.fabric.security.Seal;
@@ -34,10 +35,28 @@ import java.util.concurrent.Future;
 
 import static com.servercurio.fabric.security.impl.DefaultCryptographyImpl.applyToStream;
 
+/**
+ * Default {@code Fabric Unified Cryptography API} provider implementation that encapsulates all of the available
+ * message digest functionality. The default algorithm is {@link SignatureAlgorithm#RSA_SHA_384} which is the minimum
+ * recommended algorithm that is C-NSA compliant.
+ *
+ * @author Nathan Klick
+ * @see Cryptography
+ * @see SignatureAlgorithm
+ */
 public class SignatureProviderImpl implements SignatureProvider {
 
+    /**
+     * The {@linkplain Cryptography} implementation to which this provider is bound.
+     */
     private final DefaultCryptographyImpl crypto;
 
+    /**
+     * Constructs a new provider instance bound to the given {@link Cryptography} implementation.
+     *
+     * @param crypto
+     *         the {@link DefaultCryptographyImpl} to which this provider is bound, not null
+     */
     public SignatureProviderImpl(final DefaultCryptographyImpl crypto) {
         this.crypto = crypto;
     }

@@ -16,7 +16,6 @@
 
 module com.servercurio.fabric {
     // General Purpose Exports
-    exports com.servercurio.fabric.io;
     exports com.servercurio.fabric.lang;
 
     // Security Exports

@@ -18,9 +18,11 @@ package com.servercurio.fabric.security;
 
 /**
  * Base exception that wraps all checked and unchecked cryptographic exceptions that are caught and then rethrown by the
- * {@link Cryptography} module. All more specific cryptographic exceptions should extend from this base class.
+ * {@code Fabric Unified Cryptography API}. All more specific cryptographic exceptions should extend from this base
+ * class.
  *
  * @author Nathan Klick
+ * @see Cryptography
  */
 public class CryptographyException extends RuntimeException {
 
