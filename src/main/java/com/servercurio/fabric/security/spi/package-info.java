@@ -15,6 +15,6 @@
  */
 
 /**
- * {@code Fabric Unified Cryptography API} service provider interfaces for use by implementation authors.
+ * The {@code Fabric Unified Cryptography API} provider interfaces for use by implementation authors.
  */
 package com.servercurio.fabric.security.spi;

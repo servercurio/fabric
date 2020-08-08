@@ -16,6 +16,7 @@
 
 package com.servercurio.fabric.security.spi;
 
+import com.servercurio.fabric.security.Cryptography;
 import com.servercurio.fabric.security.Hash;
 import com.servercurio.fabric.security.MacAlgorithm;
 import java.io.InputStream;
@@ -23,10 +24,23 @@ import java.nio.ByteBuffer;
 import java.security.Key;
 import java.util.concurrent.Future;
 
+/**
+ * {@code Fabric Unified Cryptography API} provider definition that encapsulates all of the available message digest
+ * functionality. The default algorithm is {@link MacAlgorithm#HMAC_SHA_384} which is the minimum recommended algorithm
+ * that is C-NSA compliant. Provider implementations may choose to override the default; however, it is recommended that
+ * the default algorithm be a C-NSA compliant algorithm.
+ *
+ * @author Nathan Klick
+ * @see Cryptography
+ * @see MacAlgorithm
+ */
 public interface MacProvider {
 
     /**
-     * @return
+     * Returns the default algorithm. This is the algorithm that will be used when calling the overloaded methods that
+     * do not accept the algorithm as a parameter.
+     *
+     * @return the default algorithm, not null
      */
     default MacAlgorithm getDefaultAlgorithm() {
         return MacAlgorithm.HMAC_SHA_384;

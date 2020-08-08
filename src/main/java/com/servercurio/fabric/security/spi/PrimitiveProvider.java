@@ -27,6 +27,13 @@ import javax.crypto.Cipher;
 import javax.crypto.Mac;
 import javax.validation.constraints.NotNull;
 
+
+/**
+ * {@code Fabric Unified Cryptography API} provider definition that encapsulates the ability to request cryptographic
+ * primitives from the underlying Java Cryptography Architecture providers.
+ *
+ * @author Nathan Klick
+ */
 public interface PrimitiveProvider {
 
     /**
