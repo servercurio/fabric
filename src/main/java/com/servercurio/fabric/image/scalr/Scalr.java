@@ -15,11 +15,26 @@
  */
 package com.servercurio.fabric.image.scalr;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
+import java.awt.Transparency;
 import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.*;
+import java.awt.image.AreaAveragingScaleFilter;
+import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
+import java.awt.image.ColorConvertOp;
+import java.awt.image.ColorModel;
+import java.awt.image.ConvolveOp;
+import java.awt.image.ImagingOpException;
+import java.awt.image.IndexColorModel;
+import java.awt.image.Kernel;
+import java.awt.image.RasterFormatException;
+import java.awt.image.RescaleOp;
 import javax.imageio.ImageIO;
 
 /**
@@ -152,18 +167,22 @@ import javax.imageio.ImageIO;
  * RGB values pixel-by-pixel with a custom {@link ColorModel} in the scaled
  * image. This would lead to a very measurable negative impact on performance
  * without the caller understanding why.
+ *
  * <p>
  * <strong>Workaround</strong>: A workaround to this issue with all version of
  * Java is to simply save a GIF as a PNG; no change to your code needs to be
  * made except when the image is saved out, e.g. using {@link ImageIO}.
+ *
  * <p>
  * When a file type of "PNG" is used, both the transparency and high color
  * quality will be maintained as the PNG code path in Java2D is superior to the
  * GIF implementation.
+ *
  * <p>
  * If the issue with optional {@link BufferedImageOp}s destroying GIF image
  * content is ever fixed in the platform, saving out resulting images as GIFs
  * should suddenly start working.
+ *
  * <p>
  * More can be read about the issue <a
  * href="http://gman.eichberger.de/2007/07/transparent-gifs-in-java.html"
@@ -372,10 +391,6 @@ public class Scalr {
      */
     public static final int THRESHOLD_QUALITY_BALANCED = 800;
 
-    /**
-     * Static initializer used to prepare some of the variables used by this
-     * class.
-     */
     static {
         log(0, "Debug output ENABLED");
     }
@@ -482,12 +497,11 @@ public class Scalr {
 
         boolean hasReassignedSrc = false;
 
-        for (int i = 0; i < ops.length; i++) {
+        for (final BufferedImageOp op : ops) {
             long subT = -1;
             if (DEBUG) {
                 subT = System.currentTimeMillis();
             }
-            BufferedImageOp op = ops[i];
 
             // Skip null ops instead of throwing an exception.
             if (op == null) {
