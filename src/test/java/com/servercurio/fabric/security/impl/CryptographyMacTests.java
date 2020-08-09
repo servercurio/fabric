@@ -21,18 +21,14 @@ import com.servercurio.fabric.security.Cryptography;
 import com.servercurio.fabric.security.CryptographyException;
 import com.servercurio.fabric.security.Hash;
 import com.servercurio.fabric.security.HashAlgorithm;
-import com.servercurio.fabric.security.ImmutableHash;
 import com.servercurio.fabric.security.MacAlgorithm;
 import com.servercurio.fabric.security.MockHash;
-import com.servercurio.fabric.security.spi.DigestProvider;
 import com.servercurio.fabric.security.spi.MacProvider;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Base64;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -45,9 +41,12 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import static com.servercurio.fabric.lang.ComparableConstants.EQUAL;
-import static com.servercurio.fabric.lang.ComparableConstants.GREATER_THAN;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("Cryptography: Message Authentication")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -71,35 +70,35 @@ public class CryptographyMacTests {
 
     static {
         WELL_KNOWN_HASH = new MockHash(HashAlgorithm.SHA_384,
-                Base64.getDecoder()
-                      .decode("pKA/NF3xZhm+DOBne5MhXxq41eSYHyom/bAPvyCrrDNT8vt5eODhhtWG7LpQlHEE"));
+                                       Base64.getDecoder()
+                                             .decode("pKA/NF3xZhm+DOBne5MhXxq41eSYHyom/bAPvyCrrDNT8vt5eODhhtWG7LpQlHEE"));
 
         ALTERNATE_WELL_KNOWN_HASH = new MockHash(HashAlgorithm.SHA_384,
-                Base64.getDecoder()
-                      .decode("RXzuRQUHOT5zssgipY+PLujP4FrmQJQzVAvni+s52GcwtzkAnq+nRwwmW7noRqvx"));
+                                                 Base64.getDecoder()
+                                                       .decode("RXzuRQUHOT5zssgipY+PLujP4FrmQJQzVAvni+s52GcwtzkAnq+nRwwmW7noRqvx"));
 
         HASH_OF_WELL_KNOWN_HASHES = new MockHash(HashAlgorithm.SHA_384,
-                Base64.getDecoder()
-                      .decode("xlV3JkUBerW3mZvckd2AoJ2EWIeL2vVBGEzdSKStp75gh0ftKZQ82ouOFEyDj8fT"));
+                                                 Base64.getDecoder()
+                                                       .decode("xlV3JkUBerW3mZvckd2AoJ2EWIeL2vVBGEzdSKStp75gh0ftKZQ82ouOFEyDj8fT"));
 
         HASH_OF_NULL_LEFT_HASHES = new MockHash(HashAlgorithm.SHA_384,
-                Base64.getDecoder()
-                      .decode("1ASZCIrQFrH0QmwzJoyHg1KVjf4nI50nBDItuDSAEOONYVD9nhsWBOoGCTyRkIgT"));
+                                                Base64.getDecoder()
+                                                      .decode("1ASZCIrQFrH0QmwzJoyHg1KVjf4nI50nBDItuDSAEOONYVD9nhsWBOoGCTyRkIgT"));
 
         HASH_OF_NULL_RIGHT_HASHES = new MockHash(HashAlgorithm.SHA_384,
-                Base64.getDecoder()
-                      .decode("VmmAygzY5XUjBztz8UdBBjGkhvqjuRNdBF2BOkBBMhFfQjMD6qi2FbDUmeRqihli"));
+                                                 Base64.getDecoder()
+                                                       .decode("VmmAygzY5XUjBztz8UdBBjGkhvqjuRNdBF2BOkBBMhFfQjMD6qi2FbDUmeRqihli"));
 
         LARGE_FILE_KNOWN_HASH = new MockHash(HashAlgorithm.SHA_384,
-                Base64.getDecoder()
-                      .decode("tkSKrfVOE5Ini+fs+ixo+Pwly9SslX192dOEq7Rs7qzlH7aNPyp42DuzziFTJJQy"));
+                                             Base64.getDecoder()
+                                                   .decode("tkSKrfVOE5Ini+fs+ixo+Pwly9SslX192dOEq7Rs7qzlH7aNPyp42DuzziFTJJQy"));
 
         IN_MEMORY_DATA = Base64.getDecoder()
                                .decode("3K0By4fDo8jHaEoYKK7vtyb5KE1t1uYKG5p+r5ZNcnvNYCYZSTgAB6PpvHmsSGTwWov+42iTjzg9Eu4DBHtAdw==");
 
         IN_MEMORY_DATA_KNOWN_HASH = new MockHash(HashAlgorithm.SHA_384,
-                Base64.getDecoder()
-                      .decode("/PmW1EA3rAxDhSoZnvBAVvDa7HTCQrbselERSNGu7IcwJEzCvJYwkIjAf1N8ZiSK"));
+                                                 Base64.getDecoder()
+                                                       .decode("/PmW1EA3rAxDhSoZnvBAVvDa7HTCQrbselERSNGu7IcwJEzCvJYwkIjAf1N8ZiSK"));
     }
 
     @AfterAll
@@ -162,13 +161,13 @@ public class CryptographyMacTests {
 
             final Future<Hash> explicitHashOfHashes = provider
                     .authenticateAsync(MacAlgorithm.HMAC_SHA_384, secretKey, WELL_KNOWN_HASH,
-                            ALTERNATE_WELL_KNOWN_HASH);
+                                       ALTERNATE_WELL_KNOWN_HASH);
 
             final Future<Hash> nullLeftHashOfHashes =
-                    provider.authenticateAsync(secretKey, (Hash) null, ALTERNATE_WELL_KNOWN_HASH);
+                    provider.authenticateAsync(secretKey, null, ALTERNATE_WELL_KNOWN_HASH);
 
             final Future<Hash> nullRightHashOfHashes =
-                    provider.authenticateAsync(secretKey, WELL_KNOWN_HASH, (Hash) null);
+                    provider.authenticateAsync(secretKey, WELL_KNOWN_HASH, null);
 
             assertEquals(HASH_OF_WELL_KNOWN_HASHES, defaultHashOfHashes.get());
             assertArrayEquals(HASH_OF_WELL_KNOWN_HASHES.getValue(), defaultHashOfHashes.get().getValue());
@@ -202,27 +201,6 @@ public class CryptographyMacTests {
             assertEquals(IN_MEMORY_DATA_KNOWN_HASH, explicitMemoryDataHash.get());
             assertArrayEquals(IN_MEMORY_DATA_KNOWN_HASH.getValue(), explicitMemoryDataHash.get().getValue());
         }
-    }
-
-    @Test
-    @Order(25)
-    @DisplayName("MAC :: MacAlgorithm -> Basic Enum")
-    public void testCryptoMacAlgorithmBasicEnum() {
-        final BouncyCastleProvider bcProv = new BouncyCastleProvider();
-        assertEquals(384, MacAlgorithm.HMAC_SHA_384.bits());
-        assertEquals(48, MacAlgorithm.HMAC_SHA_384.bytes());
-        assertEquals(MacAlgorithm.HMAC_SHA_384, MacAlgorithm.valueOf("HMAC_SHA_384"));
-        assertEquals(MacAlgorithm.HMAC_SHA_384, MacAlgorithm.valueOf(MacAlgorithm.HMAC_SHA_384.id()));
-        assertEquals("HmacSHA384", MacAlgorithm.HMAC_SHA_384.algorithmName());
-
-        assertNull(MacAlgorithm.valueOf(-1));
-
-        assertThrows(CryptographyException.class, MacAlgorithm.NONE::instance);
-        assertThrows(CryptographyException.class, () -> MacAlgorithm.NONE.instance(bcProv));
-        assertThrows(CryptographyException.class, () -> MacAlgorithm.HMAC_SHA_384.instance("INVALID"));
-
-        assertDoesNotThrow(() -> MacAlgorithm.HMAC_SHA_384.instance(bcProv));
-        assertDoesNotThrow(() -> MacAlgorithm.HMAC_SHA_384.instance("SunJCE"));
     }
 
     @Test
@@ -263,7 +241,6 @@ public class CryptographyMacTests {
             }
         }
     }
-
 
     @Test
     @Order(175)
@@ -308,9 +285,10 @@ public class CryptographyMacTests {
             final Hash explicitHashOfHashes = provider
                     .authenticateSync(MacAlgorithm.HMAC_SHA_384, secretKey, WELL_KNOWN_HASH, ALTERNATE_WELL_KNOWN_HASH);
 
-            final Hash nullLeftHashOfHashes = provider.authenticateSync(secretKey, (Hash) null, ALTERNATE_WELL_KNOWN_HASH);
+            final Hash nullLeftHashOfHashes =
+                    provider.authenticateSync(secretKey, null, ALTERNATE_WELL_KNOWN_HASH);
 
-            final Hash nullRightHashOfHashes = provider.authenticateSync(secretKey, WELL_KNOWN_HASH, (Hash)null);
+            final Hash nullRightHashOfHashes = provider.authenticateSync(secretKey, WELL_KNOWN_HASH, null);
 
             assertEquals(HASH_OF_WELL_KNOWN_HASHES, defaultHashOfHashes);
             assertArrayEquals(HASH_OF_WELL_KNOWN_HASHES.getValue(), defaultHashOfHashes.getValue());
@@ -383,5 +361,26 @@ public class CryptographyMacTests {
                 });
             }
         }
+    }
+
+    @Test
+    @Order(25)
+    @DisplayName("MAC :: MacAlgorithm -> Basic Enum")
+    public void testCryptoMacAlgorithmBasicEnum() {
+        final BouncyCastleProvider bcProv = new BouncyCastleProvider();
+        assertEquals(384, MacAlgorithm.HMAC_SHA_384.bits());
+        assertEquals(48, MacAlgorithm.HMAC_SHA_384.bytes());
+        assertEquals(MacAlgorithm.HMAC_SHA_384, MacAlgorithm.valueOf("HMAC_SHA_384"));
+        assertEquals(MacAlgorithm.HMAC_SHA_384, MacAlgorithm.valueOf(MacAlgorithm.HMAC_SHA_384.id()));
+        assertEquals("HmacSHA384", MacAlgorithm.HMAC_SHA_384.algorithmName());
+
+        assertNull(MacAlgorithm.valueOf(-1));
+
+        assertThrows(CryptographyException.class, MacAlgorithm.NONE::instance);
+        assertThrows(CryptographyException.class, () -> MacAlgorithm.NONE.instance(bcProv));
+        assertThrows(CryptographyException.class, () -> MacAlgorithm.HMAC_SHA_384.instance("INVALID"));
+
+        assertDoesNotThrow(() -> MacAlgorithm.HMAC_SHA_384.instance(bcProv));
+        assertDoesNotThrow(() -> MacAlgorithm.HMAC_SHA_384.instance("SunJCE"));
     }
 }

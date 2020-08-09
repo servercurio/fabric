@@ -75,19 +75,19 @@ public class CryptographySignatureTests {
 
     static {
         WELL_KNOWN_HASH = new MockHash(HashAlgorithm.SHA_384,
-                Base64.getDecoder()
-                      .decode("pKA/NF3xZhm+DOBne5MhXxq41eSYHyom/bAPvyCrrDNT8vt5eODhhtWG7LpQlHEE"));
+                                       Base64.getDecoder()
+                                             .decode("pKA/NF3xZhm+DOBne5MhXxq41eSYHyom/bAPvyCrrDNT8vt5eODhhtWG7LpQlHEE"));
 
         ALTERNATE_WELL_KNOWN_HASH = new MockHash(HashAlgorithm.SHA_384,
-                Base64.getDecoder()
-                      .decode("RXzuRQUHOT5zssgipY+PLujP4FrmQJQzVAvni+s52GcwtzkAnq+nRwwmW7noRqvx"));
+                                                 Base64.getDecoder()
+                                                       .decode("RXzuRQUHOT5zssgipY+PLujP4FrmQJQzVAvni+s52GcwtzkAnq+nRwwmW7noRqvx"));
 
         IN_MEMORY_DATA = Base64.getDecoder()
                                .decode("3K0By4fDo8jHaEoYKK7vtyb5KE1t1uYKG5p+r5ZNcnvNYCYZSTgAB6PpvHmsSGTwWov+42iTjzg9Eu4DBHtAdw==");
 
         IN_MEMORY_DATA_KNOWN_HASH = new MockHash(HashAlgorithm.SHA_384,
-                Base64.getDecoder()
-                      .decode("AhmB45prgDLfSo23+TqTa3U231O85iO424sEe+lgxVhPbyviG23klX+VRcNOAOMj"));
+                                                 Base64.getDecoder()
+                                                       .decode("AhmB45prgDLfSo23+TqTa3U231O85iO424sEe+lgxVhPbyviG23klX+VRcNOAOMj"));
     }
 
     @AfterAll
@@ -120,7 +120,7 @@ public class CryptographySignatureTests {
             assertThrows(IllegalArgumentException.class, () -> new Seal(null, validHashBytes));
             assertThrows(IllegalArgumentException.class, () -> new Seal(SignatureAlgorithm.RSA_SHA_384, null));
             assertThrows(IllegalArgumentException.class,
-                    () -> new Seal(SignatureAlgorithm.RSA_SHA_384, invalidLengthHash));
+                         () -> new Seal(SignatureAlgorithm.RSA_SHA_384, invalidLengthHash));
             assertThrows(IllegalArgumentException.class, () -> new Seal(null));
 
             // Constructor Copies
@@ -230,17 +230,18 @@ public class CryptographySignatureTests {
 
             assertThrows(ExecutionException.class, () -> provider.signAsync(null, IN_MEMORY_DATA).get());
             assertThrows(ExecutionException.class,
-                    () -> provider.verifyAsync(defaultSeal, null, IN_MEMORY_DATA).get());
+                         () -> provider.verifyAsync(defaultSeal, null, IN_MEMORY_DATA).get());
 
             assertThrows(ExecutionException.class,
-                    () -> provider.signAsync(null, ByteBuffer.wrap(IN_MEMORY_DATA)).get());
+                         () -> provider.signAsync(null, ByteBuffer.wrap(IN_MEMORY_DATA)).get());
             assertThrows(ExecutionException.class,
-                    () -> provider.verifyAsync(defaultSeal, null, ByteBuffer.wrap(IN_MEMORY_DATA)).get());
+                         () -> provider.verifyAsync(defaultSeal, null, ByteBuffer.wrap(IN_MEMORY_DATA)).get());
 
             assertThrows(ExecutionException.class,
-                    () -> provider.signAsync(null, WELL_KNOWN_HASH, ALTERNATE_WELL_KNOWN_HASH).get());
+                         () -> provider.signAsync(null, WELL_KNOWN_HASH, ALTERNATE_WELL_KNOWN_HASH).get());
             assertThrows(ExecutionException.class,
-                    () -> provider.verifyAsync(defaultSeal, null, WELL_KNOWN_HASH, ALTERNATE_WELL_KNOWN_HASH).get());
+                         () -> provider.verifyAsync(defaultSeal, null, WELL_KNOWN_HASH, ALTERNATE_WELL_KNOWN_HASH)
+                                       .get());
         }
     }
 
@@ -266,7 +267,7 @@ public class CryptographySignatureTests {
                     provider.signAsync(privateKey, WELL_KNOWN_HASH, ALTERNATE_WELL_KNOWN_HASH);
             final Future<Seal> explicitSealFuture =
                     provider.signAsync(SignatureAlgorithm.RSA_SHA_384, privateKey, WELL_KNOWN_HASH,
-                            ALTERNATE_WELL_KNOWN_HASH);
+                                       ALTERNATE_WELL_KNOWN_HASH);
             final Future<Seal> nullLeftFuture = provider.signAsync(privateKey, null, ALTERNATE_WELL_KNOWN_HASH);
             final Future<Seal> nullRightFuture = provider.signAsync(privateKey, WELL_KNOWN_HASH, null);
 
@@ -437,14 +438,15 @@ public class CryptographySignatureTests {
             assertThrows(IllegalArgumentException.class, () -> provider.signSync(null, IN_MEMORY_DATA));
             assertThrows(IllegalArgumentException.class, () -> provider.verifySync(defaultSeal, null, IN_MEMORY_DATA));
 
-            assertThrows(IllegalArgumentException.class, () -> provider.signSync(null, ByteBuffer.wrap(IN_MEMORY_DATA)));
             assertThrows(IllegalArgumentException.class,
-                    () -> provider.verifySync(defaultSeal, null, ByteBuffer.wrap(IN_MEMORY_DATA)));
+                         () -> provider.signSync(null, ByteBuffer.wrap(IN_MEMORY_DATA)));
+            assertThrows(IllegalArgumentException.class,
+                         () -> provider.verifySync(defaultSeal, null, ByteBuffer.wrap(IN_MEMORY_DATA)));
 
             assertThrows(IllegalArgumentException.class,
-                    () -> provider.signSync(null, WELL_KNOWN_HASH, ALTERNATE_WELL_KNOWN_HASH));
+                         () -> provider.signSync(null, WELL_KNOWN_HASH, ALTERNATE_WELL_KNOWN_HASH));
             assertThrows(IllegalArgumentException.class,
-                    () -> provider.verifySync(defaultSeal, null, WELL_KNOWN_HASH, ALTERNATE_WELL_KNOWN_HASH));
+                         () -> provider.verifySync(defaultSeal, null, WELL_KNOWN_HASH, ALTERNATE_WELL_KNOWN_HASH));
         }
     }
 
@@ -468,7 +470,7 @@ public class CryptographySignatureTests {
 
             final Seal defaultSeal = provider.signSync(privateKey, WELL_KNOWN_HASH, ALTERNATE_WELL_KNOWN_HASH);
             final Seal explicitSeal = provider.signSync(SignatureAlgorithm.RSA_SHA_384, privateKey, WELL_KNOWN_HASH,
-                    ALTERNATE_WELL_KNOWN_HASH);
+                                                        ALTERNATE_WELL_KNOWN_HASH);
 
             final Seal nullLeftHashOfHashes = provider.signSync(privateKey, null, ALTERNATE_WELL_KNOWN_HASH);
             final Seal nullRightHashOfHashes = provider.signSync(privateKey, WELL_KNOWN_HASH, null);

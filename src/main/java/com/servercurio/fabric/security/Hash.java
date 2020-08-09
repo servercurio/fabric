@@ -17,6 +17,7 @@
 package com.servercurio.fabric.security;
 
 import com.servercurio.fabric.lang.ComparableConstants;
+import com.servercurio.fabric.lang.Validators;
 import java.util.Arrays;
 import java.util.Base64;
 import javax.validation.constraints.NotNull;
@@ -27,7 +28,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNotSized;
+import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNotExactSize;
 import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
 
 /**
@@ -138,7 +139,7 @@ public class Hash implements Comparable<Hash> {
      */
     public Hash(@NotNull final HashAlgorithm algorithm, @NotNull final byte[] value, final boolean copyValue) {
         throwIfArgumentIsNull(algorithm, ALGORITHM_FIELD);
-        throwIfArgumentIsNotSized(value, algorithm.bytes(), VALUE_FIELD, () -> algorithm != HashAlgorithm.NONE);
+        throwIfArgumentIsNotExactSize(value, algorithm.bytes(), VALUE_FIELD, () -> algorithm != HashAlgorithm.NONE);
 
         this.algorithm = algorithm;
         this.value = copyValue ? Arrays.copyOf(value, value.length) : value;
@@ -218,7 +219,7 @@ public class Hash implements Comparable<Hash> {
      * @see #getValue()
      */
     public void setValue(@NotNull final byte[] value) {
-        throwIfArgumentIsNotSized(value, getAlgorithm().bytes(), VALUE_FIELD);
+        Validators.throwIfArgumentIsNotExactSize(value, getAlgorithm().bytes(), VALUE_FIELD);
 
         this.value = value;
     }

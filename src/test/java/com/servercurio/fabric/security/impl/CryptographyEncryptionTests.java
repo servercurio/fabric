@@ -229,27 +229,27 @@ public class CryptographyEncryptionTests {
             try (final ByteArrayInputStream iStream = new ByteArrayInputStream(sourceData);
                  final ByteArrayOutputStream oStream = new ByteArrayOutputStream()) {
                 assertThrows(ExecutionException.class,
-                        () -> provider.encryption().encryptAsync(secretKey, zeroLengthIv, iStream, oStream).get());
+                             () -> provider.encryption().encryptAsync(secretKey, zeroLengthIv, iStream, oStream).get());
 
                 assertThrows(ExecutionException.class,
-                        () -> provider.encryption().decryptAsync(secretKey, zeroLengthIv, iStream, oStream).get());
+                             () -> provider.encryption().decryptAsync(secretKey, zeroLengthIv, iStream, oStream).get());
             }
 
             assertThrows(ExecutionException.class,
-                    () -> provider.encryption().encryptAsync(secretKey, zeroLengthIv, sourceData).get());
+                         () -> provider.encryption().encryptAsync(secretKey, zeroLengthIv, sourceData).get());
 
             assertThrows(ExecutionException.class,
-                    () -> provider.encryption().decryptAsync(secretKey, zeroLengthIv, sourceData).get());
+                         () -> provider.encryption().decryptAsync(secretKey, zeroLengthIv, sourceData).get());
 
             assertThrows(ExecutionException.class,
-                    () -> provider.encryption()
-                                  .encryptAsync(secretKey, zeroLengthIv, ByteBuffer.wrap(sourceData))
-                                  .get());
+                         () -> provider.encryption()
+                                       .encryptAsync(secretKey, zeroLengthIv, ByteBuffer.wrap(sourceData))
+                                       .get());
 
             assertThrows(ExecutionException.class,
-                    () -> provider.encryption()
-                                  .decryptAsync(secretKey, zeroLengthIv, ByteBuffer.wrap(sourceData))
-                                  .get());
+                         () -> provider.encryption()
+                                       .decryptAsync(secretKey, zeroLengthIv, ByteBuffer.wrap(sourceData))
+                                       .get());
         }
 
     }
@@ -470,23 +470,23 @@ public class CryptographyEncryptionTests {
             try (final ByteArrayInputStream iStream = new ByteArrayInputStream(sourceData);
                  final ByteArrayOutputStream oStream = new ByteArrayOutputStream()) {
                 assertThrows(IllegalArgumentException.class,
-                        () -> provider.encryption().encryptSync(secretKey, zeroLengthIv, iStream, oStream));
+                             () -> provider.encryption().encryptSync(secretKey, zeroLengthIv, iStream, oStream));
 
                 assertThrows(IllegalArgumentException.class,
-                        () -> provider.encryption().decryptSync(secretKey, zeroLengthIv, iStream, oStream));
+                             () -> provider.encryption().decryptSync(secretKey, zeroLengthIv, iStream, oStream));
             }
 
             assertThrows(IllegalArgumentException.class,
-                    () -> provider.encryption().encryptSync(secretKey, zeroLengthIv, sourceData));
+                         () -> provider.encryption().encryptSync(secretKey, zeroLengthIv, sourceData));
 
             assertThrows(IllegalArgumentException.class,
-                    () -> provider.encryption().decryptSync(secretKey, zeroLengthIv, sourceData));
+                         () -> provider.encryption().decryptSync(secretKey, zeroLengthIv, sourceData));
 
             assertThrows(IllegalArgumentException.class,
-                    () -> provider.encryption().encryptSync(secretKey, zeroLengthIv, ByteBuffer.wrap(sourceData)));
+                         () -> provider.encryption().encryptSync(secretKey, zeroLengthIv, ByteBuffer.wrap(sourceData)));
 
             assertThrows(IllegalArgumentException.class,
-                    () -> provider.encryption().decryptSync(secretKey, zeroLengthIv, ByteBuffer.wrap(sourceData)));
+                         () -> provider.encryption().decryptSync(secretKey, zeroLengthIv, ByteBuffer.wrap(sourceData)));
         }
 
     }

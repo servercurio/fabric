@@ -14,5 +14,7 @@
  * limitations under the License.
  */
 
-
+/**
+ * The primary package for the {@code Fabric Unified API}.
+ */
 package com.servercurio.fabric;

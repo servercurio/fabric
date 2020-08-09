@@ -95,6 +95,9 @@
         <!-- Cryptography & Security Libraries -->
         <bouncycastle.version>1.64</bouncycastle.version>
 
+        <!-- Image Libraries -->
+        <imgscalr.version>4.2</imgscalr.version>
+
         <!-- JSR-380 Bean Validation -->
         <javax.validation.version>2.0.1.Final</javax.validation.version>
 

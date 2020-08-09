@@ -62,35 +62,35 @@ public class CryptographyHashTests {
 
     static {
         WELL_KNOWN_HASH = new MockHash(HashAlgorithm.SHA_384,
-                Base64.getDecoder()
-                      .decode("pKA/NF3xZhm+DOBne5MhXxq41eSYHyom/bAPvyCrrDNT8vt5eODhhtWG7LpQlHEE"));
+                                       Base64.getDecoder()
+                                             .decode("pKA/NF3xZhm+DOBne5MhXxq41eSYHyom/bAPvyCrrDNT8vt5eODhhtWG7LpQlHEE"));
 
         ALTERNATE_WELL_KNOWN_HASH = new MockHash(HashAlgorithm.SHA_384,
-                Base64.getDecoder()
-                      .decode("RXzuRQUHOT5zssgipY+PLujP4FrmQJQzVAvni+s52GcwtzkAnq+nRwwmW7noRqvx"));
+                                                 Base64.getDecoder()
+                                                       .decode("RXzuRQUHOT5zssgipY+PLujP4FrmQJQzVAvni+s52GcwtzkAnq+nRwwmW7noRqvx"));
 
         HASH_OF_WELL_KNOWN_HASHES = new MockHash(HashAlgorithm.SHA_384,
-                Base64.getDecoder()
-                      .decode("jJ2gb5dQn1Bxdz0fxLowPxakxynJFajOjm7PBbkIVuznXA/9Cfa4QlFAagSyvDTm"));
+                                                 Base64.getDecoder()
+                                                       .decode("jJ2gb5dQn1Bxdz0fxLowPxakxynJFajOjm7PBbkIVuznXA/9Cfa4QlFAagSyvDTm"));
 
         HASH_OF_NULL_LEFT_HASHES = new MockHash(HashAlgorithm.SHA_384,
-                Base64.getDecoder()
-                      .decode("91ToGuzfdK+VDc/57EZUmvBbDaTkOoFcTaR+nXKhsebBYyYzOfW2GQCMHnGVVrik"));
+                                                Base64.getDecoder()
+                                                      .decode("91ToGuzfdK+VDc/57EZUmvBbDaTkOoFcTaR+nXKhsebBYyYzOfW2GQCMHnGVVrik"));
 
         HASH_OF_NULL_RIGHT_HASHES = new MockHash(HashAlgorithm.SHA_384,
-                Base64.getDecoder()
-                      .decode("1F4jTbdJHows8y3NTinV6PLiwNe9fKCKfOKSZ+eL8vBxErjzdAv5g3JHgAzRZFMc"));
+                                                 Base64.getDecoder()
+                                                       .decode("1F4jTbdJHows8y3NTinV6PLiwNe9fKCKfOKSZ+eL8vBxErjzdAv5g3JHgAzRZFMc"));
 
         LARGE_FILE_KNOWN_HASH = new MockHash(HashAlgorithm.SHA_384,
-                Base64.getDecoder()
-                      .decode("iztga7XMnm5KBe5gkbsPu1XUGdQUGJNG4gC3zSQNtKWBQ78y/N6nm/jXHwSq563L"));
+                                             Base64.getDecoder()
+                                                   .decode("iztga7XMnm5KBe5gkbsPu1XUGdQUGJNG4gC3zSQNtKWBQ78y/N6nm/jXHwSq563L"));
 
         IN_MEMORY_DATA = Base64.getDecoder()
                                .decode("3K0By4fDo8jHaEoYKK7vtyb5KE1t1uYKG5p+r5ZNcnvNYCYZSTgAB6PpvHmsSGTwWov+42iTjzg9Eu4DBHtAdw==");
 
         IN_MEMORY_DATA_KNOWN_HASH = new MockHash(HashAlgorithm.SHA_384,
-                Base64.getDecoder()
-                      .decode("AhmB45prgDLfSo23+TqTa3U231O85iO424sEe+lgxVhPbyviG23klX+VRcNOAOMj"));
+                                                 Base64.getDecoder()
+                                                       .decode("AhmB45prgDLfSo23+TqTa3U231O85iO424sEe+lgxVhPbyviG23klX+VRcNOAOMj"));
     }
 
     @AfterAll

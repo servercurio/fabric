@@ -31,7 +31,8 @@ public class ThrowingInputStream extends BufferedInputStream {
      * Creates a {@code BufferedInputStream} and saves its  argument, the input stream {@code in}, for later use. An
      * internal buffer array is created and  stored in {@code buf}.
      *
-     * @param in the underlying input stream.
+     * @param in
+     *         the underlying input stream.
      */
     public ThrowingInputStream(final InputStream in) {
         super(in);
@@ -42,20 +43,33 @@ public class ThrowingInputStream extends BufferedInputStream {
      * {@code in}, for later use.  An internal buffer array of length  {@code size} is created and stored in {@code
      * buf}.
      *
-     * @param in   the underlying input stream.
-     * @param size the buffer size.
-     * @throws IllegalArgumentException if {@code size <= 0}.
+     * @param in
+     *         the underlying input stream.
+     * @param size
+     *         the buffer size.
+     * @throws IllegalArgumentException
+     *         if {@code size <= 0}.
      */
     public ThrowingInputStream(final InputStream in, final int size) {
         super(in, size);
+    }
+
+    private int incrementAndThrow(final long amount) throws IOException {
+        bytesRead += amount;
+
+        if (bytesRead >= THROW_AFTER_BYTE_COUNT) {
+            throw new IOException("Number of bytes read exceeded limit: " + THROW_AFTER_BYTE_COUNT);
+        }
+
+        return (int) amount;
     }
 
     /**
      * See the general contract of the {@code read} method of {@code InputStream}.
      *
      * @return the next byte of data, or {@code -1} if the end of the stream is reached.
-     * @throws IOException if this input stream has been closed by invoking its {@link #close()} method, or an I/O error
-     *                     occurs.
+     * @throws IOException
+     *         if this input stream has been closed by invoking its {@link #close()} method, or an I/O error occurs.
      * @see FilterInputStream#in
      */
     @Override
@@ -88,12 +102,15 @@ public class ThrowingInputStream extends BufferedInputStream {
      * <p> Subclasses of this class are encouraged, but not required, to
      * attempt to read as many bytes as possible in the same fashion.
      *
-     * @param b   destination buffer.
-     * @param off offset at which to start storing bytes.
-     * @param len maximum number of bytes to read.
+     * @param b
+     *         destination buffer.
+     * @param off
+     *         offset at which to start storing bytes.
+     * @param len
+     *         maximum number of bytes to read.
      * @return the number of bytes read, or {@code -1} if the end of the stream has been reached.
-     * @throws IOException if this input stream has been closed by invoking its {@link #close()} method, or an I/O error
-     *                     occurs.
+     * @throws IOException
+     *         if this input stream has been closed by invoking its {@link #close()} method, or an I/O error occurs.
      */
     @Override
     public synchronized int read(final byte[] b, final int off, final int len) throws IOException {
@@ -104,8 +121,9 @@ public class ThrowingInputStream extends BufferedInputStream {
      * See the general contract of the {@code skip} method of {@code InputStream}.
      *
      * @param n
-     * @throws IOException if this input stream has been closed by invoking its {@link #close()} method, {@code
-     *                     in.skip(n)} throws an IOException, or an I/O error occurs.
+     * @throws IOException
+     *         if this input stream has been closed by invoking its {@link #close()} method, {@code in.skip(n)} throws
+     *         an IOException, or an I/O error occurs.
      */
     @Override
     public synchronized long skip(final long n) throws IOException {
@@ -121,10 +139,12 @@ public class ThrowingInputStream extends BufferedInputStream {
      * <i>not</i> do {@code in.read(b)} instead;
      * certain subclasses of  {@code FilterInputStream} depend on the implementation strategy actually used.
      *
-     * @param b the buffer into which the data is read.
+     * @param b
+     *         the buffer into which the data is read.
      * @return the total number of bytes read into the buffer, or {@code -1} if there is no more data because the end of
-     * the stream has been reached.
-     * @throws IOException if an I/O error occurs.
+     *         the stream has been reached.
+     * @throws IOException
+     *         if an I/O error occurs.
      * @see FilterInputStream#read(byte[], int, int)
      */
     @Override
@@ -153,8 +173,10 @@ public class ThrowingInputStream extends BufferedInputStream {
      * occurs.
      *
      * @return a byte array containing the bytes read from this input stream
-     * @throws IOException      if an I/O error occurs
-     * @throws OutOfMemoryError if an array of the required size cannot be allocated.
+     * @throws IOException
+     *         if an I/O error occurs
+     * @throws OutOfMemoryError
+     *         if an array of the required size cannot be allocated.
      * @implSpec This method invokes {@link #readNBytes(int)} with a length of {@link Integer#MAX_VALUE}.
      * @since 9
      */
@@ -193,13 +215,17 @@ public class ThrowingInputStream extends BufferedInputStream {
      * may be in an inconsistent state. It is strongly recommended that the stream be promptly closed if an I/O error
      * occurs.
      *
-     * @param len the maximum number of bytes to read
+     * @param len
+     *         the maximum number of bytes to read
      * @return a byte array containing the bytes read from this input stream
-     * @throws IllegalArgumentException if {@code length} is negative
-     * @throws IOException              if an I/O error occurs
-     * @throws OutOfMemoryError         if an array of the required size cannot be allocated.
-     * @implNote The number of bytes allocated to read data from this stream and return the result is bounded by {@code
-     * 2*(long)len}, inclusive.
+     * @throws IllegalArgumentException
+     *         if {@code length} is negative
+     * @throws IOException
+     *         if an I/O error occurs
+     * @throws OutOfMemoryError
+     *         if an array of the required size cannot be allocated.
+     * @implNote The number of bytes allocated to read data from this stream and return the result is bounded by
+     *         {@code 2*(long)len}, inclusive.
      * @since 11
      */
     @Override
@@ -235,14 +261,20 @@ public class ThrowingInputStream extends BufferedInputStream {
      * the input stream and {@code b} may be in an inconsistent state. It is strongly recommended that the stream be
      * promptly closed if an I/O error occurs.
      *
-     * @param b   the byte array into which the data is read
-     * @param off the start offset in {@code b} at which the data is written
-     * @param len the maximum number of bytes to read
+     * @param b
+     *         the byte array into which the data is read
+     * @param off
+     *         the start offset in {@code b} at which the data is written
+     * @param len
+     *         the maximum number of bytes to read
      * @return the actual number of bytes read into the buffer
-     * @throws IOException               if an I/O error occurs
-     * @throws NullPointerException      if {@code b} is {@code null}
-     * @throws IndexOutOfBoundsException If {@code off} is negative, {@code len} is negative, or {@code len} is greater
-     *                                   than {@code b.length - off}
+     * @throws IOException
+     *         if an I/O error occurs
+     * @throws NullPointerException
+     *         if {@code b} is {@code null}
+     * @throws IndexOutOfBoundsException
+     *         If {@code off} is negative, {@code len} is negative, or {@code len} is greater than {@code b.length -
+     *         off}
      * @since 9
      */
     @Override
@@ -264,32 +296,26 @@ public class ThrowingInputStream extends BufferedInputStream {
      * <p> If an I/O error occurs, then the input stream may be
      * in an inconsistent state. It is strongly recommended that the stream be promptly closed if an I/O error occurs.
      *
-     * @param n the number of bytes to be skipped.
-     * @throws EOFException if end of stream is encountered before the stream can be positioned {@code n} bytes beyond
-     *                      its position when this method was invoked.
-     * @throws IOException  if the stream cannot be positioned properly or if an I/O error occurs.
+     * @param n
+     *         the number of bytes to be skipped.
+     * @throws EOFException
+     *         if end of stream is encountered before the stream can be positioned {@code n} bytes beyond its position
+     *         when this method was invoked.
+     * @throws IOException
+     *         if the stream cannot be positioned properly or if an I/O error occurs.
      * @implNote Subclasses are encouraged to provide a more efficient implementation of this method.
-     * @implSpec If {@code n} is zero or negative, then no bytes are skipped. If {@code n} is positive, the default
-     * implementation of this method invokes {@link #skip(long) skip()} with parameter {@code n}.  If the return value
-     * of {@code skip(n)} is non-negative and less than {@code n}, then {@link #read()} is invoked repeatedly until the
-     * stream is {@code n} bytes beyond its position when this method was invoked or end of stream is reached.  If the
-     * return value of {@code skip(n)} is negative or greater than {@code n}, then an {@code IOException} is thrown. Any
-     * exception thrown by {@code skip()} or {@code read()} will be propagated.
+     * @implSpec If {@code n} is zero or negative, then no bytes are skipped. If {@code n} is positive, the
+     *         default implementation of this method invokes {@link #skip(long) skip()} with parameter {@code n}.  If
+     *         the return value of {@code skip(n)} is non-negative and less than {@code n}, then {@link #read()} is
+     *         invoked repeatedly until the stream is {@code n} bytes beyond its position when this method was invoked
+     *         or end of stream is reached.  If the return value of {@code skip(n)} is negative or greater than {@code
+     *         n}, then an {@code IOException} is thrown. Any exception thrown by {@code skip()} or {@code read()} will
+     *         be propagated.
      * @see InputStream#skip(long)
      */
     @Override
     public void skipNBytes(final long n) throws IOException {
         super.skipNBytes(n);
         incrementAndThrow(n);
-    }
-
-    private int incrementAndThrow(final long amount) throws IOException {
-        bytesRead += amount;
-
-        if (bytesRead >= THROW_AFTER_BYTE_COUNT) {
-            throw new IOException("Number of bytes read exceeded limit: " + THROW_AFTER_BYTE_COUNT);
-        }
-
-        return (int) amount;
     }
 }
