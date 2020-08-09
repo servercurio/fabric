@@ -476,8 +476,8 @@ public class Scalr {
             // Watch out for flaky/misbehaving ops that fail to work right.
             if (resultBounds == null) {
                 throw new ImagingOpException(String.format(
-                        "BufferedImageOp [%s] getBounds2D(src) returned null bounds for the target image; " +
-                        "this should not happen and indicates a problem with application of this type of op.", op));
+                        "BufferedImageOp [%s] getBounds2D(src) returned null bounds for the target image; "
+                        + "this should not happen and indicates a problem with application of this type of op.", op));
             }
 
             /*
@@ -608,13 +608,15 @@ public class Scalr {
         }
 
         int srcWidth = src.getWidth();
-        int srcHeight = src.getHeight();
 
         if ((x + width) > srcWidth) {
             throw new IllegalArgumentException(
                     "Invalid crop bounds: x + width [" + (x + width)
                     + "] must be <= src.getWidth() [" + srcWidth + "]");
         }
+
+        int srcHeight = src.getHeight();
+
         if ((y + height) > srcHeight) {
             throw new IllegalArgumentException(
                     "Invalid crop bounds: y + height [" + (y + height)
@@ -631,8 +633,7 @@ public class Scalr {
          * directly into our result image (which is the exact size of the crop
          * region).
          */
-        g.drawImage(src, 0, 0, width, height, x, y, (x + width), (y + height),
-                    null);
+        g.drawImage(src, 0, 0, width, height, x, y, x + width, y + height, null);
         g.dispose();
 
         // Apply any optional operations (if specified).
@@ -742,13 +743,13 @@ public class Scalr {
          * height, so we have 1 new pixel of padding all the way around our
          * image.
          */
-        int sizeDiff = (padding * 2);
+        int sizeDiff = padding * 2;
         int newWidth = srcWidth + sizeDiff;
         int newHeight = srcHeight + sizeDiff;
 
 
-        boolean colorHasAlpha = (color.getAlpha() != 255);
-        boolean imageHasAlpha = (src.getTransparency() != BufferedImage.OPAQUE);
+        boolean colorHasAlpha = color.getAlpha() != 255;
+        boolean imageHasAlpha = src.getTransparency() != Transparency.OPAQUE;
 
         BufferedImage result;
 
@@ -1192,13 +1193,11 @@ public class Scalr {
         }
 
 
-        BufferedImage result = null;
-
         int currentWidth = src.getWidth();
         int currentHeight = src.getHeight();
 
         // <= 1 is a square or landscape-oriented image, > 1 is a portrait.
-        float ratio = ((float) currentHeight / (float) currentWidth);
+        float ratio = (float) currentHeight / (float) currentWidth;
 
 
         /*
@@ -1222,8 +1221,8 @@ public class Scalr {
             // Resize Mode FIT_EXACT used, no width/height checking or re-calculation will be done.
 
         } else if (resizeMode == Mode.BEST_FIT_BOTH) {
-            float requestedHeightScaling = ((float) targetHeight / (float) currentHeight);
-            float requestedWidthScaling = ((float) targetWidth / (float) currentWidth);
+            float requestedHeightScaling = (float) targetHeight / (float) currentHeight;
+            float requestedWidthScaling = (float) targetWidth / (float) currentWidth;
             float actualScaling = Math.min(requestedHeightScaling, requestedWidthScaling);
 
             targetHeight = Math.round((float) currentHeight * actualScaling);
@@ -1233,8 +1232,7 @@ public class Scalr {
                 return src;
             }
         } else {
-            if ((ratio <= 1 && resizeMode == Mode.AUTOMATIC)
-                || (resizeMode == Mode.FIT_TO_WIDTH)) {
+            if (ratio <= 1 && resizeMode == Mode.AUTOMATIC || resizeMode == Mode.FIT_TO_WIDTH) {
                 // First make sure we need to do any work in the first place
                 if (targetWidth == src.getWidth()) {
                     return src;
@@ -1265,6 +1263,9 @@ public class Scalr {
             scalingMethod = determineScalingMethod(targetWidth, targetHeight,
                                                    ratio);
         }
+
+
+        BufferedImage result = null;
 
         // Now we scale the image
         if (scalingMethod == Scalr.Method.SPEED) {
@@ -1395,6 +1396,7 @@ public class Scalr {
          */
         AffineTransform tx = new AffineTransform();
 
+        //CHECKSTYLE.OFF: IndentationCheck
         switch (rotation) {
             case CW_90:
                 /*
@@ -1438,6 +1440,7 @@ public class Scalr {
                 tx.scale(1.0, -1.0);
                 break;
         }
+        //CHECKSTYLE.ON: IndentationCheck
 
         // Create our target image we will render the rotated result to.
         BufferedImage result = createOptimalImage(src, newWidth, newHeight);
@@ -1682,7 +1685,6 @@ public class Scalr {
     protected static BufferedImage scaleImageIncrementally(BufferedImage src, int targetWidth, int targetHeight,
                                                            Method scalingMethod, Object interpolationHintValue) {
         boolean hasReassignedSrc = false;
-        int incrementCount = 0;
         int currentWidth = src.getWidth();
         int currentHeight = src.getHeight();
 
@@ -1716,7 +1718,7 @@ public class Scalr {
          * significantly worse than the progressive approach used below; even
          * when a very high number of incremental steps (13) was tested.
          */
-        int fraction = (scalingMethod == Method.ULTRA_QUALITY ? 7 : 2);
+        int fraction = scalingMethod == Method.ULTRA_QUALITY ? 7 : 2;
 
         do {
             int prevCurrentWidth = currentWidth;
@@ -1727,7 +1729,7 @@ public class Scalr {
              * and sample again.
              */
             if (currentWidth > targetWidth) {
-                currentWidth -= (currentWidth / fraction);
+                currentWidth -= currentWidth / fraction;
 
                 /*
                  * If we cut the width too far it means we are on our last
@@ -1744,7 +1746,7 @@ public class Scalr {
              */
 
             if (currentHeight > targetHeight) {
-                currentHeight -= (currentHeight / fraction);
+                currentHeight -= currentHeight / fraction;
 
                 /*
                  * If we cut the height too far it means we are on our last
@@ -1804,8 +1806,6 @@ public class Scalr {
              */
             hasReassignedSrc = true;
 
-            // Track how many times we go through this cycle to scale the image.
-            incrementCount++;
         } while (currentWidth != targetWidth || currentHeight != targetHeight);
 
         /*
@@ -1878,6 +1878,7 @@ public class Scalr {
          * Used to indicate that the scaling implementation should calculate dimensions for the resultant image by
          * looking at the image's orientation and generating proportional dimensions that best fit into the target width
          * and height given
+         *
          * <p>
          * See "Image Proportions" in the {@link Scalr} class description for more detail.
          */

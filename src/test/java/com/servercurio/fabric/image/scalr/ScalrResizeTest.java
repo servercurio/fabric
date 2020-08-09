@@ -129,8 +129,8 @@ public class ScalrResizeTest extends AbstractScalrTest {
         BufferedImage i = new BufferedImage(500, 500, BufferedImage.TYPE_INT_RGB);
         BufferedImage i2 = Scalr.resize(i, Scalr.Mode.FIT_EXACT, 500, 250);
 
-        Assertions.assertEquals(i2.getWidth(), 500);
-        Assertions.assertEquals(i2.getHeight(), 250);
+        Assertions.assertEquals(500, i2.getWidth());
+        Assertions.assertEquals(250, i2.getHeight());
     }
 
     @Test
