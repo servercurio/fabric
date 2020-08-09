@@ -192,7 +192,8 @@ public class AsyncScalr {
      */
     public static final int THREAD_COUNT = Integer.getInteger(
             THREAD_COUNT_PROPERTY_NAME, 2);
-    protected static ExecutorService service;
+
+    protected volatile static ExecutorService service;
 
     /**
      * Initializer used to verify the THREAD_COUNT system property.
@@ -457,7 +458,7 @@ public class AsyncScalr {
      * Any subclass that wants to customize the {@link ExecutorService} or {@link ThreadFactory} used internally by this
      * class should override the {@link #createService()}.
      */
-    protected static void checkService() {
+    protected synchronized static void checkService() {
         if (service == null || service.isShutdown() || service.isTerminated()) {
             /*
              * If service was shutdown or terminated, assigning a new value will
@@ -468,16 +469,15 @@ public class AsyncScalr {
         }
     }
 
-    protected static ExecutorService createService(ThreadFactory factory)
-            throws IllegalArgumentException {
+    protected synchronized static ExecutorService createService(ThreadFactory factory) throws IllegalArgumentException {
         if (factory == null) {
             throw new IllegalArgumentException("factory cannot be null");
         }
 
-        return Executors.newFixedThreadPool(THREAD_COUNT, factory);
+        return Executors.newCachedThreadPool(factory);
     }
 
-    protected static ExecutorService createService() {
+    protected synchronized static ExecutorService createService() {
         return createService(new DefaultThreadFactory());
     }
 
