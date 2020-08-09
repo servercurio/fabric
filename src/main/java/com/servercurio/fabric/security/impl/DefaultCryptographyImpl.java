@@ -57,7 +57,7 @@ import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
  * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html">Java
  *         Cryptography Architecture</a>
  */
-public final class DefaultCryptographyImpl implements Cryptography {
+public class DefaultCryptographyImpl implements Cryptography {
 
     /**
      * The default buffer size to use when reading/writing blocks of data from streams.
@@ -145,7 +145,7 @@ public final class DefaultCryptographyImpl implements Cryptography {
     /**
      * Private default constructor.
      */
-    private DefaultCryptographyImpl() {
+    protected DefaultCryptographyImpl() {
         this.executorService = Executors.newCachedThreadPool();
     }
 

@@ -271,7 +271,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
 
         try {
             final AlgorithmParameterSpec parameterSpec = deriveParameters(algorithm, iv);
-            cipher.init(Cipher.DECRYPT_MODE, key, parameterSpec);
+            cipher.init(Cipher.DECRYPT_MODE, key, parameterSpec, crypto.random());
 
             final CipherInputStream iStream = new CipherInputStream(cipherStream, cipher);
             iStream.transferTo(clearStream);
@@ -302,7 +302,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
 
         try {
             final AlgorithmParameterSpec parameterSpec = deriveParameters(algorithm, iv);
-            cipher.init(Cipher.DECRYPT_MODE, key, parameterSpec);
+            cipher.init(Cipher.DECRYPT_MODE, key, parameterSpec, crypto.random());
 
             return cipher.doFinal(data);
         } catch (GeneralSecurityException ex) {
@@ -325,7 +325,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
 
         try {
             final AlgorithmParameterSpec parameterSpec = deriveParameters(algorithm, iv);
-            cipher.init(Cipher.DECRYPT_MODE, key, parameterSpec);
+            cipher.init(Cipher.DECRYPT_MODE, key, parameterSpec, crypto.random());
 
             final ByteBuffer clearText = ByteBuffer.allocate(cipher.getOutputSize(buffer.capacity()));
             cipher.doFinal(buffer, clearText);
@@ -381,7 +381,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
 
         try {
             final AlgorithmParameterSpec parameterSpec = deriveParameters(algorithm, iv);
-            cipher.init(Cipher.ENCRYPT_MODE, key, parameterSpec);
+            cipher.init(Cipher.ENCRYPT_MODE, key, parameterSpec, crypto.random());
 
             try (CipherOutputStream oStream = new CipherOutputStream(cipherStream, cipher)) {
 
@@ -415,7 +415,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
 
         try {
             final AlgorithmParameterSpec parameterSpec = deriveParameters(algorithm, iv);
-            cipher.init(Cipher.ENCRYPT_MODE, key, parameterSpec);
+            cipher.init(Cipher.ENCRYPT_MODE, key, parameterSpec, crypto.random());
 
             return cipher.doFinal(data);
         } catch (GeneralSecurityException ex) {
@@ -438,7 +438,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
 
         try {
             final AlgorithmParameterSpec parameterSpec = deriveParameters(algorithm, iv);
-            cipher.init(Cipher.ENCRYPT_MODE, key, parameterSpec);
+            cipher.init(Cipher.ENCRYPT_MODE, key, parameterSpec, crypto.random());
 
             final ByteBuffer cipherText = ByteBuffer.allocate(cipher.getOutputSize(buffer.capacity()));
             cipher.doFinal(buffer, cipherText);

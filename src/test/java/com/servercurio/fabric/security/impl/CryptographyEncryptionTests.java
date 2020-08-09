@@ -114,11 +114,11 @@ public class CryptographyEncryptionTests {
     @ValueSource(ints = {8, 10, 12, 16, 32, 48, 64, 100, 123})
     public void testCryptoCipherAsyncByteArrayEncryption(int bufferSize) throws Exception {
 
-        try (final Cryptography provider = Cryptography.newDefaultInstance()) {
+        try (final Cryptography provider = new MockCryptographyImpl()) {
             final byte[] sourceData = new byte[bufferSize];
 
             // Acquire random and generate random source data
-            final SecureRandom random = SecureRandom.getInstance("NativePRNGNonBlocking");
+            final SecureRandom random = provider.random();
             random.nextBytes(sourceData);
 
             // Compute source hash
@@ -161,11 +161,11 @@ public class CryptographyEncryptionTests {
     @ValueSource(ints = {8, 10, 12, 16, 32, 48, 64, 100, 123})
     public void testCryptoCipherAsyncByteBufferEncryption(int bufferSize) throws Exception {
 
-        try (final Cryptography provider = Cryptography.newDefaultInstance()) {
+        try (final Cryptography provider = new MockCryptographyImpl()) {
             final byte[] sourceData = new byte[bufferSize];
 
             // Acquire random and generate random source data
-            final SecureRandom random = SecureRandom.getInstance("NativePRNGNonBlocking");
+            final SecureRandom random = provider.random();
             random.nextBytes(sourceData);
 
             // Compute source hash
@@ -208,14 +208,14 @@ public class CryptographyEncryptionTests {
     @DisplayName("Encryption :: Cipher -> Async Exceptions")
     public void testCryptoCipherAsyncExceptions() throws Exception {
 
-        try (final Cryptography provider = Cryptography.newDefaultInstance()) {
+        try (final Cryptography provider = new MockCryptographyImpl()) {
             final CipherTransformation noneTransformation =
                     new CipherTransformation(CipherAlgorithm.NONE, CipherMode.NONE, CipherPadding.NONE);
 
             final byte[] sourceData = new byte[100];
             final byte[] zeroLengthIv = new byte[0];
 
-            final SecureRandom random = SecureRandom.getInstance("NativePRNGNonBlocking");
+            final SecureRandom random = provider.random();
             random.nextBytes(sourceData);
 
             final KeyGenerator keyGenerator = KeyGenerator.getInstance(CipherAlgorithm.AES.keyAlgorithmName());
@@ -274,7 +274,7 @@ public class CryptographyEncryptionTests {
 
         final Future<Hash> sourceHashFuture;
         final Hash sourceHash;
-        try (final Cryptography provider = Cryptography.newDefaultInstance();
+        try (final Cryptography provider = new MockCryptographyImpl();
              final InputStream sourceStream = classLoader.getResourceAsStream(LARGE_FILE_NAME)) {
 
             assertNotNull(sourceStream);
@@ -287,13 +287,13 @@ public class CryptographyEncryptionTests {
             assertNotNull(sourceHash);
         }
 
-        try (final Cryptography provider = Cryptography.newDefaultInstance();
+        try (final Cryptography provider = new MockCryptographyImpl();
              final InputStream sourceStream = classLoader.getResourceAsStream(LARGE_FILE_NAME)) {
 
             assertNotNull(sourceStream);
 
             // Find a secure random source
-            final SecureRandom random = SecureRandom.getInstance("NativePRNGNonBlocking");
+            final SecureRandom random = provider.random();
 
             // Setup OTP structures
             final Future<byte[]> nonceFuture = provider.encryption().nonceAsync(transformation);
@@ -362,11 +362,11 @@ public class CryptographyEncryptionTests {
     @ValueSource(ints = {8, 10, 12, 16, 32, 48, 64, 100, 123})
     public void testCryptoCipherSyncByteArrayEncryption(int bufferSize) throws Exception {
 
-        try (final Cryptography provider = Cryptography.newDefaultInstance()) {
+        try (final Cryptography provider = new MockCryptographyImpl()) {
             final byte[] sourceData = new byte[bufferSize];
 
             // Acquire random and generate random source data
-            final SecureRandom random = SecureRandom.getInstance("NativePRNGNonBlocking");
+            final SecureRandom random = provider.random();
             random.nextBytes(sourceData);
 
             // Compute source hash
@@ -407,11 +407,11 @@ public class CryptographyEncryptionTests {
     @ValueSource(ints = {8, 10, 12, 16, 32, 48, 64, 100, 123})
     public void testCryptoCipherSyncByteBufferEncryption(int bufferSize) throws Exception {
 
-        try (final Cryptography provider = Cryptography.newDefaultInstance()) {
+        try (final Cryptography provider = new MockCryptographyImpl()) {
             final byte[] sourceData = new byte[bufferSize];
 
             // Acquire random and generate random source data
-            final SecureRandom random = SecureRandom.getInstance("NativePRNGNonBlocking");
+            final SecureRandom random = provider.random();
             random.nextBytes(sourceData);
 
             // Compute source hash
@@ -449,14 +449,14 @@ public class CryptographyEncryptionTests {
     @DisplayName("Encryption :: Cipher -> Sync Exceptions")
     public void testCryptoCipherSyncExceptions() throws Exception {
 
-        try (final Cryptography provider = Cryptography.newDefaultInstance()) {
+        try (final Cryptography provider = new MockCryptographyImpl()) {
             final CipherTransformation noneTransformation =
                     new CipherTransformation(CipherAlgorithm.NONE, CipherMode.NONE, CipherPadding.NONE);
 
             final byte[] sourceData = new byte[100];
             final byte[] zeroLengthIv = new byte[0];
 
-            final SecureRandom random = SecureRandom.getInstance("NativePRNGNonBlocking");
+            final SecureRandom random = provider.random();
             random.nextBytes(sourceData);
 
             final KeyGenerator keyGenerator = KeyGenerator.getInstance(CipherAlgorithm.AES.keyAlgorithmName());
@@ -511,7 +511,7 @@ public class CryptographyEncryptionTests {
 
         final Hash sourceHash;
 
-        try (final Cryptography provider = Cryptography.newDefaultInstance();
+        try (final Cryptography provider = new MockCryptographyImpl();
              final InputStream sourceStream = classLoader.getResourceAsStream(LARGE_FILE_NAME)) {
 
             assertNotNull(sourceStream);
@@ -521,13 +521,13 @@ public class CryptographyEncryptionTests {
             assertNotNull(sourceHash);
         }
 
-        try (final Cryptography provider = Cryptography.newDefaultInstance();
+        try (final Cryptography provider = new MockCryptographyImpl();
              final InputStream sourceStream = classLoader.getResourceAsStream(LARGE_FILE_NAME)) {
 
             assertNotNull(sourceStream);
 
             // Find a secure random source
-            final SecureRandom random = SecureRandom.getInstance("NativePRNGNonBlocking");
+            final SecureRandom random = provider.random();
 
             // Setup OTP structures
             final byte[] iv = provider.encryption().nonceSync(transformation);
