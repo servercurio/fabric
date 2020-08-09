@@ -1396,7 +1396,8 @@ public class Scalr {
          */
         AffineTransform tx = new AffineTransform();
 
-        //CHECKSTYLE.OFF: IndentationCheck | MissingSwitchDefaultCheck
+        //CHECKSTYLE.OFF: IndentationCheck
+        //CHECKSTYLE.OFF: MissingSwitchDefaultCheck
         switch (rotation) {
             case CW_90:
                 /*
@@ -1440,7 +1441,8 @@ public class Scalr {
                 tx.scale(1.0, -1.0);
                 break;
         }
-        //CHECKSTYLE.ON: IndentationCheck | MissingSwitchDefaultCheck
+        //CHECKSTYLE.ON: IndentationCheck
+        //CHECKSTYLE.ON: MissingSwitchDefaultCheck
 
         // Create our target image we will render the rotated result to.
         BufferedImage result = createOptimalImage(src, newWidth, newHeight);
