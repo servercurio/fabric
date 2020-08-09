@@ -486,6 +486,7 @@
                     <windowtitle>Fabric API</windowtitle>
                     <defaultAuthor>Nathan Klick</defaultAuthor>
                     <defaultSince>1.0</defaultSince>
+                    <additionalOptions>-Xdoclint:none</additionalOptions>
                     <links>
                         <link>https://docs.oracle.com/en/java/javase/14/docs/api</link>
                     </links>

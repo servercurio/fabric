@@ -58,7 +58,7 @@ import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsEmpty;
  *
  * <p>
  * This class also implements an optimized version of the incremental scaling algorithm presented by Chris Campbell in
- * his <a href="http://today.java .net/pub/a/today/2007/04/03/perils-of-image-getscaledinstance.html">Perils of
+ * his <a href="http://today.java.net/pub/a/today/2007/04/03/perils-of-image-getscaledinstance.html">Perils of
  * Image.getScaledInstance()</a> article in order to give the best-looking image resize results (e.g. generating
  * thumbnails that aren't blurry or jagged).
  *
@@ -147,9 +147,8 @@ import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsEmpty;
  * </ol>
  * depending on if the source image utilizes transparency or not. This is a
  * recommended approach by the Java2D team for dealing with poorly (or non)
- * supported image types. More can be read about this issue <a href=
- * "http://www.mail-archive.com/java2d-interest@capra.eng.sun.com/msg05621.html"
- * >here</a>.
+ * supported image types. More can be read about this issue
+ * <a href="http://www.mail-archive.com/java2d-interest@capra.eng.sun.com/msg05621.html">here</a>.
  *
  * <p>
  * This is also the reason we recommend using
@@ -1667,9 +1666,9 @@ public class Scalr {
     }
 
     /**
-     * Used to implement Chris Campbell's incremental-scaling algorithm: <a href="http://today.java.net/pub/a/today/2007/04/03/perils
-     * -of-image-getscaledinstance .html">http://today.java.net/pub/a/today/2007/04/03/perils
-     * -of-image-getscaledinstance.html</a>.
+     * Used to implement Chris Campbell's incremental-scaling algorithm:
+     * <a href="http://today.java.net/pub/a/today/2007/04/03/perils-of-image-getscaledinstance.html">
+     * http://today.java.net/pub/a/today/2007/04/03/perils-of-image-getscaledinstance.html</a>.
      *
      * <p>
      * Modifications to the original algorithm are variable names and comments added for clarity and the hard-coding of
