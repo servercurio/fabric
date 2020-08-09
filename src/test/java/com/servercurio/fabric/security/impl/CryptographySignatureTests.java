@@ -427,23 +427,23 @@ public class CryptographySignatureTests {
             }
 
             try (final InputStream stream = classLoader.getResourceAsStream(LARGE_FILE_NAME)) {
-                assertThrows(CryptographyException.class, () -> provider.signSync(null, stream));
+                assertThrows(IllegalArgumentException.class, () -> provider.signSync(null, stream));
             }
 
             try (final InputStream stream = classLoader.getResourceAsStream(LARGE_FILE_NAME)) {
-                assertThrows(CryptographyException.class, () -> provider.verifySync(defaultSeal, null, stream));
+                assertThrows(IllegalArgumentException.class, () -> provider.verifySync(defaultSeal, null, stream));
             }
 
-            assertThrows(CryptographyException.class, () -> provider.signSync(null, IN_MEMORY_DATA));
-            assertThrows(CryptographyException.class, () -> provider.verifySync(defaultSeal, null, IN_MEMORY_DATA));
+            assertThrows(IllegalArgumentException.class, () -> provider.signSync(null, IN_MEMORY_DATA));
+            assertThrows(IllegalArgumentException.class, () -> provider.verifySync(defaultSeal, null, IN_MEMORY_DATA));
 
-            assertThrows(CryptographyException.class, () -> provider.signSync(null, ByteBuffer.wrap(IN_MEMORY_DATA)));
-            assertThrows(CryptographyException.class,
+            assertThrows(IllegalArgumentException.class, () -> provider.signSync(null, ByteBuffer.wrap(IN_MEMORY_DATA)));
+            assertThrows(IllegalArgumentException.class,
                     () -> provider.verifySync(defaultSeal, null, ByteBuffer.wrap(IN_MEMORY_DATA)));
 
-            assertThrows(CryptographyException.class,
+            assertThrows(IllegalArgumentException.class,
                     () -> provider.signSync(null, WELL_KNOWN_HASH, ALTERNATE_WELL_KNOWN_HASH));
-            assertThrows(CryptographyException.class,
+            assertThrows(IllegalArgumentException.class,
                     () -> provider.verifySync(defaultSeal, null, WELL_KNOWN_HASH, ALTERNATE_WELL_KNOWN_HASH));
         }
     }

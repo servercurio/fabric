@@ -17,6 +17,7 @@
 package com.servercurio.fabric.security.spi;
 
 import com.servercurio.fabric.security.Cryptography;
+import com.servercurio.fabric.security.CryptographyException;
 import com.servercurio.fabric.security.Hash;
 import com.servercurio.fabric.security.Seal;
 import com.servercurio.fabric.security.SignatureAlgorithm;
@@ -25,6 +26,8 @@ import java.nio.ByteBuffer;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.concurrent.Future;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 /**
  * {@code Fabric Unified Cryptography API} provider definition that encapsulates all of the available message digest
@@ -49,202 +52,562 @@ public interface SignatureProvider {
     }
 
     /**
+     * Asynchronously computes the signature of the {@link InputStream} specified by the {@code stream} parameter. This
+     * implementation uses the default algorithm provided by the {@link #getDefaultAlgorithm()} method.
+     *
+     * <p>
+     * This implementation will read the input stream from the current position until the end of the stream is reached
+     * or no more bytes are available.
+     *
+     * <p>
+     * Care must be taken to ensure the provided {@link InputStream} is not closed before the {@link Future} has been
+     * resolved.
+     *
      * @param key
+     *         the private key to use during the signature computation, not null
      * @param stream
-     * @return
+     *         the stream to be signed, not null
+     * @return a {@link Future} that when resolved will return the computed {@link Seal}, not null
+     * @throws IllegalArgumentException
+     *         if the {@code key} or {@code stream} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while computing the signature
+     * @see #getDefaultAlgorithm()
      */
-    default Future<Seal> signAsync(final PrivateKey key, final InputStream stream) {
+    default Future<Seal> signAsync(@NotNull final PrivateKey key, @NotNull final InputStream stream) {
         return signAsync(getDefaultAlgorithm(), key, stream);
     }
 
     /**
+     * Asynchronously computes the signature of the {@link InputStream} specified by the {@code stream} parameter using
+     * the hash algorithm specified by the {@code algorithm} parameter.
+     *
+     * <p>
+     * This implementation will read the input stream from the current position until the end of the stream is reached
+     * or no more bytes are available.
+     *
+     * <p>
+     * Care must be taken to ensure the provided {@link InputStream} is not closed before the {@link Future} has been
+     * resolved.
+     *
      * @param algorithm
+     *         the algorithm to use, not null
      * @param key
+     *         the private key to use during the signature computation, not null
      * @param stream
-     * @return
+     *         the stream to be signed, not null
+     * @return a {@link Future} that when resolved will return the computed {@link Seal}, not null
+     * @throws IllegalArgumentException
+     *         if the {@code algorithm}, {@code key}, or {@code stream} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while computing the signature
      */
-    Future<Seal> signAsync(final SignatureAlgorithm algorithm, final PrivateKey key, final InputStream stream);
+    Future<Seal> signAsync(@NotNull final SignatureAlgorithm algorithm, @NotNull final PrivateKey key,
+                           @NotNull final InputStream stream);
 
     /**
+     * Asynchronously computes the signature of the byte array specified by the {@code data} parameter. This
+     * implementation uses the default algorithm provided by the {@link #getDefaultAlgorithm()} method.
+     *
+     * <p>
+     * This implementation will compute the signature of the entire byte array provided by the {@code data} parameter.
+     *
+     * <p>
+     * Care must be taken to ensure the provided byte array is not modified before the {@link Future} has been
+     * resolved.
+     *
      * @param key
+     *         the private key to use during the signature computation, not null
      * @param data
-     * @return
+     *         the byte array to be signed, not null
+     * @return a {@link Future} that when resolved will return the computed {@link Seal}, not null
+     * @throws IllegalArgumentException
+     *         if the {@code key} or {@code data} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while computing the signature
+     * @see #getDefaultAlgorithm()
      */
-    default Future<Seal> signAsync(final PrivateKey key, final byte[] data) {
+    default Future<Seal> signAsync(@NotNull final PrivateKey key, @NotNull final byte[] data) {
         return signAsync(getDefaultAlgorithm(), key, data);
     }
 
     /**
+     * Asynchronously computes the signature of the byte array specified by the {@code data} parameter using the hash
+     * algorithm specified by the {@code algorithm} parameter.
+     *
+     * <p>
+     * This implementation will compute the signature of the entire byte array provided by the {@code data} parameter.
+     *
+     * <p>
+     * Care must be taken to ensure the provided byte array is not modified before the {@link Future} has been
+     * resolved.
+     *
      * @param algorithm
+     *         the algorithm to use, not null
      * @param key
+     *         the private key to use during the signature computation, not null
      * @param data
-     * @return
+     *         the byte array to be signed, not null
+     * @return a {@link Future} that when resolved will return the computed {@link Seal}, not null
+     * @throws IllegalArgumentException
+     *         if the {@code algorithm}, {@code key}, or {@code data} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while computing the signature
      */
-    Future<Seal> signAsync(final SignatureAlgorithm algorithm, final PrivateKey key, final byte[] data);
+    Future<Seal> signAsync(@NotNull final SignatureAlgorithm algorithm, @NotNull final PrivateKey key,
+                           @NotNull final byte[] data);
 
     /**
+     * Asynchronously computes the signature of the {@link Hash} array specified by the {@code hashes} parameter. This
+     * implementation uses the default algorithm provided by the {@link #getDefaultAlgorithm()} method.
+     *
+     * <p>
+     * Care must be taken to ensure the provided {@link Hash} array is not modified before the {@link Future} has been
+     * resolved.
+     *
      * @param key
+     *         the private key to use during the signature computation, not null
      * @param hashes
-     * @return
+     *         the {@link Hash} array to be signed, not null
+     * @return a {@link Future} that when resolved will return the computed {@link Seal}, not null
+     * @throws IllegalArgumentException
+     *         if the {@code key} or {@code hashes} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while computing the signature
+     * @see #getDefaultAlgorithm()
      */
-    default Future<Seal> signAsync(final PrivateKey key, final Hash... hashes) {
+    default Future<Seal> signAsync(@NotNull final PrivateKey key, @NotEmpty final Hash... hashes) {
         return signAsync(getDefaultAlgorithm(), key, hashes);
     }
 
     /**
+     * Asynchronously computes the signature of the {@link Hash} array specified by the {@code hashes} parameter using
+     * the hash algorithm specified by the {@code algorithm} parameter.
+     *
+     * <p>
+     * Care must be taken to ensure the provided byte array is not modified before the {@link Future} has been
+     * resolved.
+     *
      * @param algorithm
+     *         the algorithm to use, not null
      * @param key
+     *         the private key to use during the signature computation, not null
      * @param hashes
-     * @return
+     *         the {@link Hash} array to be signed, not null
+     * @return a {@link Future} that when resolved will return the computed {@link Seal}, not null
+     * @throws IllegalArgumentException
+     *         if the {@code algorithm}, {@code key}, or {@code hashes} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while computing the signature
      */
-    Future<Seal> signAsync(final SignatureAlgorithm algorithm, final PrivateKey key, final Hash... hashes);
+    Future<Seal> signAsync(@NotNull final SignatureAlgorithm algorithm, @NotNull final PrivateKey key,
+                           @NotEmpty final Hash... hashes);
 
     /**
+     * Asynchronously computes the signature of the {@link ByteBuffer} specified by the {@code buffer} parameter. This
+     * implementation uses the default algorithm provided by the {@link #getDefaultAlgorithm()} method.
+     *
+     * <p>
+     * This implementation will read the {@link ByteBuffer} from the current position until the end of the buffer is
+     * reached.
+     *
+     * <p>
+     * Care must be taken to ensure the provided {@link ByteBuffer} is not modified before the {@link Future} has been
+     * resolved.
+     *
      * @param key
+     *         the private key to use during the signature computation, not null
      * @param buffer
-     * @return
+     *         the {@link ByteBuffer} to be signed, not null
+     * @return a {@link Future} that when resolved will return the computed {@link Seal}, not null
+     * @throws IllegalArgumentException
+     *         if the {@code key} or {@code buffer} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while computing the signature
+     * @see #getDefaultAlgorithm()
      */
-    default Future<Seal> signAsync(final PrivateKey key, final ByteBuffer buffer) {
+    default Future<Seal> signAsync(@NotNull final PrivateKey key, @NotNull final ByteBuffer buffer) {
         return signAsync(getDefaultAlgorithm(), key, buffer);
     }
 
     /**
+     * Asynchronously computes the signature of the {@link ByteBuffer} specified by the {@code buffer} parameter using
+     * the hash algorithm specified by the {@code algorithm} parameter.
+     *
+     * <p>
+     * This implementation will read the {@link ByteBuffer} from the current position until the end of the buffer is
+     * reached.
+     *
+     * <p>
+     * Care must be taken to ensure the provided byte array is not modified before the {@link Future} has been
+     * resolved.
+     *
      * @param algorithm
+     *         the algorithm to use, not null
      * @param key
+     *         the private key to use during the signature computation, not null
      * @param buffer
-     * @return
+     *         the {@link ByteBuffer} to be signed, not null
+     * @return a {@link Future} that when resolved will return the computed {@link Seal}, not null
+     * @throws IllegalArgumentException
+     *         if the {@code algorithm}, {@code key}, or {@code buffer} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while computing the signature
      */
-    Future<Seal> signAsync(final SignatureAlgorithm algorithm, final PrivateKey key, final ByteBuffer buffer);
+    Future<Seal> signAsync(@NotNull final SignatureAlgorithm algorithm, @NotNull final PrivateKey key,
+                           @NotNull final ByteBuffer buffer);
 
     /**
+     * Synchronously computes the signature of the {@link InputStream} specified by the {@code stream} parameter. This
+     * implementation uses the default algorithm provided by the {@link #getDefaultAlgorithm()} method.
+     *
+     * <p>
+     * This implementation will read the input stream from the current position until the end of the stream is reached
+     * or no more bytes are available.
+     *
      * @param key
+     *         the private key to use during the signature computation, not null
      * @param stream
-     * @return
+     *         the stream to be signed, not null
+     * @return the computed {@link Seal}, not null
+     * @throws IllegalArgumentException
+     *         if the {@code key} or {@code stream} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while computing the signature
+     * @see #getDefaultAlgorithm()
      */
-    default Seal signSync(final PrivateKey key, final InputStream stream) {
+    default Seal signSync(@NotNull final PrivateKey key, @NotNull final InputStream stream) {
         return signSync(getDefaultAlgorithm(), key, stream);
     }
 
     /**
+     * Synchronously computes the signature of the {@link InputStream} specified by the {@code stream} parameter using
+     * the hash algorithm specified by the {@code algorithm} parameter.
+     *
+     * <p>
+     * This implementation will read the input stream from the current position until the end of the stream is reached
+     * or no more bytes are available.
+     *
      * @param algorithm
+     *         the algorithm to use, not null
      * @param key
+     *         the private key to use during the signature computation, not null
      * @param stream
-     * @return
+     *         the stream to be signed, not null
+     * @return the computed {@link Seal}, not null
+     * @throws IllegalArgumentException
+     *         if the {@code algorithm}, {@code key}, or {@code stream} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while computing the signature
      */
-    Seal signSync(final SignatureAlgorithm algorithm, final PrivateKey key, final InputStream stream);
+    Seal signSync(@NotNull final SignatureAlgorithm algorithm, @NotNull final PrivateKey key,
+                  @NotNull final InputStream stream);
 
     /**
+     * Synchronously computes the signature of the byte array specified by the {@code data} parameter. This
+     * implementation uses the default algorithm provided by the {@link #getDefaultAlgorithm()} method.
+     *
+     * <p>
+     * This implementation will compute the signature of the entire byte array provided by the {@code data} parameter.
+     *
      * @param key
+     *         the private key to use during the signature computation, not null
      * @param data
-     * @return
+     *         the byte array to be signed, not null
+     * @return the computed {@link Seal}, not null
+     * @throws IllegalArgumentException
+     *         if the {@code key} or {@code data} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while computing the signature
+     * @see #getDefaultAlgorithm()
      */
-    default Seal signSync(final PrivateKey key, final byte[] data) {
+    default Seal signSync(@NotNull final PrivateKey key, @NotNull final byte[] data) {
         return signSync(getDefaultAlgorithm(), key, data);
     }
 
     /**
+     * Synchronously computes the signature of the byte array specified by the {@code data} parameter using the hash
+     * algorithm specified by the {@code algorithm} parameter.
+     *
+     * <p>
+     * This implementation will compute the signature of the entire byte array provided by the {@code data} parameter.
+     *
      * @param algorithm
+     *         the algorithm to use, not null
      * @param key
+     *         the private key to use during the signature computation, not null
      * @param data
-     * @return
+     *         the byte array to be signed, not null
+     * @return the computed {@link Seal}, not null
+     * @throws IllegalArgumentException
+     *         if the {@code algorithm}, {@code key}, or {@code data} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while computing the signature
      */
-    Seal signSync(final SignatureAlgorithm algorithm, final PrivateKey key, final byte[] data);
+    Seal signSync(@NotNull final SignatureAlgorithm algorithm, @NotNull final PrivateKey key,
+                  @NotNull final byte[] data);
 
     /**
+     * Synchronously computes the signature of the {@link Hash} array specified by the {@code hashes} parameter. This
+     * implementation uses the default algorithm provided by the {@link #getDefaultAlgorithm()} method.
+     *
      * @param key
+     *         the private key to use during the signature computation, not null
      * @param hashes
-     * @return
+     *         the {@link Hash} array to be signed, not null
+     * @return the computed {@link Seal}, not null
+     * @throws IllegalArgumentException
+     *         if the {@code key} or {@code hashes} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while computing the signature
+     * @see #getDefaultAlgorithm()
      */
-    default Seal signSync(final PrivateKey key, final Hash... hashes) {
+    default Seal signSync(@NotNull final PrivateKey key, @NotEmpty final Hash... hashes) {
         return signSync(getDefaultAlgorithm(), key, hashes);
     }
 
     /**
+     * Synchronously computes the signature of the {@link Hash} array specified by the {@code hashes} parameter using
+     * the hash algorithm specified by the {@code algorithm} parameter.
+     *
      * @param algorithm
+     *         the algorithm to use, not null
      * @param key
+     *         the private key to use during the signature computation, not null
      * @param hashes
-     * @return
+     *         the {@link Hash} array to be signed, not null
+     * @return the computed {@link Seal}, not null
+     * @throws IllegalArgumentException
+     *         if the {@code algorithm}, {@code key}, or {@code hashes} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while computing the signature
      */
-    Seal signSync(final SignatureAlgorithm algorithm, final PrivateKey key, final Hash... hashes);
+    Seal signSync(@NotNull final SignatureAlgorithm algorithm, @NotNull final PrivateKey key,
+                  @NotEmpty final Hash... hashes);
 
     /**
+     * Synchronously computes the signature of the {@link ByteBuffer} specified by the {@code buffer} parameter. This
+     * implementation uses the default algorithm provided by the {@link #getDefaultAlgorithm()} method.
+     *
+     * <p>
+     * This implementation will read the {@link ByteBuffer} from the current position until the end of the buffer is
+     * reached.
+     *
      * @param key
+     *         the private key to use during the signature computation, not null
      * @param buffer
-     * @return
+     *         the {@link ByteBuffer} to be signed, not null
+     * @return the computed {@link Seal}, not null
+     * @throws IllegalArgumentException
+     *         if the {@code key} or {@code buffer} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while computing the signature
+     * @see #getDefaultAlgorithm()
      */
-    default Seal signSync(final PrivateKey key, final ByteBuffer buffer) {
+    default Seal signSync(@NotNull final PrivateKey key, @NotNull final ByteBuffer buffer) {
         return signSync(getDefaultAlgorithm(), key, buffer);
     }
 
     /**
+     * Synchronously computes the signature of the {@link ByteBuffer} specified by the {@code buffer} parameter using
+     * the hash algorithm specified by the {@code algorithm} parameter.
+     *
+     * <p>
+     * This implementation will read the {@link ByteBuffer} from the current position until the end of the buffer is
+     * reached.
+     *
      * @param algorithm
+     *         the algorithm to use, not null
      * @param key
+     *         the private key to use during the signature computation, not null
      * @param buffer
-     * @return
+     *         the {@link ByteBuffer} to be signed, not null
+     * @return the computed {@link Seal}, not null
+     * @throws IllegalArgumentException
+     *         if the {@code algorithm}, {@code key}, or {@code buffer} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while computing the signature
      */
-    Seal signSync(final SignatureAlgorithm algorithm, final PrivateKey key, final ByteBuffer buffer);
+    Seal signSync(@NotNull final SignatureAlgorithm algorithm, @NotNull final PrivateKey key,
+                  @NotNull final ByteBuffer buffer);
 
     /**
+     * Asynchronously verifies the signature against the {@link InputStream} specified by the {@code stream} parameter.
+     *
+     * <p>
+     * This implementation will read the input stream from the current position until the end of the stream is reached
+     * or no more bytes are available.
+     *
+     * <p>
+     * Care must be taken to ensure the provided {@link InputStream} is not closed before the {@link Future} has been
+     * resolved.
+     *
      * @param seal
+     *         the signature to use when verifying the data, not null
      * @param key
+     *         the public key to use during the signature verification, not null
      * @param stream
-     * @return
+     *         the stream to be verified, not null
+     * @return a {@link Future} that when resolved will return true if the signature was validated successfully, not
+     *         null
+     * @throws IllegalArgumentException
+     *         if the {@code seal}, {@code key} or {@code stream} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while verifying the signature
      */
-    Future<Boolean> verifyAsync(final Seal seal, final PublicKey key, final InputStream stream);
+    Future<Boolean> verifyAsync(@NotNull final Seal seal, @NotNull final PublicKey key,
+                                @NotNull final InputStream stream);
 
     /**
+     * Asynchronously verifies the signature against the byte array specified by the {@code data} parameter.
+     *
+     * <p>
+     * This implementation will verify the signature of the entire byte array provided by the {@code data} parameter.
+     *
+     * <p>
+     * Care must be taken to ensure the provided byte array is not modified before the {@link Future} has been
+     * resolved.
+     *
      * @param seal
+     *         the signature to use when verifying the data, not null
      * @param key
+     *         the public key to use during the signature verification, not null
      * @param data
-     * @return
+     *         the byte array to be verified, not null
+     * @return a {@link Future} that when resolved will return true if the signature was validated successfully, not
+     *         null
+     * @throws IllegalArgumentException
+     *         if the {@code seal}, {@code key} or {@code data} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while verifying the signature
      */
-    Future<Boolean> verifyAsync(final Seal seal, final PublicKey key, final byte[] data);
+    Future<Boolean> verifyAsync(@NotNull final Seal seal, @NotNull final PublicKey key, @NotNull final byte[] data);
 
     /**
+     * Asynchronously verifies the signature against the {@link Hash} array specified by the {@code hashes} parameter.
+     *
+     * <p>
+     * Care must be taken to ensure the provided {@link Hash} array is not modified before the {@link Future} has been
+     * resolved.
+     *
      * @param seal
+     *         the signature to use when verifying the data, not null
      * @param key
+     *         the public key to use during the signature verification, not null
      * @param hashes
-     * @return
+     *         the {@link Hash} array to be verified, not null
+     * @return a {@link Future} that when resolved will return true if the signature was validated successfully, not
+     *         null
+     * @throws IllegalArgumentException
+     *         if the {@code seal}, {@code key} or {@code hashes} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while verifying the signature
      */
-    Future<Boolean> verifyAsync(final Seal seal, final PublicKey key, final Hash... hashes);
+    Future<Boolean> verifyAsync(@NotNull final Seal seal, @NotNull final PublicKey key, @NotEmpty final Hash... hashes);
 
     /**
+     * Asynchronously verifies the signature against the {@link ByteBuffer} specified by the {@code buffer} parameter.
+     *
+     * <p>
+     * This implementation will read the {@link ByteBuffer} from the current position until the end of the buffer is
+     * reached.
+     *
+     * <p>
+     * Care must be taken to ensure the provided {@link ByteBuffer} is not modified before the {@link Future} has been
+     * resolved.
+     *
      * @param seal
+     *         the signature to use when verifying the data, not null
      * @param key
+     *         the public key to use during the signature verification, not null
      * @param buffer
-     * @return
+     *         the {@link ByteBuffer} to be verified, not null
+     * @return a {@link Future} that when resolved will return true if the signature was validated successfully, not
+     *         null
+     * @throws IllegalArgumentException
+     *         if the {@code seal}, {@code key} or {@code buffer} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while verifying the signature
      */
-    Future<Boolean> verifyAsync(final Seal seal, final PublicKey key, final ByteBuffer buffer);
+    Future<Boolean> verifyAsync(@NotNull final Seal seal, @NotNull final PublicKey key,
+                                @NotNull final ByteBuffer buffer);
 
     /**
+     * Synchronously verifies the signature against the {@link InputStream} specified by the {@code stream} parameter.
+     *
+     * <p>
+     * This implementation will read the input stream from the current position until the end of the stream is reached
+     * or no more bytes are available.
+     *
      * @param seal
+     *         the signature to use when verifying the data, not null
      * @param key
+     *         the public key to use during the signature verification, not null
      * @param stream
-     * @return
+     *         the stream to be verified, not null
+     * @return a true if the signature was validated successfully, not null
+     * @throws IllegalArgumentException
+     *         if the {@code seal}, {@code key} or {@code stream} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while verifying the signature
      */
-    boolean verifySync(final Seal seal, final PublicKey key, final InputStream stream);
+    boolean verifySync(@NotNull final Seal seal, @NotNull final PublicKey key, @NotNull final InputStream stream);
 
     /**
+     * Synchronously verifies the signature against the byte array specified by the {@code data} parameter.
+     *
+     * <p>
+     * This implementation will verify the signature of the entire byte array provided by the {@code data} parameter.
+     *
      * @param seal
+     *         the signature to use when verifying the data, not null
      * @param key
+     *         the public key to use during the signature verification, not null
      * @param data
-     * @return
+     *         the byte array to be verified, not null
+     * @return true if the signature was validated successfully, not null
+     * @throws IllegalArgumentException
+     *         if the {@code seal}, {@code key} or {@code data} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while verifying the signature
      */
-    boolean verifySync(final Seal seal, final PublicKey key, final byte[] data);
+    boolean verifySync(@NotNull final Seal seal, @NotNull final PublicKey key, @NotNull final byte[] data);
 
     /**
+     * Synchronously verifies the signature against the {@link Hash} array specified by the {@code hashes} parameter.
+     *
      * @param seal
+     *         the signature to use when verifying the data, not null
      * @param key
+     *         the public key to use during the signature verification, not null
      * @param hashes
-     * @return
+     *         the {@link Hash} array to be verified, not null
+     * @return true if the signature was validated successfully, not null
+     * @throws IllegalArgumentException
+     *         if the {@code seal}, {@code key} or {@code hashes} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while verifying the signature
      */
-    boolean verifySync(final Seal seal, final PublicKey key, final Hash... hashes);
+    boolean verifySync(@NotNull final Seal seal, @NotNull final PublicKey key, @NotEmpty final Hash... hashes);
 
     /**
+     * Synchronously verifies the signature against the {@link ByteBuffer} specified by the {@code buffer} parameter.
+     *
+     * <p>
+     * This implementation will read the {@link ByteBuffer} from the current position until the end of the buffer is
+     * reached.
+     *
      * @param seal
+     *         the signature to use when verifying the data, not null
      * @param key
+     *         the public key to use during the signature verification, not null
      * @param buffer
-     * @return
+     *         the {@link ByteBuffer} to be verified, not null
+     * @return true if the signature was validated successfully, not null
+     * @throws IllegalArgumentException
+     *         if the {@code seal}, {@code key} or {@code buffer} parameters are null
+     * @throws CryptographyException
+     *         if an error occurs while verifying the signature
      */
-    boolean verifySync(final Seal seal, final PublicKey key, final ByteBuffer buffer);
+    boolean verifySync(@NotNull final Seal seal, @NotNull final PublicKey key, @NotNull final ByteBuffer buffer);
 }

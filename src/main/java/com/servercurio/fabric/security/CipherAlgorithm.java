@@ -47,7 +47,7 @@ public enum CipherAlgorithm {
      * @see <a href="https://csrc.nist.gov/publications/fips/fips197/fips-197.pdf">
      *         https://csrc.nist.gov/publications/fips/fips197/fips-197.pdf</a>
      */
-    AES_128(2, "AES_128", "AES", "SunJCE"),
+    AES_128(2, "AES_128", "AES"),
 
     /**
      * The AES algorithm as defined by NIST FIPS 197.
@@ -55,7 +55,7 @@ public enum CipherAlgorithm {
      * @see <a href="https://csrc.nist.gov/publications/fips/fips197/fips-197.pdf">
      *         https://csrc.nist.gov/publications/fips/fips197/fips-197.pdf</a>
      */
-    AES_192(3, "AES_192", "AES", "SunJCE"),
+    AES_192(3, "AES_192", "AES"),
 
     /**
      * The AES algorithm as defined by NIST FIPS 197.
@@ -63,7 +63,7 @@ public enum CipherAlgorithm {
      * @see <a href="https://csrc.nist.gov/publications/fips/fips197/fips-197.pdf">
      *         https://csrc.nist.gov/publications/fips/fips197/fips-197.pdf</a>
      */
-    AES_256(4, "AES_256", "AES", "SunJCE"),
+    AES_256(4, "AES_256", "AES"),
 
     /**
      * The ChaCha20 algorithm as defined by RFC-7539.

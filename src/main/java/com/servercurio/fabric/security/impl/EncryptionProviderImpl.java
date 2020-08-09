@@ -383,7 +383,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
             final AlgorithmParameterSpec parameterSpec = deriveParameters(algorithm, iv);
             cipher.init(Cipher.ENCRYPT_MODE, key, parameterSpec);
 
-            try (final CipherOutputStream oStream = new CipherOutputStream(cipherStream, cipher)) {
+            try (CipherOutputStream oStream = new CipherOutputStream(cipherStream, cipher)) {
 
                 clearStream.transferTo(oStream);
                 oStream.flush();
