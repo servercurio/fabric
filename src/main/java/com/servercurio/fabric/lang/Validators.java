@@ -180,7 +180,7 @@ public final class Validators {
      */
     public static void throwIfArgumentIsNotPositive(final int value, final String name) {
         if (value <= 0) {
-            throw new IllegalArgumentException(constrainParameter(name, mustConstraint("a positive integer")));
+            throw new IllegalArgumentException(constrainParameter(name, positiveIntegerConstraint()));
         }
     }
 
@@ -196,7 +196,7 @@ public final class Validators {
      */
     public static void throwIfArgumentIsNotPositive(final long value, final String name) {
         if (value <= 0) {
-            throw new IllegalArgumentException(constrainParameter(name, mustConstraint("a positive integer")));
+            throw new IllegalArgumentException(constrainParameter(name, positiveIntegerConstraint()));
         }
     }
 
@@ -212,7 +212,7 @@ public final class Validators {
      */
     public static void throwIfArgumentIsNotPositive(final short value, final String name) {
         if (value <= 0) {
-            throw new IllegalArgumentException(constrainParameter(name, mustConstraint("a positive integer")));
+            throw new IllegalArgumentException(constrainParameter(name, positiveIntegerConstraint()));
         }
     }
 
@@ -228,7 +228,7 @@ public final class Validators {
      */
     public static void throwIfArgumentIsNotPositive(final byte value, final String name) {
         if (value <= 0) {
-            throw new IllegalArgumentException(constrainParameter(name, mustConstraint("a positive integer")));
+            throw new IllegalArgumentException(constrainParameter(name, positiveIntegerConstraint()));
         }
     }
 
@@ -244,7 +244,7 @@ public final class Validators {
      */
     public static void throwIfArgumentIsNotPositive(final float value, final String name) {
         if (value <= 0) {
-            throw new IllegalArgumentException(constrainParameter(name, mustConstraint("a positive integer")));
+            throw new IllegalArgumentException(constrainParameter(name, positiveIntegerConstraint()));
         }
     }
 
@@ -260,7 +260,7 @@ public final class Validators {
      */
     public static void throwIfArgumentIsNotPositive(final double value, final String name) {
         if (value <= 0) {
-            throw new IllegalArgumentException(constrainParameter(name, mustConstraint("a positive integer")));
+            throw new IllegalArgumentException(constrainParameter(name, positiveIntegerConstraint()));
         }
     }
 
@@ -294,5 +294,9 @@ public final class Validators {
 
     private static String mustNotConstraint(final Object value) {
         return String.format("must not be %s", value);
+    }
+
+    private static String positiveIntegerConstraint() {
+        return mustConstraint("a positive integer");
     }
 }
