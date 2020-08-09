@@ -1314,7 +1314,7 @@ public class Scalr {
         }
 
         // Apply any optional operations (if specified).
-        if (ops != null && ops.length > 0) {
+        if (result != null && ops != null && ops.length > 0) {
             result = apply(result, ops);
         }
 
