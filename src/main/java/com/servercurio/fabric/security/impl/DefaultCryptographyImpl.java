@@ -232,9 +232,11 @@ public final class DefaultCryptographyImpl implements Cryptography {
      *         the type of algorithm enumeration
      * @return the primitive instance, not null
      */
-    @SuppressWarnings("checkstyle:indentationcheck")
+    //CHECKSTYLE.OFF: IndentationCheck
+    @SuppressWarnings("checkstyle:indentation.indentationcheck")
     private static <T, E extends CryptoPrimitiveSupplier<T>>
     T acquireAlgorithm(@NotNull final E algorithm, @NotNull final ThreadLocal<HashMap<E, T>> threadLocal) {
+        //CHECKSTYLE.ON: IndentationCheck
         throwIfArgumentIsNull(algorithm, ALGORITHM_PARAM);
         throwIfArgumentIsNull(threadLocal, THREAD_LOCAL_PARAM);
 

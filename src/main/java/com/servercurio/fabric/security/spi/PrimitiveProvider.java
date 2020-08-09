@@ -27,6 +27,8 @@ import javax.crypto.Cipher;
 import javax.crypto.Mac;
 import javax.validation.constraints.NotNull;
 
+import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
+
 
 /**
  * {@code Fabric Unified Cryptography API} provider definition that encapsulates the ability to request cryptographic
@@ -114,13 +116,8 @@ public interface PrimitiveProvider {
      *         if the {@code left} or {@code right} parameters are {@code null}
      */
     default boolean secureEquals(@NotNull final char[] left, @NotNull final char[] right) {
-        if (left == null) {
-            throw new IllegalArgumentException("left");
-        }
-
-        if (right == null) {
-            throw new IllegalArgumentException("right");
-        }
+        throwIfArgumentIsNull(left, "left");
+        throwIfArgumentIsNull(right, "right");
 
         int diff = left.length ^ right.length;
         for (int i = 0; i < left.length && i < right.length; i++) {
@@ -144,13 +141,8 @@ public interface PrimitiveProvider {
      *         if the {@code left} or {@code right} parameters are {@code null}
      */
     default boolean secureEquals(@NotNull final byte[] left, @NotNull final byte[] right) {
-        if (left == null) {
-            throw new IllegalArgumentException("left");
-        }
-
-        if (right == null) {
-            throw new IllegalArgumentException("right");
-        }
+        throwIfArgumentIsNull(left, "left");
+        throwIfArgumentIsNull(right, "right");
 
         int diff = left.length ^ right.length;
         for (int i = 0; i < left.length && i < right.length; i++) {
@@ -174,13 +166,8 @@ public interface PrimitiveProvider {
      *         if the {@code left} or {@code right} parameters are {@code null}
      */
     default boolean secureEquals(@NotNull final int[] left, @NotNull final int[] right) {
-        if (left == null) {
-            throw new IllegalArgumentException("left");
-        }
-
-        if (right == null) {
-            throw new IllegalArgumentException("right");
-        }
+        throwIfArgumentIsNull(left, "left");
+        throwIfArgumentIsNull(right, "right");
 
         int diff = left.length ^ right.length;
         for (int i = 0; i < left.length && i < right.length; i++) {
@@ -204,13 +191,8 @@ public interface PrimitiveProvider {
      *         if the {@code left} or {@code right} parameters are {@code null}
      */
     default boolean secureEquals(@NotNull final long[] left, @NotNull final long[] right) {
-        if (left == null) {
-            throw new IllegalArgumentException("left");
-        }
-
-        if (right == null) {
-            throw new IllegalArgumentException("right");
-        }
+        throwIfArgumentIsNull(left, "left");
+        throwIfArgumentIsNull(right, "right");
 
         int diff = left.length ^ right.length;
         for (int i = 0; i < left.length && i < right.length; i++) {

@@ -185,6 +185,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
 
         final Cipher cipher = crypto.primitive(algorithm);
 
+        //CHECKSTYLE.OFF: IndentationCheck
         switch (algorithm.getMode()) {
             case GCM:
                 return GCM_NONCE_SIZE;
@@ -193,6 +194,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
             default:
                 return cipher.getBlockSize();
         }
+        //CHECKSTYLE.ON: IndentationCheck
     }
 
     /**
@@ -212,6 +214,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
 
         final Cipher cipher = crypto.primitive(algorithm);
 
+        //CHECKSTYLE.OFF: IndentationCheck
         switch (algorithm.getMode()) {
             case GCM:
                 return new GCMParameterSpec(GCM_TAG_SIZE, iv);
@@ -220,6 +223,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
             default:
                 return new IvParameterSpec(iv);
         }
+        //CHECKSTYLE.ON: IndentationCheck
     }
 
     /**

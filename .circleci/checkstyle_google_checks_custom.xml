@@ -68,6 +68,11 @@
     <module name="TreeWalker">
         <!-- Make the @SuppressWarnings annotations available to Checkstyle -->
         <module name="SuppressWarningsHolder" />
+        <module name="SuppressionCommentFilter">
+            <property name="offCommentFormat" value="CHECKSTYLE.OFF\: ([\w\|]+)"/>
+            <property name="onCommentFormat" value="CHECKSTYLE.ON\: ([\w\|]+)"/>
+            <property name="checkFormat" value="$1"/>
+        </module>
 
         <module name="OuterTypeFilename"/>
         <module name="IllegalTokenText">

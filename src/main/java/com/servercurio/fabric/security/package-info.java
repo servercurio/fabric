@@ -15,8 +15,8 @@
  */
 
 /**
- * The {@code Fabric Unified Cryptography API} and related classes. The {@link com.servercurio.fabric.security.Cryptography}
- * interface serves as the primary entry-point for accessing the entire suite of cryptographic methods. The {@link
+ * The {@code Fabric Unified Cryptography API}. The {@link com.servercurio.fabric.security.Cryptography} interface
+ * serves as the primary entry-point for accessing the entire suite of cryptographic methods. The {@link
  * com.servercurio.fabric.security.Hash}, {@link com.servercurio.fabric.security.ImmutableHash}, and {@link
  * com.servercurio.fabric.security.Seal} implementations serve as convenience wrappers for cryptographic hashes and
  * signatures respectively. One of the major design goals is to eliminate the need for users to maintain magic strings
