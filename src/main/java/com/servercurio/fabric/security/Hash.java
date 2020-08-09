@@ -219,7 +219,7 @@ public class Hash implements Comparable<Hash> {
      * @see #getValue()
      */
     public void setValue(@NotNull final byte[] value) {
-        Validators.throwIfArgumentIsNotExactSize(value, getAlgorithm().bytes(), VALUE_FIELD);
+        throwIfArgumentIsNotExactSize(value, getAlgorithm().bytes(), VALUE_FIELD);
 
         this.value = value;
     }
