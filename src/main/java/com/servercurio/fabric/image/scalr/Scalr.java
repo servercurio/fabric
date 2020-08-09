@@ -38,8 +38,10 @@ import java.awt.image.RasterFormatException;
 import java.awt.image.RescaleOp;
 import javax.imageio.ImageIO;
 
+import static com.servercurio.fabric.lang.Validators.throwIfArgIsNotPositive;
+import static com.servercurio.fabric.lang.Validators.throwIfArgIsNotPositiveOrZero;
+import static com.servercurio.fabric.lang.Validators.throwIfArgIsNull;
 import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsEmpty;
-import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
 
 /**
  * Class used to implement performant, high-quality and intelligent image scaling and manipulation algorithms in native
@@ -368,6 +370,31 @@ public class Scalr {
     private static final String ROTATION_PARAM = "rotation";
 
     /**
+     * The {@code targetWidth} parameter name represented as a string value.
+     */
+    private static final String TARGET_WIDTH_PARAM = "targetWidth";
+
+    /**
+     * The {@code targetHeight} parameter name represented as a string value.
+     */
+    private static final String TARGET_HEIGHT_PARAM = "targetHeight";
+
+    /**
+     * The {@code width} parameter name represented as a string value.
+     */
+    private static final String WIDTH_PARAM = "width";
+
+    /**
+     * The {@code height} parameter name represented as a string value.
+     */
+    private static final String HEIGHT_PARAM = "height";
+
+    /**
+     * The {@code padding} parameter name represented as a string value.
+     */
+    private static final String PADDING_PARAM = "padding";
+
+    /**
      * Used to apply, in the order given, 1 or more {@link BufferedImageOp}s to a given {@link BufferedImage} and return
      * the result.
      *
@@ -419,7 +446,7 @@ public class Scalr {
      */
     public static BufferedImage apply(BufferedImage src, BufferedImageOp... ops) {
 
-        throwIfArgumentIsNull(src, SRC_PARAM);
+        throwIfArgIsNull(src, SRC_PARAM);
         throwIfArgumentIsEmpty(ops, OPS_PARAM);
 
         int type = src.getType();
@@ -599,7 +626,7 @@ public class Scalr {
      *         to fail, even when using straight forward JDK-image operations.
      */
     public static BufferedImage crop(BufferedImage src, int x, int y, int width, int height, BufferedImageOp... ops) {
-        throwIfArgumentIsNull(src, SRC_PARAM);
+        throwIfArgIsNull(src, SRC_PARAM);
 
         if (x < 0 || y < 0 || width < 0 || height < 0) {
             throw new IllegalArgumentException("Invalid crop bounds: x [" + x
@@ -727,12 +754,9 @@ public class Scalr {
      */
     public static BufferedImage pad(BufferedImage src, int padding, Color color, BufferedImageOp... ops) {
 
-        throwIfArgumentIsNull(src, SRC_PARAM);
-        throwIfArgumentIsNull(color, COLOR_PARAM);
-
-        if (padding < 1) {
-            throw new IllegalArgumentException("padding [" + padding + "] must be > 0");
-        }
+        throwIfArgIsNull(src, SRC_PARAM);
+        throwIfArgIsNull(color, COLOR_PARAM);
+        throwIfArgIsNotPositive(padding, PADDING_PARAM);
 
         int srcWidth = src.getWidth();
         int srcHeight = src.getHeight();
@@ -1180,18 +1204,12 @@ public class Scalr {
     public static BufferedImage resize(BufferedImage src, Method scalingMethod, Mode resizeMode, int targetWidth,
                                        int targetHeight, BufferedImageOp... ops) {
 
-        throwIfArgumentIsNull(src, SRC_PARAM);
-        throwIfArgumentIsNull(scalingMethod, SCALING_METHOD_PARAM);
-        throwIfArgumentIsNull(resizeMode, RESIZE_MODE_PARAM);
+        throwIfArgIsNull(src, SRC_PARAM);
+        throwIfArgIsNull(scalingMethod, SCALING_METHOD_PARAM);
+        throwIfArgIsNull(resizeMode, RESIZE_MODE_PARAM);
 
-        if (targetWidth < 0) {
-            throw new IllegalArgumentException("targetWidth must be >= 0");
-        }
-
-        if (targetHeight < 0) {
-            throw new IllegalArgumentException("targetHeight must be >= 0");
-        }
-
+        throwIfArgIsNotPositiveOrZero(targetWidth, TARGET_WIDTH_PARAM);
+        throwIfArgIsNotPositiveOrZero(targetHeight, TARGET_HEIGHT_PARAM);
 
         int currentWidth = src.getWidth();
         int currentHeight = src.getHeight();
@@ -1260,8 +1278,7 @@ public class Scalr {
 
         // If AUTOMATIC was specified, determine the real scaling method.
         if (scalingMethod == Scalr.Method.AUTOMATIC) {
-            scalingMethod = determineScalingMethod(targetWidth, targetHeight,
-                                                   ratio);
+            scalingMethod = determineScalingMethod(targetWidth, targetHeight, ratio);
         }
 
 
@@ -1269,13 +1286,10 @@ public class Scalr {
 
         // Now we scale the image
         if (scalingMethod == Scalr.Method.SPEED) {
-            result = scaleImage(src, targetWidth, targetHeight,
-                                RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+            result = scaleImage(src, targetWidth, targetHeight, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         } else if (scalingMethod == Scalr.Method.BALANCED) {
-            result = scaleImage(src, targetWidth, targetHeight,
-                                RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        } else if (scalingMethod == Scalr.Method.QUALITY
-                   || scalingMethod == Scalr.Method.ULTRA_QUALITY) {
+            result = scaleImage(src, targetWidth, targetHeight, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        } else if (scalingMethod == Scalr.Method.QUALITY || scalingMethod == Scalr.Method.ULTRA_QUALITY) {
             /*
              * If we are scaling up (in either width or height - since we know
              * the image will stay proportional we just check if either are
@@ -1295,8 +1309,7 @@ public class Scalr {
                  * This note is just here for anyone reading the code and
                  * wondering how they can speed their own calls up.
                  */
-                result = scaleImage(src, targetWidth, targetHeight,
-                                    RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+                result = scaleImage(src, targetWidth, targetHeight, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
             } else {
                 /*
                  * Originally we wanted to use BILINEAR interpolation here
@@ -1308,8 +1321,7 @@ public class Scalr {
                  * scale of their original image. Instead BICUBIC was chosen to
                  * honor the contract of a QUALITY scale of the original image.
                  */
-                result = scaleImageIncrementally(src, targetWidth,
-                                                 targetHeight, scalingMethod,
+                result = scaleImageIncrementally(src, targetWidth, targetHeight, scalingMethod,
                                                  RenderingHints.VALUE_INTERPOLATION_BICUBIC);
             }
         }
@@ -1354,8 +1366,8 @@ public class Scalr {
      * @see Rotation
      */
     public static BufferedImage rotate(BufferedImage src, Rotation rotation, BufferedImageOp... ops) {
-        throwIfArgumentIsNull(src, SRC_PARAM);
-        throwIfArgumentIsNull(rotation, ROTATION_PARAM);
+        throwIfArgIsNull(src, SRC_PARAM);
+        throwIfArgIsNull(rotation, ROTATION_PARAM);
 
         /*
          * Setup the default width/height values from our image.
@@ -1431,12 +1443,12 @@ public class Scalr {
                 tx.quadrantRotate(2);
                 break;
 
-            case FLIP_HORZ:
+            case FLIP_HORIZONTAL:
                 tx.translate(newWidth, 0);
                 tx.scale(-1.0, 1.0);
                 break;
 
-            case FLIP_VERT:
+            case FLIP_VERTICAL:
                 tx.translate(0, newHeight);
                 tx.scale(1.0, -1.0);
                 break;
@@ -1490,9 +1502,7 @@ public class Scalr {
      *         if <code>src</code> is <code>null</code>.
      */
     protected static BufferedImage copyToOptimalImage(BufferedImage src) {
-        if (src == null) {
-            throw new IllegalArgumentException("src cannot be null");
-        }
+        throwIfArgIsNull(src, SRC_PARAM);
 
         // Calculate the type depending on the presence of alpha.
         int type =
@@ -1541,10 +1551,8 @@ public class Scalr {
      *         to Morten Nobel for implementation hint</a>
      */
     protected static BufferedImage createOptimalImage(BufferedImage src, int width, int height) {
-        if (width <= 0 || height <= 0) {
-            throw new IllegalArgumentException("width [" + width
-                                               + "] and height [" + height + "] must be > 0");
-        }
+        throwIfArgIsNotPositive(width, WIDTH_PARAM);
+        throwIfArgIsNotPositive(height, HEIGHT_PARAM);
 
         return new BufferedImage(width, height,
                                  src.getTransparency() == Transparency.OPAQUE ? BufferedImage.TYPE_INT_RGB :
@@ -1644,13 +1652,11 @@ public class Scalr {
     protected static BufferedImage scaleImage(BufferedImage src,
                                               int targetWidth, int targetHeight, Object interpolationHintValue) {
         // Setup the rendering resources to match the source image's
-        BufferedImage result = createOptimalImage(src, targetWidth,
-                                                  targetHeight);
+        BufferedImage result = createOptimalImage(src, targetWidth, targetHeight);
         Graphics2D resultGraphics = result.createGraphics();
 
         // Scale the image to the new buffer using the specified rendering hint.
-        resultGraphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-                                        interpolationHintValue);
+        resultGraphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, interpolationHintValue);
         resultGraphics.drawImage(src, 0, 0, targetWidth, targetHeight, null);
 
         // Just to be clean, explicitly dispose our temporary graphics object
@@ -1661,8 +1667,7 @@ public class Scalr {
     }
 
     /**
-     * Used to implement Chris Campbell's incremental-scaling algorithm:
-     * <a href="http://today.java.net/pub/a/today/2007/04/03/perils
+     * Used to implement Chris Campbell's incremental-scaling algorithm: <a href="http://today.java.net/pub/a/today/2007/04/03/perils
      * -of-image-getscaledinstance .html">http://today.java.net/pub/a/today/2007/04/03/perils
      * -of-image-getscaledinstance.html</a>.
      *
@@ -1947,7 +1952,7 @@ public class Scalr {
          * on bottom), but the right and left sides flip. This is different than a standard rotation where the top and
          * bottom would also have been flipped.
          */
-        FLIP_HORZ,
+        FLIP_HORIZONTAL,
         /**
          * Flip the image vertically by reflecting it around the x axis.
          *
@@ -1960,6 +1965,6 @@ public class Scalr {
          * right stays on the right), but the top and bottom sides flip. This is different than a standard rotation
          * where the left and right would also have been flipped.
          */
-        FLIP_VERT
+        FLIP_VERTICAL
     }
 }

@@ -16,6 +16,7 @@
 
 package com.servercurio.fabric.security.impl;
 
+import com.servercurio.fabric.lang.Validators;
 import com.servercurio.fabric.security.CipherTransformation;
 import com.servercurio.fabric.security.Cryptography;
 import com.servercurio.fabric.security.CryptographyException;
@@ -47,8 +48,8 @@ import javax.validation.constraints.Positive;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
-import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNotPositive;
-import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
+import static com.servercurio.fabric.lang.Validators.throwIfArgIsNotPositive;
+import static com.servercurio.fabric.lang.Validators.throwIfArgIsNull;
 
 /**
  * Default {@link Cryptography} implementation provided by the base {@code Fabric} library.
@@ -195,9 +196,9 @@ public class DefaultCryptographyImpl implements Cryptography {
                                      @NotNull final TriConsumer<byte[], Integer, Integer> fn) throws
                                                                                               IOException,
                                                                                               GeneralSecurityException {
-        throwIfArgumentIsNull(stream, STREAM_PARAM);
-        throwIfArgumentIsNotPositive(blockSize, BLOCK_SIZE_PARAM);
-        throwIfArgumentIsNull(fn, FN_PARAM);
+        throwIfArgIsNull(stream, STREAM_PARAM);
+        Validators.throwIfArgIsNotPositive(blockSize, BLOCK_SIZE_PARAM);
+        throwIfArgIsNull(fn, FN_PARAM);
 
         final byte[] buffer = new byte[blockSize];
 
@@ -236,8 +237,8 @@ public class DefaultCryptographyImpl implements Cryptography {
     private static <T, E extends CryptoPrimitiveSupplier<T>>
     T acquireAlgorithm(@NotNull final E algorithm, @NotNull final ThreadLocal<HashMap<E, T>> threadLocal) {
         //CHECKSTYLE.ON: IndentationCheck
-        throwIfArgumentIsNull(algorithm, ALGORITHM_PARAM);
-        throwIfArgumentIsNull(threadLocal, THREAD_LOCAL_PARAM);
+        throwIfArgIsNull(algorithm, ALGORITHM_PARAM);
+        throwIfArgIsNull(threadLocal, THREAD_LOCAL_PARAM);
 
         final HashMap<E, T> cache = threadLocal.get();
 

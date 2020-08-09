@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
 
-import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
+import static com.servercurio.fabric.lang.Validators.throwIfArgIsNull;
 
 /**
  * An enumeration of the standard cryptographic encryption algorithm modes along with their initialization parameters.
@@ -157,7 +157,7 @@ public enum CipherMode {
      *         the standard name for this algorithm mode as specified by the Java Security documentation, not null
      */
     CipherMode(final int id, @NotNull final String modeName) {
-        throwIfArgumentIsNull(modeName, MODE_NAME_FIELD);
+        throwIfArgIsNull(modeName, MODE_NAME_FIELD);
 
         this.id = id;
         this.modeName = modeName;

@@ -18,7 +18,7 @@ package com.servercurio.fabric.security;
 
 import javax.validation.constraints.NotNull;
 
-import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
+import static com.servercurio.fabric.lang.Validators.throwIfArgIsNull;
 
 /**
  * Provides a reasonable default {@link Hashable} implementation for classes that should compute their own cryptographic
@@ -88,8 +88,8 @@ public abstract class AbstractHashable implements Hashable {
      *         if the {@code algorithm} or {@code cryptography} parameters are null
      */
     public AbstractHashable(@NotNull final HashAlgorithm algorithm, @NotNull final Cryptography cryptography) {
-        throwIfArgumentIsNull(algorithm, ALGORITHM_FIELD);
-        throwIfArgumentIsNull(cryptography, CRYPTOGRAPHY_FIELD);
+        throwIfArgIsNull(algorithm, ALGORITHM_FIELD);
+        throwIfArgIsNull(cryptography, CRYPTOGRAPHY_FIELD);
 
         this.algorithm = algorithm;
         this.cryptography = cryptography;

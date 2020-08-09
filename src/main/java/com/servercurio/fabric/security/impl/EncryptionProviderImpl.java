@@ -16,6 +16,7 @@
 
 package com.servercurio.fabric.security.impl;
 
+import com.servercurio.fabric.lang.Validators;
 import com.servercurio.fabric.security.CipherAlgorithm;
 import com.servercurio.fabric.security.CipherMode;
 import com.servercurio.fabric.security.CipherPadding;
@@ -43,8 +44,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
 import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsEmpty;
-import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNotPositive;
-import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
+import static com.servercurio.fabric.lang.Validators.throwIfArgIsNotPositive;
+import static com.servercurio.fabric.lang.Validators.throwIfArgIsNull;
 
 /**
  * Default {@code Fabric Unified Cryptography API} provider implementation that encapsulates all of the available
@@ -141,7 +142,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
      *         the {@link DefaultCryptographyImpl} to which this provider is bound, not null
      */
     public EncryptionProviderImpl(@NotNull final DefaultCryptographyImpl crypto) {
-        throwIfArgumentIsNull(crypto, CRYPTO_FIELD);
+        throwIfArgIsNull(crypto, CRYPTO_FIELD);
 
         this.crypto = crypto;
     }
@@ -162,8 +163,8 @@ public class EncryptionProviderImpl implements EncryptionProvider {
      */
     private static byte[] deriveCounterIv(@Positive final int blockSize, @Positive final int counterLength,
                                           @NotEmpty final byte[] iv) {
-        throwIfArgumentIsNotPositive(blockSize, BLOCK_SIZE_PARAM);
-        throwIfArgumentIsNotPositive(counterLength, COUNTER_LENGTH_PARAM);
+        Validators.throwIfArgIsNotPositive(blockSize, BLOCK_SIZE_PARAM);
+        Validators.throwIfArgIsNotPositive(counterLength, COUNTER_LENGTH_PARAM);
         throwIfArgumentIsEmpty(iv, IV_PARAM);
 
         final int supportedIvLength = blockSize - counterLength;
@@ -181,7 +182,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
      * @return a positive integer representing the number of bytes that should be used for the nonce
      */
     private int deriveNonceSize(@NotNull final CipherTransformation algorithm) {
-        throwIfArgumentIsNull(algorithm, ALGORITHM_PARAM);
+        throwIfArgIsNull(algorithm, ALGORITHM_PARAM);
 
         final Cipher cipher = crypto.primitive(algorithm);
 
@@ -209,7 +210,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
      */
     private AlgorithmParameterSpec deriveParameters(@NotNull final CipherTransformation algorithm,
                                                     @NotEmpty final byte[] iv) {
-        throwIfArgumentIsNull(algorithm, ALGORITHM_PARAM);
+        throwIfArgIsNull(algorithm, ALGORITHM_PARAM);
         throwIfArgumentIsEmpty(iv, IV_PARAM);
 
         final Cipher cipher = crypto.primitive(algorithm);
@@ -261,11 +262,11 @@ public class EncryptionProviderImpl implements EncryptionProvider {
     public void decryptSync(@NotNull final CipherTransformation algorithm, @NotNull final Key key,
                             @NotEmpty final byte[] iv, @NotNull final InputStream cipherStream,
                             @NotNull final OutputStream clearStream) {
-        throwIfArgumentIsNull(algorithm, ALGORITHM_PARAM);
-        throwIfArgumentIsNull(key, KEY_PARAM);
+        throwIfArgIsNull(algorithm, ALGORITHM_PARAM);
+        throwIfArgIsNull(key, KEY_PARAM);
         throwIfArgumentIsEmpty(iv, IV_PARAM);
-        throwIfArgumentIsNull(cipherStream, CIPHER_STREAM_PARAM);
-        throwIfArgumentIsNull(clearStream, CLEAR_STREAM_PARAM);
+        throwIfArgIsNull(cipherStream, CIPHER_STREAM_PARAM);
+        throwIfArgIsNull(clearStream, CLEAR_STREAM_PARAM);
 
         final Cipher cipher = crypto.primitive(algorithm);
 
@@ -293,8 +294,8 @@ public class EncryptionProviderImpl implements EncryptionProvider {
     @Override
     public byte[] decryptSync(@NotNull final CipherTransformation algorithm, @NotNull final Key key,
                               @NotEmpty final byte[] iv, @NotEmpty final byte[] data) {
-        throwIfArgumentIsNull(algorithm, ALGORITHM_PARAM);
-        throwIfArgumentIsNull(key, KEY_PARAM);
+        throwIfArgIsNull(algorithm, ALGORITHM_PARAM);
+        throwIfArgIsNull(key, KEY_PARAM);
         throwIfArgumentIsEmpty(iv, IV_PARAM);
         throwIfArgumentIsEmpty(data, DATA_PARAM);
 
@@ -316,10 +317,10 @@ public class EncryptionProviderImpl implements EncryptionProvider {
     @Override
     public ByteBuffer decryptSync(@NotNull final CipherTransformation algorithm, @NotNull final Key key,
                                   @NotEmpty final byte[] iv, @NotNull final ByteBuffer buffer) {
-        throwIfArgumentIsNull(algorithm, ALGORITHM_PARAM);
-        throwIfArgumentIsNull(key, KEY_PARAM);
+        throwIfArgIsNull(algorithm, ALGORITHM_PARAM);
+        throwIfArgIsNull(key, KEY_PARAM);
         throwIfArgumentIsEmpty(iv, IV_PARAM);
-        throwIfArgumentIsNull(buffer, BUFFER_PARAM);
+        throwIfArgIsNull(buffer, BUFFER_PARAM);
 
         final Cipher cipher = crypto.primitive(algorithm);
 
@@ -371,11 +372,11 @@ public class EncryptionProviderImpl implements EncryptionProvider {
     public void encryptSync(@NotNull final CipherTransformation algorithm, @NotNull final Key key,
                             @NotEmpty final byte[] iv, @NotNull final InputStream clearStream,
                             @NotNull final OutputStream cipherStream) {
-        throwIfArgumentIsNull(algorithm, ALGORITHM_PARAM);
-        throwIfArgumentIsNull(key, KEY_PARAM);
+        throwIfArgIsNull(algorithm, ALGORITHM_PARAM);
+        throwIfArgIsNull(key, KEY_PARAM);
         throwIfArgumentIsEmpty(iv, IV_PARAM);
-        throwIfArgumentIsNull(clearStream, CLEAR_STREAM_PARAM);
-        throwIfArgumentIsNull(cipherStream, CIPHER_STREAM_PARAM);
+        throwIfArgIsNull(clearStream, CLEAR_STREAM_PARAM);
+        throwIfArgIsNull(cipherStream, CIPHER_STREAM_PARAM);
 
         final Cipher cipher = crypto.primitive(algorithm);
 
@@ -406,8 +407,8 @@ public class EncryptionProviderImpl implements EncryptionProvider {
     @Override
     public byte[] encryptSync(@NotNull final CipherTransformation algorithm, @NotNull final Key key,
                               @NotEmpty final byte[] iv, @NotEmpty final byte[] data) {
-        throwIfArgumentIsNull(algorithm, ALGORITHM_PARAM);
-        throwIfArgumentIsNull(key, KEY_PARAM);
+        throwIfArgIsNull(algorithm, ALGORITHM_PARAM);
+        throwIfArgIsNull(key, KEY_PARAM);
         throwIfArgumentIsEmpty(iv, IV_PARAM);
         throwIfArgumentIsEmpty(data, DATA_PARAM);
 
@@ -429,10 +430,10 @@ public class EncryptionProviderImpl implements EncryptionProvider {
     @Override
     public ByteBuffer encryptSync(@NotNull final CipherTransformation algorithm, @NotNull final Key key,
                                   @NotEmpty final byte[] iv, @NotNull final ByteBuffer buffer) {
-        throwIfArgumentIsNull(algorithm, ALGORITHM_PARAM);
-        throwIfArgumentIsNull(key, KEY_PARAM);
+        throwIfArgIsNull(algorithm, ALGORITHM_PARAM);
+        throwIfArgIsNull(key, KEY_PARAM);
         throwIfArgumentIsEmpty(iv, IV_PARAM);
-        throwIfArgumentIsNull(buffer, BUFFER_PARAM);
+        throwIfArgIsNull(buffer, BUFFER_PARAM);
 
         final Cipher cipher = crypto.primitive(algorithm);
 
@@ -462,7 +463,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
      */
     @Override
     public byte[] nonceSync(@NotNull final CipherTransformation algorithm) {
-        throwIfArgumentIsNull(algorithm, ALGORITHM_PARAM);
+        throwIfArgIsNull(algorithm, ALGORITHM_PARAM);
 
         final int nonceSize = deriveNonceSize(algorithm);
         final byte[] nonce = new byte[nonceSize];

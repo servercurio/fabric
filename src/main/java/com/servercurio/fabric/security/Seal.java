@@ -27,7 +27,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsEmpty;
-import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
+import static com.servercurio.fabric.lang.Validators.throwIfArgIsNull;
 
 /**
  * Represents a immutable cryptographic signature that includes the algorithm used to perform the original computation.
@@ -115,7 +115,7 @@ public class Seal implements Comparable<Seal> {
      *         if the {@code other} parameter is null
      */
     public Seal(@NotNull final Seal other) {
-        throwIfArgumentIsNull(other, OTHER_PARAM);
+        throwIfArgIsNull(other, OTHER_PARAM);
 
         this.algorithm = other.algorithm;
         this.value = Arrays.copyOf(other.value, other.value.length);
@@ -138,7 +138,7 @@ public class Seal implements Comparable<Seal> {
      *         is zero
      */
     protected Seal(@NotNull final SignatureAlgorithm algorithm, @NotNull final byte[] value, final boolean copyValue) {
-        throwIfArgumentIsNull(algorithm, ALGORITHM_FIELD);
+        throwIfArgIsNull(algorithm, ALGORITHM_FIELD);
         throwIfArgumentIsEmpty(value, VALUE_FIELD, () -> algorithm != SignatureAlgorithm.NONE);
 
         this.algorithm = algorithm;

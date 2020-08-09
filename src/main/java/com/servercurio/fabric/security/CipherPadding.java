@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
 
-import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
+import static com.servercurio.fabric.lang.Validators.throwIfArgIsNull;
 
 /**
  * An enumeration of the standard cryptographic encryption padding modes along with their initialization parameters.
@@ -99,7 +99,7 @@ public enum CipherPadding {
      *         the standard name for this padding mode as specified by the Java Security documentation, not null
      */
     CipherPadding(final int id, @NotNull final String paddingName) {
-        throwIfArgumentIsNull(paddingName, PADDING_NAME_FIELD);
+        throwIfArgIsNull(paddingName, PADDING_NAME_FIELD);
 
         this.id = id;
         this.paddingName = paddingName;

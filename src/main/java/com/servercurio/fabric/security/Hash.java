@@ -28,8 +28,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNotExactSize;
-import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
+import static com.servercurio.fabric.lang.Validators.throwIfArgIsNotExactLength;
+import static com.servercurio.fabric.lang.Validators.throwIfArgIsNull;
 
 /**
  * Represents a mutable cryptographic hash value that includes the algorithm used to perform the original computation.
@@ -138,8 +138,8 @@ public class Hash implements Comparable<Hash> {
      *         does not equal the {@link HashAlgorithm#bytes()} length
      */
     public Hash(@NotNull final HashAlgorithm algorithm, @NotNull final byte[] value, final boolean copyValue) {
-        throwIfArgumentIsNull(algorithm, ALGORITHM_FIELD);
-        throwIfArgumentIsNotExactSize(value, algorithm.bytes(), VALUE_FIELD, () -> algorithm != HashAlgorithm.NONE);
+        throwIfArgIsNull(algorithm, ALGORITHM_FIELD);
+        Validators.throwIfArgIsNotExactLength(value, algorithm.bytes(), VALUE_FIELD, () -> algorithm != HashAlgorithm.NONE);
 
         this.algorithm = algorithm;
         this.value = copyValue ? Arrays.copyOf(value, value.length) : value;
@@ -154,7 +154,7 @@ public class Hash implements Comparable<Hash> {
      *         if the {@code other} parameter is null
      */
     public Hash(@NotNull final Hash other) {
-        throwIfArgumentIsNull(other, OTHER_PARAM);
+        throwIfArgIsNull(other, OTHER_PARAM);
 
         this.algorithm = other.getAlgorithm();
 
@@ -185,7 +185,7 @@ public class Hash implements Comparable<Hash> {
      * @see HashAlgorithm
      */
     public void setAlgorithm(@NotNull final HashAlgorithm algorithm) {
-        throwIfArgumentIsNull(algorithm, ALGORITHM_FIELD);
+        throwIfArgIsNull(algorithm, ALGORITHM_FIELD);
 
         this.algorithm = algorithm;
         this.value = new byte[algorithm.bytes()];
@@ -219,7 +219,7 @@ public class Hash implements Comparable<Hash> {
      * @see #getValue()
      */
     public void setValue(@NotNull final byte[] value) {
-        throwIfArgumentIsNotExactSize(value, getAlgorithm().bytes(), VALUE_FIELD);
+        Validators.throwIfArgIsNotExactLength(value, getAlgorithm().bytes(), VALUE_FIELD);
 
         this.value = value;
     }

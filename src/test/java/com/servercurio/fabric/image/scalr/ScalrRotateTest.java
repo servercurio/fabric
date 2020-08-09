@@ -58,14 +58,14 @@ public class ScalrRotateTest extends AbstractScalrTest {
     @DisplayName("Rotate :: Flip Horizontal")
     public void testRotateFlipH() {
         assertEquals(load("time-square-rotate-horz.png"),
-                     Scalr.rotate(load("time-square.png"), Scalr.Rotation.FLIP_HORZ));
+                     Scalr.rotate(load("time-square.png"), Scalr.Rotation.FLIP_HORIZONTAL));
     }
 
     @Test
     @DisplayName("Rotate :: Flip Horizontal Grayscale Op")
     public void testRotateFlipHOps() {
         assertEquals(load("time-square-rotate-horz-ops.png"),
-                     Scalr.rotate(load("time-square.png"), Scalr.Rotation.FLIP_HORZ,
+                     Scalr.rotate(load("time-square.png"), Scalr.Rotation.FLIP_HORIZONTAL,
                                   Scalr.OP_GRAYSCALE));
     }
 
@@ -73,6 +73,6 @@ public class ScalrRotateTest extends AbstractScalrTest {
     @DisplayName("Rotate :: Flip Vertical")
     public void testRotateFlipV() {
         assertEquals(load("time-square-rotate-vert.png"),
-                     Scalr.rotate(load("time-square.png"), Scalr.Rotation.FLIP_VERT));
+                     Scalr.rotate(load("time-square.png"), Scalr.Rotation.FLIP_VERTICAL));
     }
 }

@@ -42,7 +42,7 @@ public final class Validators {
      *         if the {@code value} parameter is {@code null}, an empty String, or a zero-length array
      */
     public static void throwIfArgumentIsEmpty(final Object value, final String name) {
-        throwIfArgumentIsNull(value, name);
+        throwIfArgIsNull(value, name);
 
         if (value instanceof String) {
             if (((String) value).isEmpty()) {
@@ -69,7 +69,7 @@ public final class Validators {
      *         if the {@code value} parameter is {@code null}, an empty String, or a zero-length array
      */
     public static void throwIfArgumentIsEmpty(final byte[] value, final String name) {
-        throwIfArgumentIsNull(value, name);
+        throwIfArgIsNull(value, name);
 
         if (value.length == 0) {
             throw new IllegalArgumentException(constrainParameter(name, mustNotConstraint("a zero-length array")));
@@ -90,10 +90,32 @@ public final class Validators {
      *         if the {@code value} parameter is {@code null}, an empty String, or a zero-length array
      */
     public static void throwIfArgumentIsEmpty(final byte[] value, final String name, final BooleanSupplier predicate) {
-        throwIfArgumentIsNull(value, name);
+        throwIfArgIsNull(value, name);
 
         if (predicate.getAsBoolean()) {
             throwIfArgumentIsEmpty(value, name);
+        }
+    }
+
+    /**
+     * Throws an {@link IllegalArgumentException} if the supplied value is {@code null} or does not have a String length
+     * that matches the specified {@code length} parameter.
+     *
+     * @param value
+     *         the value to be tested, may be null
+     * @param length
+     *         the required length, positive or zero integer
+     * @param name
+     *         the name of the field or method parameter, not null
+     * @throws IllegalArgumentException
+     *         if the {@code value} parameter is null or does not have an array length as specified by the {@code
+     *         length} parameter
+     */
+    public static void throwIfArgIsNotExactLength(final String value, final int length, final String name) {
+        throwIfArgIsNull(value, name);
+
+        if (value.length() != length) {
+            throw new IllegalArgumentException(constrainParameter(name, mustLengthConstraint(length)));
         }
     }
 
@@ -113,8 +135,8 @@ public final class Validators {
      *         if the {@code value} parameter is null or does not have an array length as specified by the {@code
      *         length} parameter
      */
-    public static <T> void throwIfArgumentIsNotExactSize(final T[] value, final int length, final String name) {
-        throwIfArgumentIsNull(value, name);
+    public static <T> void throwIfArgIsNotExactLength(final T[] value, final int length, final String name) {
+        throwIfArgIsNull(value, name);
 
         if (value.length != length) {
             throw new IllegalArgumentException(constrainParameter(name, mustLengthConstraint(length)));
@@ -135,8 +157,8 @@ public final class Validators {
      *         if the {@code value} parameter is null or does not have an array length as specified by the {@code
      *         length} parameter
      */
-    public static void throwIfArgumentIsNotExactSize(final byte[] value, final int length, final String name) {
-        throwIfArgumentIsNull(value, name);
+    public static void throwIfArgIsNotExactLength(final byte[] value, final int length, final String name) {
+        throwIfArgIsNull(value, name);
 
         if (value.length != length) {
             throw new IllegalArgumentException(constrainParameter(name, mustLengthConstraint(length)));
@@ -159,9 +181,9 @@ public final class Validators {
      *         if the {@code value} parameter is null or does not have an array length as specified by the {@code
      *         length} parameter
      */
-    public static void throwIfArgumentIsNotExactSize(final byte[] value, final int length, final String name,
-                                                     final BooleanSupplier predicate) {
-        throwIfArgumentIsNull(value, name);
+    public static void throwIfArgIsNotExactLength(final byte[] value, final int length, final String name,
+                                                  final BooleanSupplier predicate) {
+        throwIfArgIsNull(value, name);
 
         if (predicate.getAsBoolean() && value.length != length) {
             throw new IllegalArgumentException(constrainParameter(name, mustLengthConstraint(length)));
@@ -178,7 +200,7 @@ public final class Validators {
      * @throws IllegalArgumentException
      *         if the {@code value} parameter is not a positive integer
      */
-    public static void throwIfArgumentIsNotPositive(final int value, final String name) {
+    public static void throwIfArgIsNotPositive(final int value, final String name) {
         if (value <= 0) {
             throw new IllegalArgumentException(constrainParameter(name, positiveIntegerConstraint()));
         }
@@ -194,7 +216,7 @@ public final class Validators {
      * @throws IllegalArgumentException
      *         if the {@code value} parameter is not a positive integer
      */
-    public static void throwIfArgumentIsNotPositive(final long value, final String name) {
+    public static void throwIfArgIsNotPositive(final long value, final String name) {
         if (value <= 0) {
             throw new IllegalArgumentException(constrainParameter(name, positiveIntegerConstraint()));
         }
@@ -210,7 +232,7 @@ public final class Validators {
      * @throws IllegalArgumentException
      *         if the {@code value} parameter is not a positive integer
      */
-    public static void throwIfArgumentIsNotPositive(final short value, final String name) {
+    public static void throwIfArgIsNotPositive(final short value, final String name) {
         if (value <= 0) {
             throw new IllegalArgumentException(constrainParameter(name, positiveIntegerConstraint()));
         }
@@ -226,7 +248,7 @@ public final class Validators {
      * @throws IllegalArgumentException
      *         if the {@code value} parameter is not a positive integer
      */
-    public static void throwIfArgumentIsNotPositive(final byte value, final String name) {
+    public static void throwIfArgIsNotPositive(final byte value, final String name) {
         if (value <= 0) {
             throw new IllegalArgumentException(constrainParameter(name, positiveIntegerConstraint()));
         }
@@ -242,7 +264,7 @@ public final class Validators {
      * @throws IllegalArgumentException
      *         if the {@code value} parameter is not a positive integer
      */
-    public static void throwIfArgumentIsNotPositive(final float value, final String name) {
+    public static void throwIfArgIsNotPositive(final float value, final String name) {
         if (value <= 0) {
             throw new IllegalArgumentException(constrainParameter(name, positiveIntegerConstraint()));
         }
@@ -258,9 +280,105 @@ public final class Validators {
      * @throws IllegalArgumentException
      *         if the {@code value} parameter is not a positive integer
      */
-    public static void throwIfArgumentIsNotPositive(final double value, final String name) {
+    public static void throwIfArgIsNotPositive(final double value, final String name) {
         if (value <= 0) {
             throw new IllegalArgumentException(constrainParameter(name, positiveIntegerConstraint()));
+        }
+    }
+
+    /**
+     * Throws an {@link IllegalArgumentException} if the supplied value is not zero or a positive integer.
+     *
+     * @param value
+     *         the value to be tested for empty, may be null
+     * @param name
+     *         the name of the field or method parameter, not null
+     * @throws IllegalArgumentException
+     *         if the {@code value} parameter is not a positive integer
+     */
+    public static void throwIfArgIsNotPositiveOrZero(final int value, final String name) {
+        if (value < 0) {
+            throw new IllegalArgumentException(constrainParameter(name, positiveOrZeroIntegerConstraint()));
+        }
+    }
+
+    /**
+     * Throws an {@link IllegalArgumentException} if the supplied value is not zero or a positive integer.
+     *
+     * @param value
+     *         the value to be tested for empty, may be null
+     * @param name
+     *         the name of the field or method parameter, not null
+     * @throws IllegalArgumentException
+     *         if the {@code value} parameter is not a positive integer
+     */
+    public static void throwIfArgIsNotPositiveOrZero(final long value, final String name) {
+        if (value < 0) {
+            throw new IllegalArgumentException(constrainParameter(name, positiveOrZeroIntegerConstraint()));
+        }
+    }
+
+    /**
+     * Throws an {@link IllegalArgumentException} if the supplied value is not zero or a positive integer.
+     *
+     * @param value
+     *         the value to be tested for empty, may be null
+     * @param name
+     *         the name of the field or method parameter, not null
+     * @throws IllegalArgumentException
+     *         if the {@code value} parameter is not a positive integer
+     */
+    public static void throwIfArgIsNotPositiveOrZero(final byte value, final String name) {
+        if (value < 0) {
+            throw new IllegalArgumentException(constrainParameter(name, positiveOrZeroIntegerConstraint()));
+        }
+    }
+
+    /**
+     * Throws an {@link IllegalArgumentException} if the supplied value is not zero or a positive integer.
+     *
+     * @param value
+     *         the value to be tested for empty, may be null
+     * @param name
+     *         the name of the field or method parameter, not null
+     * @throws IllegalArgumentException
+     *         if the {@code value} parameter is not a positive integer
+     */
+    public static void throwIfArgIsNotPositiveOrZero(final short value, final String name) {
+        if (value < 0) {
+            throw new IllegalArgumentException(constrainParameter(name, positiveOrZeroIntegerConstraint()));
+        }
+    }
+
+    /**
+     * Throws an {@link IllegalArgumentException} if the supplied value is not zero or a positive integer.
+     *
+     * @param value
+     *         the value to be tested for empty, may be null
+     * @param name
+     *         the name of the field or method parameter, not null
+     * @throws IllegalArgumentException
+     *         if the {@code value} parameter is not a positive integer
+     */
+    public static void throwIfArgIsNotPositiveOrZero(final float value, final String name) {
+        if (value < 0) {
+            throw new IllegalArgumentException(constrainParameter(name, positiveOrZeroIntegerConstraint()));
+        }
+    }
+
+    /**
+     * Throws an {@link IllegalArgumentException} if the supplied value is not zero or a positive integer.
+     *
+     * @param value
+     *         the value to be tested for empty, may be null
+     * @param name
+     *         the name of the field or method parameter, not null
+     * @throws IllegalArgumentException
+     *         if the {@code value} parameter is not a positive integer
+     */
+    public static void throwIfArgIsNotPositiveOrZero(final double value, final String name) {
+        if (value < 0) {
+            throw new IllegalArgumentException(constrainParameter(name, positiveOrZeroIntegerConstraint()));
         }
     }
 
@@ -274,7 +392,7 @@ public final class Validators {
      * @throws IllegalArgumentException
      *         if the {@code value} parameter is {@code null}
      */
-    public static void throwIfArgumentIsNull(final Object value, final String name) {
+    public static void throwIfArgIsNull(final Object value, final String name) {
         if (value == null) {
             throw new IllegalArgumentException(constrainParameter(name, mustNotConstraint(null)));
         }
@@ -298,6 +416,10 @@ public final class Validators {
 
     private static String positiveIntegerConstraint() {
         return mustConstraint("a positive integer");
+    }
+
+    private static String positiveOrZeroIntegerConstraint() {
+        return mustConstraint("zero or a positive integer");
     }
 
 }

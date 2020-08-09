@@ -16,16 +16,16 @@
 
 package com.servercurio.fabric.lang;
 
-import com.servercurio.fabric.security.Hash;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
+import static com.servercurio.fabric.lang.Validators.throwIfArgIsNotPositiveOrZero;
 import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsEmpty;
-import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNotExactSize;
-import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNotPositive;
+import static com.servercurio.fabric.lang.Validators.throwIfArgIsNotExactLength;
+import static com.servercurio.fabric.lang.Validators.throwIfArgIsNotPositive;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -39,23 +39,23 @@ public class ValidatorTests {
     @Order(25)
     @DisplayName("Validators :: Positive Integer")
     public void testValidatorsPositiveInteger() {
-        assertThrows(IllegalArgumentException.class, () -> throwIfArgumentIsNotPositive(0, TEST_PARAM));
-        assertThrows(IllegalArgumentException.class, () -> throwIfArgumentIsNotPositive((short) 0, TEST_PARAM));
-        assertThrows(IllegalArgumentException.class, () -> throwIfArgumentIsNotPositive((byte) 0, TEST_PARAM));
-        assertThrows(IllegalArgumentException.class, () -> throwIfArgumentIsNotPositive(0L, TEST_PARAM));
-        assertThrows(IllegalArgumentException.class, () -> throwIfArgumentIsNotPositive(0.0F, TEST_PARAM));
-        assertThrows(IllegalArgumentException.class, () -> throwIfArgumentIsNotPositive(0.0, TEST_PARAM));
+        assertThrows(IllegalArgumentException.class, () -> throwIfArgIsNotPositive(0, TEST_PARAM));
+        assertThrows(IllegalArgumentException.class, () -> throwIfArgIsNotPositive((short) 0, TEST_PARAM));
+        assertThrows(IllegalArgumentException.class, () -> throwIfArgIsNotPositive((byte) 0, TEST_PARAM));
+        assertThrows(IllegalArgumentException.class, () -> throwIfArgIsNotPositive(0L, TEST_PARAM));
+        assertThrows(IllegalArgumentException.class, () -> throwIfArgIsNotPositive(0.0F, TEST_PARAM));
+        assertThrows(IllegalArgumentException.class, () -> throwIfArgIsNotPositive(0.0, TEST_PARAM));
 
-        assertDoesNotThrow(() -> throwIfArgumentIsNotPositive(1, TEST_PARAM));
-        assertDoesNotThrow(() -> throwIfArgumentIsNotPositive((short) 1, TEST_PARAM));
-        assertDoesNotThrow(() -> throwIfArgumentIsNotPositive((byte) 1, TEST_PARAM));
-        assertDoesNotThrow(() -> throwIfArgumentIsNotPositive(1L, TEST_PARAM));
-        assertDoesNotThrow(() -> throwIfArgumentIsNotPositive(1.0F, TEST_PARAM));
-        assertDoesNotThrow(() -> throwIfArgumentIsNotPositive(1.0, TEST_PARAM));
+        assertDoesNotThrow(() -> throwIfArgIsNotPositive(1, TEST_PARAM));
+        assertDoesNotThrow(() -> throwIfArgIsNotPositive((short) 1, TEST_PARAM));
+        assertDoesNotThrow(() -> throwIfArgIsNotPositive((byte) 1, TEST_PARAM));
+        assertDoesNotThrow(() -> throwIfArgIsNotPositive(1L, TEST_PARAM));
+        assertDoesNotThrow(() -> throwIfArgIsNotPositive(1.0F, TEST_PARAM));
+        assertDoesNotThrow(() -> throwIfArgIsNotPositive(1.0, TEST_PARAM));
     }
 
     @Test
-    @Order(50)
+    @Order(75)
     @DisplayName("Validators :: Empty")
     public void testValidatorsEmpty() {
        assertThrows(IllegalArgumentException.class, () -> throwIfArgumentIsEmpty(StringConstants.EMPTY, TEST_PARAM));
@@ -66,11 +66,32 @@ public class ValidatorTests {
     }
 
     @Test
-    @Order(75)
-    @DisplayName("Validators :: Not Exact Size")
-    public void testValidatorsNotExactSize() {
-        assertThrows(IllegalArgumentException.class, () -> throwIfArgumentIsNotExactSize(new Long[5], 6, TEST_PARAM));
+    @Order(100)
+    @DisplayName("Validators :: Not Exact Length")
+    public void testValidatorsNotExactLength() {
+        assertThrows(IllegalArgumentException.class, () -> throwIfArgIsNotExactLength(new Long[5], 6, TEST_PARAM));
+        assertThrows(IllegalArgumentException.class, () -> throwIfArgIsNotExactLength(TEST_PARAM, 6, TEST_PARAM));
 
-        assertDoesNotThrow(() -> throwIfArgumentIsNotExactSize(new Long[10], 10, TEST_PARAM));
+        assertDoesNotThrow(() -> throwIfArgIsNotExactLength(new Long[10], 10, TEST_PARAM));
+        assertDoesNotThrow(() -> throwIfArgIsNotExactLength(TEST_PARAM, 4, TEST_PARAM));
+    }
+
+    @Test
+    @Order(50)
+    @DisplayName("Validators :: Positive or Zero Integer")
+    public void testValidatorsPositiveOrZeroInteger() {
+        assertThrows(IllegalArgumentException.class, () -> throwIfArgIsNotPositiveOrZero(-1, TEST_PARAM));
+        assertThrows(IllegalArgumentException.class, () -> throwIfArgIsNotPositiveOrZero((short) -1, TEST_PARAM));
+        assertThrows(IllegalArgumentException.class, () -> throwIfArgIsNotPositiveOrZero((byte) -1, TEST_PARAM));
+        assertThrows(IllegalArgumentException.class, () -> throwIfArgIsNotPositiveOrZero(-1L, TEST_PARAM));
+        assertThrows(IllegalArgumentException.class, () -> throwIfArgIsNotPositiveOrZero(-0.03F, TEST_PARAM));
+        assertThrows(IllegalArgumentException.class, () -> throwIfArgIsNotPositiveOrZero(-0.0001, TEST_PARAM));
+
+        assertDoesNotThrow(() -> throwIfArgIsNotPositiveOrZero(0, TEST_PARAM));
+        assertDoesNotThrow(() -> throwIfArgIsNotPositiveOrZero((short) 0, TEST_PARAM));
+        assertDoesNotThrow(() -> throwIfArgIsNotPositiveOrZero((byte) 0, TEST_PARAM));
+        assertDoesNotThrow(() -> throwIfArgIsNotPositiveOrZero(0L, TEST_PARAM));
+        assertDoesNotThrow(() -> throwIfArgIsNotPositiveOrZero(0.0F, TEST_PARAM));
+        assertDoesNotThrow(() -> throwIfArgIsNotPositiveOrZero(0.0, TEST_PARAM));
     }
 }

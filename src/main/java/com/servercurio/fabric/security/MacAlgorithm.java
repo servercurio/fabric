@@ -26,7 +26,7 @@ import javax.crypto.Mac;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
-import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
+import static com.servercurio.fabric.lang.Validators.throwIfArgIsNull;
 
 /**
  * An enumeration of the standard cryptographic hash-based message authentication algorithms along with their
@@ -175,8 +175,8 @@ public enum MacAlgorithm implements CryptoPrimitiveSupplier<Mac> {
      *         the underlying hash algorithm used by this message authentication algorithm
      */
     MacAlgorithm(final int id, @NotNull final String algorithmName, @NotNull final HashAlgorithm hashAlgorithm) {
-        throwIfArgumentIsNull(algorithmName, ALGORITHM_NAME_FIELD);
-        throwIfArgumentIsNull(hashAlgorithm, HASH_ALGORITHM_FIELD);
+        throwIfArgIsNull(algorithmName, ALGORITHM_NAME_FIELD);
+        throwIfArgIsNull(hashAlgorithm, HASH_ALGORITHM_FIELD);
 
         this.id = id;
         this.algorithmName = algorithmName;
@@ -267,7 +267,7 @@ public enum MacAlgorithm implements CryptoPrimitiveSupplier<Mac> {
      */
     @Override
     public Mac instance(@NotNull final String provider) {
-        throwIfArgumentIsNull(provider, PROVIDER_PARAM);
+        throwIfArgIsNull(provider, PROVIDER_PARAM);
 
         try {
             return Mac.getInstance(algorithmName, provider);
@@ -281,7 +281,7 @@ public enum MacAlgorithm implements CryptoPrimitiveSupplier<Mac> {
      */
     @Override
     public Mac instance(@NotNull final Provider provider) {
-        throwIfArgumentIsNull(provider, PROVIDER_PARAM);
+        throwIfArgIsNull(provider, PROVIDER_PARAM);
 
         try {
             return Mac.getInstance(algorithmName, provider);

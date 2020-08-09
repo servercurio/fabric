@@ -27,7 +27,7 @@ import javax.crypto.Cipher;
 import javax.crypto.Mac;
 import javax.validation.constraints.NotNull;
 
-import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
+import static com.servercurio.fabric.lang.Validators.throwIfArgIsNull;
 
 
 /**
@@ -116,8 +116,8 @@ public interface PrimitiveProvider {
      *         if the {@code left} or {@code right} parameters are {@code null}
      */
     default boolean secureEquals(@NotNull final char[] left, @NotNull final char[] right) {
-        throwIfArgumentIsNull(left, "left");
-        throwIfArgumentIsNull(right, "right");
+        throwIfArgIsNull(left, "left");
+        throwIfArgIsNull(right, "right");
 
         int diff = left.length ^ right.length;
         for (int i = 0; i < left.length && i < right.length; i++) {
@@ -141,8 +141,8 @@ public interface PrimitiveProvider {
      *         if the {@code left} or {@code right} parameters are {@code null}
      */
     default boolean secureEquals(@NotNull final byte[] left, @NotNull final byte[] right) {
-        throwIfArgumentIsNull(left, "left");
-        throwIfArgumentIsNull(right, "right");
+        throwIfArgIsNull(left, "left");
+        throwIfArgIsNull(right, "right");
 
         int diff = left.length ^ right.length;
         for (int i = 0; i < left.length && i < right.length; i++) {
@@ -166,8 +166,8 @@ public interface PrimitiveProvider {
      *         if the {@code left} or {@code right} parameters are {@code null}
      */
     default boolean secureEquals(@NotNull final int[] left, @NotNull final int[] right) {
-        throwIfArgumentIsNull(left, "left");
-        throwIfArgumentIsNull(right, "right");
+        throwIfArgIsNull(left, "left");
+        throwIfArgIsNull(right, "right");
 
         int diff = left.length ^ right.length;
         for (int i = 0; i < left.length && i < right.length; i++) {
@@ -191,8 +191,8 @@ public interface PrimitiveProvider {
      *         if the {@code left} or {@code right} parameters are {@code null}
      */
     default boolean secureEquals(@NotNull final long[] left, @NotNull final long[] right) {
-        throwIfArgumentIsNull(left, "left");
-        throwIfArgumentIsNull(right, "right");
+        throwIfArgIsNull(left, "left");
+        throwIfArgIsNull(right, "right");
 
         int diff = left.length ^ right.length;
         for (int i = 0; i < left.length && i < right.length; i++) {

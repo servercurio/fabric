@@ -18,6 +18,9 @@ module com.servercurio.fabric {
     // General Purpose Exports
     exports com.servercurio.fabric.lang;
 
+    // Imaging Exports
+    exports com.servercurio.fabric.image.scalr;
+
     // Security Exports
     exports com.servercurio.fabric.security;
     exports com.servercurio.fabric.security.spi;
@@ -31,6 +34,9 @@ module com.servercurio.fabric {
 
     // JSR-380 Validation
     requires java.validation;
+
+    // Imaging Libraries
+    requires metadata.extractor;
 
     // JDK Components
     requires java.desktop;

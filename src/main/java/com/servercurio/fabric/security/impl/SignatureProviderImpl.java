@@ -36,7 +36,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsEmpty;
-import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
+import static com.servercurio.fabric.lang.Validators.throwIfArgIsNull;
 import static com.servercurio.fabric.security.impl.DefaultCryptographyImpl.applyToStream;
 
 /**
@@ -103,7 +103,7 @@ public class SignatureProviderImpl implements SignatureProvider {
      *         the {@link DefaultCryptographyImpl} to which this provider is bound, not null
      */
     public SignatureProviderImpl(@NotNull final DefaultCryptographyImpl crypto) {
-        throwIfArgumentIsNull(crypto, CRYPTO_FIELD);
+        throwIfArgIsNull(crypto, CRYPTO_FIELD);
 
         this.crypto = crypto;
     }
@@ -150,9 +150,9 @@ public class SignatureProviderImpl implements SignatureProvider {
     @Override
     public Seal signSync(@NotNull final SignatureAlgorithm algorithm, @NotNull final PrivateKey key,
                          @NotNull final InputStream stream) {
-        throwIfArgumentIsNull(algorithm, ALGORITHM_PARAM);
-        throwIfArgumentIsNull(key, KEY_PARAM);
-        throwIfArgumentIsNull(stream, STREAM_PARAM);
+        throwIfArgIsNull(algorithm, ALGORITHM_PARAM);
+        throwIfArgIsNull(key, KEY_PARAM);
+        throwIfArgIsNull(stream, STREAM_PARAM);
 
         final Signature signature = crypto.primitive(algorithm);
 
@@ -172,9 +172,9 @@ public class SignatureProviderImpl implements SignatureProvider {
     @Override
     public Seal signSync(@NotNull final SignatureAlgorithm algorithm, @NotNull final PrivateKey key,
                          @NotNull final byte[] data) {
-        throwIfArgumentIsNull(algorithm, ALGORITHM_PARAM);
-        throwIfArgumentIsNull(key, KEY_PARAM);
-        throwIfArgumentIsNull(data, DATA_PARAM);
+        throwIfArgIsNull(algorithm, ALGORITHM_PARAM);
+        throwIfArgIsNull(key, KEY_PARAM);
+        throwIfArgIsNull(data, DATA_PARAM);
 
         final Signature signature = crypto.primitive(algorithm);
 
@@ -193,8 +193,8 @@ public class SignatureProviderImpl implements SignatureProvider {
     @Override
     public Seal signSync(@NotNull final SignatureAlgorithm algorithm, @NotNull final PrivateKey key,
                          @NotEmpty final Hash... hashes) {
-        throwIfArgumentIsNull(algorithm, ALGORITHM_PARAM);
-        throwIfArgumentIsNull(key, KEY_PARAM);
+        throwIfArgIsNull(algorithm, ALGORITHM_PARAM);
+        throwIfArgIsNull(key, KEY_PARAM);
         throwIfArgumentIsEmpty(hashes, HASHES_PARAM);
 
         final Signature signature = crypto.primitive(algorithm);
@@ -222,9 +222,9 @@ public class SignatureProviderImpl implements SignatureProvider {
     @Override
     public Seal signSync(@NotNull final SignatureAlgorithm algorithm, @NotNull final PrivateKey key,
                          @NotNull final ByteBuffer buffer) {
-        throwIfArgumentIsNull(algorithm, ALGORITHM_PARAM);
-        throwIfArgumentIsNull(key, KEY_PARAM);
-        throwIfArgumentIsNull(buffer, BUFFER_PARAM);
+        throwIfArgIsNull(algorithm, ALGORITHM_PARAM);
+        throwIfArgIsNull(key, KEY_PARAM);
+        throwIfArgIsNull(buffer, BUFFER_PARAM);
 
         final Signature signature = crypto.primitive(algorithm);
 
@@ -279,9 +279,9 @@ public class SignatureProviderImpl implements SignatureProvider {
     @Override
     public boolean verifySync(@NotNull final Seal seal, @NotNull final PublicKey key,
                               @NotNull final InputStream stream) {
-        throwIfArgumentIsNull(seal, SEAL_PARAM);
-        throwIfArgumentIsNull(key, KEY_PARAM);
-        throwIfArgumentIsNull(stream, STREAM_PARAM);
+        throwIfArgIsNull(seal, SEAL_PARAM);
+        throwIfArgIsNull(key, KEY_PARAM);
+        throwIfArgIsNull(stream, STREAM_PARAM);
 
         final Signature signature = crypto.primitive(seal.getAlgorithm());
 
@@ -300,9 +300,9 @@ public class SignatureProviderImpl implements SignatureProvider {
      */
     @Override
     public boolean verifySync(@NotNull final Seal seal, @NotNull final PublicKey key, @NotNull final byte[] data) {
-        throwIfArgumentIsNull(seal, SEAL_PARAM);
-        throwIfArgumentIsNull(key, KEY_PARAM);
-        throwIfArgumentIsNull(data, DATA_PARAM);
+        throwIfArgIsNull(seal, SEAL_PARAM);
+        throwIfArgIsNull(key, KEY_PARAM);
+        throwIfArgIsNull(data, DATA_PARAM);
 
         final Signature signature = crypto.primitive(seal.getAlgorithm());
 
@@ -320,8 +320,8 @@ public class SignatureProviderImpl implements SignatureProvider {
      */
     @Override
     public boolean verifySync(@NotNull final Seal seal, @NotNull final PublicKey key, @NotEmpty final Hash... hashes) {
-        throwIfArgumentIsNull(seal, SEAL_PARAM);
-        throwIfArgumentIsNull(key, KEY_PARAM);
+        throwIfArgIsNull(seal, SEAL_PARAM);
+        throwIfArgIsNull(key, KEY_PARAM);
         throwIfArgumentIsEmpty(hashes, HASHES_PARAM);
 
         final Signature signature = crypto.primitive(seal.getAlgorithm());
@@ -349,9 +349,9 @@ public class SignatureProviderImpl implements SignatureProvider {
     @Override
     public boolean verifySync(@NotNull final Seal seal, @NotNull final PublicKey key,
                               @NotNull final ByteBuffer buffer) {
-        throwIfArgumentIsNull(seal, SEAL_PARAM);
-        throwIfArgumentIsNull(key, KEY_PARAM);
-        throwIfArgumentIsNull(buffer, BUFFER_PARAM);
+        throwIfArgIsNull(seal, SEAL_PARAM);
+        throwIfArgIsNull(key, KEY_PARAM);
+        throwIfArgIsNull(buffer, BUFFER_PARAM);
 
         final Signature signature = crypto.primitive(seal.getAlgorithm());
 

@@ -96,7 +96,7 @@
         <bouncycastle.version>1.64</bouncycastle.version>
 
         <!-- Image Libraries -->
-        <imgscalr.version>4.2</imgscalr.version>
+        <metadata.extractor.version>2.14.0</metadata.extractor.version>
 
         <!-- JSR-380 Bean Validation -->
         <javax.validation.version>2.0.1.Final</javax.validation.version>
@@ -303,6 +303,13 @@
                 <version>${javax.validation.version}</version>
             </dependency>
 
+            <!-- Imaging Libraries -->
+            <dependency>
+                <groupId>com.drewnoakes</groupId>
+                <artifactId>metadata-extractor</artifactId>
+                <version>${metadata.extractor.version}</version>
+            </dependency>
+
             <!-- JUnit 5 -->
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
@@ -361,6 +368,11 @@
             <artifactId>validation-api</artifactId>
         </dependency>
 
+        <!-- Imaging Libraries -->
+        <dependency>
+            <groupId>com.drewnoakes</groupId>
+            <artifactId>metadata-extractor</artifactId>
+        </dependency>
 
         <!-- JUnit 5 -->
         <dependency>

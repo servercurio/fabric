@@ -33,7 +33,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsEmpty;
-import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
+import static com.servercurio.fabric.lang.Validators.throwIfArgIsNull;
 import static com.servercurio.fabric.security.impl.DefaultCryptographyImpl.applyToStream;
 
 /**
@@ -95,7 +95,7 @@ public class MacProviderImpl implements MacProvider {
      *         the {@link DefaultCryptographyImpl} to which this provider is bound, not null
      */
     public MacProviderImpl(@NotNull final DefaultCryptographyImpl crypto) {
-        throwIfArgumentIsNull(crypto, CRYPTO_FIELD);
+        throwIfArgIsNull(crypto, CRYPTO_FIELD);
 
         this.crypto = crypto;
     }
@@ -142,9 +142,9 @@ public class MacProviderImpl implements MacProvider {
     @Override
     public Hash authenticateSync(@NotNull final MacAlgorithm algorithm, @NotNull final Key key,
                                  @NotNull final InputStream stream) {
-        throwIfArgumentIsNull(algorithm, ALGORITHM_PARAM);
-        throwIfArgumentIsNull(key, KEY_PARAM);
-        throwIfArgumentIsNull(stream, STREAM_PARAM);
+        throwIfArgIsNull(algorithm, ALGORITHM_PARAM);
+        throwIfArgIsNull(key, KEY_PARAM);
+        throwIfArgIsNull(stream, STREAM_PARAM);
 
         final Mac mac = crypto.primitive(algorithm);
 
@@ -164,9 +164,9 @@ public class MacProviderImpl implements MacProvider {
     @Override
     public Hash authenticateSync(@NotNull final MacAlgorithm algorithm, @NotNull final Key key,
                                  @NotNull final byte[] data) {
-        throwIfArgumentIsNull(algorithm, ALGORITHM_PARAM);
-        throwIfArgumentIsNull(key, KEY_PARAM);
-        throwIfArgumentIsNull(data, DATA_PARAM);
+        throwIfArgIsNull(algorithm, ALGORITHM_PARAM);
+        throwIfArgIsNull(key, KEY_PARAM);
+        throwIfArgIsNull(data, DATA_PARAM);
 
         final Mac mac = crypto.primitive(algorithm);
 
@@ -185,8 +185,8 @@ public class MacProviderImpl implements MacProvider {
     @Override
     public Hash authenticateSync(@NotNull final MacAlgorithm algorithm, @NotNull final Key key,
                                  @NotEmpty final Hash... hashes) {
-        throwIfArgumentIsNull(algorithm, ALGORITHM_PARAM);
-        throwIfArgumentIsNull(key, KEY_PARAM);
+        throwIfArgIsNull(algorithm, ALGORITHM_PARAM);
+        throwIfArgIsNull(key, KEY_PARAM);
         throwIfArgumentIsEmpty(hashes, HASHES_PARAM);
 
         final Mac mac = crypto.primitive(algorithm);
@@ -214,9 +214,9 @@ public class MacProviderImpl implements MacProvider {
     @Override
     public Hash authenticateSync(@NotNull final MacAlgorithm algorithm, @NotNull final Key key,
                                  @NotNull final ByteBuffer buffer) {
-        throwIfArgumentIsNull(algorithm, ALGORITHM_PARAM);
-        throwIfArgumentIsNull(key, KEY_PARAM);
-        throwIfArgumentIsNull(buffer, BUFFER_PARAM);
+        throwIfArgIsNull(algorithm, ALGORITHM_PARAM);
+        throwIfArgIsNull(key, KEY_PARAM);
+        throwIfArgIsNull(buffer, BUFFER_PARAM);
 
         final Mac mac = crypto.primitive(algorithm);
 

@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
 
-import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
+import static com.servercurio.fabric.lang.Validators.throwIfArgIsNull;
 
 /**
  * An enumeration of the standard cryptographic encryption algorithms along with their initialization parameters.
@@ -177,8 +177,8 @@ public enum CipherAlgorithm {
      */
     CipherAlgorithm(final int id, @NotNull final String algorithmName, @NotNull final String keyAlgorithmName,
                     final String providerName) {
-        throwIfArgumentIsNull(algorithmName, ALGORITHM_NAME_FIELD);
-        throwIfArgumentIsNull(keyAlgorithmName, KEY_ALGORITHM_NAME_FIELD);
+        throwIfArgIsNull(algorithmName, ALGORITHM_NAME_FIELD);
+        throwIfArgIsNull(keyAlgorithmName, KEY_ALGORITHM_NAME_FIELD);
 
         this.id = id;
         this.algorithmName = algorithmName;

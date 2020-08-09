@@ -31,7 +31,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import static com.servercurio.fabric.lang.ComparableConstants.EQUAL;
 import static com.servercurio.fabric.lang.ComparableConstants.GREATER_THAN;
-import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
+import static com.servercurio.fabric.lang.Validators.throwIfArgIsNull;
 
 /**
  * Represents a complete cryptographic encryption transformation that includes the encryption algorithm, operational
@@ -134,7 +134,7 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
      */
     public CipherTransformation(@NotNull final CipherAlgorithm algorithm, final CipherMode mode,
                                 final CipherPadding padding) {
-        throwIfArgumentIsNull(algorithm, ALGORITHM_FIELD);
+        throwIfArgIsNull(algorithm, ALGORITHM_FIELD);
 
         this.algorithm = algorithm;
         this.mode = mode;
@@ -159,7 +159,7 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
      * @see CipherAlgorithm
      */
     public void setAlgorithm(@NotNull final CipherAlgorithm algorithm) {
-        throwIfArgumentIsNull(algorithm, ALGORITHM_FIELD);
+        throwIfArgIsNull(algorithm, ALGORITHM_FIELD);
 
         this.algorithm = algorithm;
     }
@@ -313,7 +313,7 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
      */
     @Override
     public Cipher instance(@NotNull final String provider) {
-        throwIfArgumentIsNull(provider, PROVIDER_PARAM);
+        throwIfArgIsNull(provider, PROVIDER_PARAM);
 
         try {
             return Cipher.getInstance(toCipherTransform(), provider);
@@ -328,7 +328,7 @@ public class CipherTransformation implements Comparable<CipherTransformation>, C
      */
     @Override
     public Cipher instance(@NotNull final Provider provider) {
-        throwIfArgumentIsNull(provider, PROVIDER_PARAM);
+        throwIfArgIsNull(provider, PROVIDER_PARAM);
 
         try {
             return Cipher.getInstance(toCipherTransform(), provider);

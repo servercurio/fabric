@@ -31,7 +31,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsEmpty;
-import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
+import static com.servercurio.fabric.lang.Validators.throwIfArgIsNull;
 import static com.servercurio.fabric.security.impl.DefaultCryptographyImpl.applyToStream;
 
 /**
@@ -88,7 +88,7 @@ public class DigestProviderImpl implements DigestProvider {
      *         the {@link DefaultCryptographyImpl} to which this provider is bound, not null
      */
     public DigestProviderImpl(@NotNull final DefaultCryptographyImpl crypto) {
-        throwIfArgumentIsNull(crypto, CRYPTO_FIELD);
+        throwIfArgIsNull(crypto, CRYPTO_FIELD);
 
         this.crypto = crypto;
     }
@@ -130,8 +130,8 @@ public class DigestProviderImpl implements DigestProvider {
      */
     @Override
     public Hash digestSync(@NotNull final HashAlgorithm algorithm, @NotNull final InputStream stream) {
-        throwIfArgumentIsNull(algorithm, ALGORITHM_PARAM);
-        throwIfArgumentIsNull(stream, STREAM_PARAM);
+        throwIfArgIsNull(algorithm, ALGORITHM_PARAM);
+        throwIfArgIsNull(stream, STREAM_PARAM);
 
         final MessageDigest digest = crypto.primitive(algorithm);
 
@@ -149,8 +149,8 @@ public class DigestProviderImpl implements DigestProvider {
      */
     @Override
     public Hash digestSync(@NotNull final HashAlgorithm algorithm, @NotNull final byte[] data) {
-        throwIfArgumentIsNull(algorithm, ALGORITHM_PARAM);
-        throwIfArgumentIsNull(data, DATA_PARAM);
+        throwIfArgIsNull(algorithm, ALGORITHM_PARAM);
+        throwIfArgIsNull(data, DATA_PARAM);
 
         final MessageDigest digest = crypto.primitive(algorithm);
 
@@ -163,7 +163,7 @@ public class DigestProviderImpl implements DigestProvider {
      */
     @Override
     public Hash digestSync(@NotNull final HashAlgorithm algorithm, @NotEmpty final Hash... hashes) {
-        throwIfArgumentIsNull(algorithm, ALGORITHM_PARAM);
+        throwIfArgIsNull(algorithm, ALGORITHM_PARAM);
         throwIfArgumentIsEmpty(hashes, HASHES_PARAM);
 
         final MessageDigest digest = crypto.primitive(algorithm);
@@ -184,8 +184,8 @@ public class DigestProviderImpl implements DigestProvider {
      */
     @Override
     public Hash digestSync(@NotNull final HashAlgorithm algorithm, @NotNull final ByteBuffer buffer) {
-        throwIfArgumentIsNull(algorithm, ALGORITHM_PARAM);
-        throwIfArgumentIsNull(buffer, BUFFER_PARAM);
+        throwIfArgIsNull(algorithm, ALGORITHM_PARAM);
+        throwIfArgIsNull(buffer, BUFFER_PARAM);
 
         final MessageDigest digest = crypto.primitive(algorithm);
 

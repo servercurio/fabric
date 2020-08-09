@@ -16,6 +16,7 @@
 
 package com.servercurio.fabric.security;
 
+import com.servercurio.fabric.lang.Validators;
 import com.servercurio.fabric.security.spi.CryptoPrimitiveSupplier;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -26,8 +27,8 @@ import java.util.Map;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
-import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNotPositive;
-import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsNull;
+import static com.servercurio.fabric.lang.Validators.throwIfArgIsNotPositive;
+import static com.servercurio.fabric.lang.Validators.throwIfArgIsNull;
 
 /**
  * An enumeration of the standard cryptographic hash algorithms along with their initialization parameters.
@@ -185,10 +186,10 @@ public enum HashAlgorithm implements CryptoPrimitiveSupplier<MessageDigest> {
      *         the number of bits in the hash value produced by this algorithm, positive and greater than zero
      */
     HashAlgorithm(final int id, @NotNull final String algorithmName, @Positive final int bits) {
-        throwIfArgumentIsNull(algorithmName, ALGORITHM_NAME_FIELD);
+        throwIfArgIsNull(algorithmName, ALGORITHM_NAME_FIELD);
 
         if (!NONE_ALGORITHM_NAME.equals(algorithmName)) {
-            throwIfArgumentIsNotPositive(bits, BITS_FIELD);
+            Validators.throwIfArgIsNotPositive(bits, BITS_FIELD);
         }
 
         this.id = id;
@@ -270,7 +271,7 @@ public enum HashAlgorithm implements CryptoPrimitiveSupplier<MessageDigest> {
      */
     @Override
     public MessageDigest instance(@NotNull final String provider) {
-        throwIfArgumentIsNull(provider, PROVIDER_PARAM);
+        throwIfArgIsNull(provider, PROVIDER_PARAM);
 
         try {
             return MessageDigest.getInstance(algorithmName, provider);
@@ -284,7 +285,7 @@ public enum HashAlgorithm implements CryptoPrimitiveSupplier<MessageDigest> {
      */
     @Override
     public MessageDigest instance(@NotNull final Provider provider) {
-        throwIfArgumentIsNull(provider, PROVIDER_PARAM);
+        throwIfArgIsNull(provider, PROVIDER_PARAM);
 
         try {
             return MessageDigest.getInstance(algorithmName, provider);
