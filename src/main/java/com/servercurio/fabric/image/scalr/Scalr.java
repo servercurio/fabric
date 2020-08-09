@@ -1232,7 +1232,7 @@ public class Scalr {
                 return src;
             }
         } else {
-            if (ratio <= 1 && resizeMode == Mode.AUTOMATIC || resizeMode == Mode.FIT_TO_WIDTH) {
+            if ((ratio <= 1 && resizeMode == Mode.AUTOMATIC) || resizeMode == Mode.FIT_TO_WIDTH) {
                 // First make sure we need to do any work in the first place
                 if (targetWidth == src.getWidth()) {
                     return src;
@@ -1493,8 +1493,8 @@ public class Scalr {
         }
 
         // Calculate the type depending on the presence of alpha.
-        int type = (src.getTransparency() == Transparency.OPAQUE ? BufferedImage.TYPE_INT_RGB
-                                                                 : BufferedImage.TYPE_INT_ARGB);
+        int type =
+                src.getTransparency() == Transparency.OPAQUE ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
         BufferedImage result = new BufferedImage(src.getWidth(),
                                                  src.getHeight(), type);
 
@@ -1604,7 +1604,7 @@ public class Scalr {
     protected static Method determineScalingMethod(int targetWidth,
                                                    int targetHeight, float ratio) {
         // Get the primary dimension based on the orientation of the image
-        int length = (ratio <= 1 ? targetWidth : targetHeight);
+        int length = ratio <= 1 ? targetWidth : targetHeight;
 
         // Default to speed
         Method result = Method.SPEED;
@@ -1659,7 +1659,8 @@ public class Scalr {
     }
 
     /**
-     * Used to implement Chris Campbell's incremental-scaling algorithm: <a href="http://today.java.net/pub/a/today/2007/04/03/perils
+     * Used to implement Chris Campbell's incremental-scaling algorithm:
+     * <a href="http://today.java.net/pub/a/today/2007/04/03/perils
      * -of-image-getscaledinstance .html">http://today.java.net/pub/a/today/2007/04/03/perils
      * -of-image-getscaledinstance.html</a>.
      *
