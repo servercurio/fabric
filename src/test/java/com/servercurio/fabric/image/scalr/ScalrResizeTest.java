@@ -142,7 +142,6 @@ public class ScalrResizeTest extends AbstractScalrTest {
     @Test
     @DisplayName("Resize :: Fit Exact Square")
     public void testResizeSizeExact() {
-        System.setProperty(Scalr.DEBUG_PROPERTY_NAME, "true");
         assertEquals(load("time-square-resize-320-fit-exact.png"),
                      Scalr.resize(src, Scalr.Mode.FIT_EXACT, 320));
     }
@@ -164,7 +163,6 @@ public class ScalrResizeTest extends AbstractScalrTest {
     @Test
     @DisplayName("Resize :: Ultra Square")
     public void testResizeUltraQuality() {
-        System.setProperty(Scalr.DEBUG_PROPERTY_NAME, "true");
         BufferedImage i = new BufferedImage(32, 32, BufferedImage.TYPE_INT_RGB);
         Scalr.resize(i, Scalr.Method.ULTRA_QUALITY, 1);
 
