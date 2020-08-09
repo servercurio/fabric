@@ -31,73 +31,6 @@ public final class Validators {
     }
 
     /**
-     * Throws an {@link IllegalArgumentException} if the supplied value is {@code null}, an empty {@link String}, or a
-     * zero-length array.
-     *
-     * @param value
-     *         the value to be tested for empty, may be null
-     * @param name
-     *         the name of the field or method parameter, not null
-     * @throws IllegalArgumentException
-     *         if the {@code value} parameter is {@code null}, an empty String, or a zero-length array
-     */
-    public static void throwIfArgumentIsEmpty(final Object value, final String name) {
-        throwIfArgIsNull(value, name);
-
-        if (value instanceof String) {
-            if (((String) value).isEmpty()) {
-                throw new IllegalArgumentException(constrainParameter(name, mustNotConstraint("an empty string")));
-            }
-        } else if (value instanceof Object[]) {
-            final Object[] arrayValue = (Object[]) value;
-
-            if (arrayValue.length == 0) {
-                throw new IllegalArgumentException(constrainParameter(name, mustNotConstraint("a zero-length array")));
-            }
-        }
-    }
-
-    /**
-     * Throws an {@link IllegalArgumentException} if the supplied value is {@code null}, an empty {@link String}, or a
-     * zero-length array.
-     *
-     * @param value
-     *         the value to be tested for empty, may be null
-     * @param name
-     *         the name of the field or method parameter, not null
-     * @throws IllegalArgumentException
-     *         if the {@code value} parameter is {@code null}, an empty String, or a zero-length array
-     */
-    public static void throwIfArgumentIsEmpty(final byte[] value, final String name) {
-        throwIfArgIsNull(value, name);
-
-        if (value.length == 0) {
-            throw new IllegalArgumentException(constrainParameter(name, mustNotConstraint("a zero-length array")));
-        }
-    }
-
-    /**
-     * Throws an {@link IllegalArgumentException} if the supplied value is {@code null}, an empty {@link String}, or a
-     * zero-length array.
-     *
-     * @param value
-     *         the value to be tested for empty, may be null
-     * @param name
-     *         the name of the field or method parameter, not null
-     * @param predicate
-     *         the conditional test that must pass before the emptiness will be validated, not null
-     * @throws IllegalArgumentException
-     *         if the {@code value} parameter is {@code null}, an empty String, or a zero-length array
-     */
-    public static void throwIfArgumentIsEmpty(final byte[] value, final String name, final BooleanSupplier predicate) {
-        throwIfArgIsNull(value, name);
-
-        if (predicate.getAsBoolean()) {
-            throwIfArgumentIsEmpty(value, name);
-        }
-    }
-
-    /**
      * Throws an {@link IllegalArgumentException} if the supplied value is {@code null} or does not have a String length
      * that matches the specified {@code length} parameter.
      *
@@ -395,6 +328,73 @@ public final class Validators {
     public static void throwIfArgIsNull(final Object value, final String name) {
         if (value == null) {
             throw new IllegalArgumentException(constrainParameter(name, mustNotConstraint(null)));
+        }
+    }
+
+    /**
+     * Throws an {@link IllegalArgumentException} if the supplied value is {@code null}, an empty {@link String}, or a
+     * zero-length array.
+     *
+     * @param value
+     *         the value to be tested for empty, may be null
+     * @param name
+     *         the name of the field or method parameter, not null
+     * @throws IllegalArgumentException
+     *         if the {@code value} parameter is {@code null}, an empty String, or a zero-length array
+     */
+    public static void throwIfArgumentIsEmpty(final Object value, final String name) {
+        throwIfArgIsNull(value, name);
+
+        if (value instanceof String) {
+            if (((String) value).isEmpty()) {
+                throw new IllegalArgumentException(constrainParameter(name, mustNotConstraint("an empty string")));
+            }
+        } else if (value instanceof Object[]) {
+            final Object[] arrayValue = (Object[]) value;
+
+            if (arrayValue.length == 0) {
+                throw new IllegalArgumentException(constrainParameter(name, mustNotConstraint("a zero-length array")));
+            }
+        }
+    }
+
+    /**
+     * Throws an {@link IllegalArgumentException} if the supplied value is {@code null}, an empty {@link String}, or a
+     * zero-length array.
+     *
+     * @param value
+     *         the value to be tested for empty, may be null
+     * @param name
+     *         the name of the field or method parameter, not null
+     * @throws IllegalArgumentException
+     *         if the {@code value} parameter is {@code null}, an empty String, or a zero-length array
+     */
+    public static void throwIfArgumentIsEmpty(final byte[] value, final String name) {
+        throwIfArgIsNull(value, name);
+
+        if (value.length == 0) {
+            throw new IllegalArgumentException(constrainParameter(name, mustNotConstraint("a zero-length array")));
+        }
+    }
+
+    /**
+     * Throws an {@link IllegalArgumentException} if the supplied value is {@code null}, an empty {@link String}, or a
+     * zero-length array.
+     *
+     * @param value
+     *         the value to be tested for empty, may be null
+     * @param name
+     *         the name of the field or method parameter, not null
+     * @param predicate
+     *         the conditional test that must pass before the emptiness will be validated, not null
+     * @throws IllegalArgumentException
+     *         if the {@code value} parameter is {@code null}, an empty String, or a zero-length array
+     */
+    public static void throwIfArgumentIsEmpty(final byte[] value, final String name, final BooleanSupplier predicate) {
+        throwIfArgIsNull(value, name);
+
+        if (predicate.getAsBoolean()) {
+            throwIfArgumentIsEmpty(value, name);
         }
     }
 

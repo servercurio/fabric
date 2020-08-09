@@ -16,7 +16,6 @@
 
 package com.servercurio.fabric.security;
 
-import com.servercurio.fabric.lang.Validators;
 import com.servercurio.fabric.security.spi.CryptoPrimitiveSupplier;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -189,7 +188,7 @@ public enum HashAlgorithm implements CryptoPrimitiveSupplier<MessageDigest> {
         throwIfArgIsNull(algorithmName, ALGORITHM_NAME_FIELD);
 
         if (!NONE_ALGORITHM_NAME.equals(algorithmName)) {
-            Validators.throwIfArgIsNotPositive(bits, BITS_FIELD);
+            throwIfArgIsNotPositive(bits, BITS_FIELD);
         }
 
         this.id = id;

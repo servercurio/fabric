@@ -17,7 +17,6 @@
 package com.servercurio.fabric.security;
 
 import com.servercurio.fabric.lang.ComparableConstants;
-import com.servercurio.fabric.lang.Validators;
 import java.util.Arrays;
 import java.util.Base64;
 import javax.validation.constraints.NotNull;
@@ -139,7 +138,8 @@ public class Hash implements Comparable<Hash> {
      */
     public Hash(@NotNull final HashAlgorithm algorithm, @NotNull final byte[] value, final boolean copyValue) {
         throwIfArgIsNull(algorithm, ALGORITHM_FIELD);
-        Validators.throwIfArgIsNotExactLength(value, algorithm.bytes(), VALUE_FIELD, () -> algorithm != HashAlgorithm.NONE);
+        throwIfArgIsNotExactLength(value, algorithm.bytes(), VALUE_FIELD,
+                                   () -> algorithm != HashAlgorithm.NONE);
 
         this.algorithm = algorithm;
         this.value = copyValue ? Arrays.copyOf(value, value.length) : value;
@@ -219,7 +219,7 @@ public class Hash implements Comparable<Hash> {
      * @see #getValue()
      */
     public void setValue(@NotNull final byte[] value) {
-        Validators.throwIfArgIsNotExactLength(value, getAlgorithm().bytes(), VALUE_FIELD);
+        throwIfArgIsNotExactLength(value, getAlgorithm().bytes(), VALUE_FIELD);
 
         this.value = value;
     }

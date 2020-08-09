@@ -26,8 +26,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsEmpty;
 import static com.servercurio.fabric.lang.Validators.throwIfArgIsNull;
+import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsEmpty;
 
 /**
  * Represents a immutable cryptographic signature that includes the algorithm used to perform the original computation.

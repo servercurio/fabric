@@ -16,7 +16,6 @@
 
 package com.servercurio.fabric.security.impl;
 
-import com.servercurio.fabric.lang.Validators;
 import com.servercurio.fabric.security.CipherAlgorithm;
 import com.servercurio.fabric.security.CipherMode;
 import com.servercurio.fabric.security.CipherPadding;
@@ -43,9 +42,9 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
-import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsEmpty;
 import static com.servercurio.fabric.lang.Validators.throwIfArgIsNotPositive;
 import static com.servercurio.fabric.lang.Validators.throwIfArgIsNull;
+import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsEmpty;
 
 /**
  * Default {@code Fabric Unified Cryptography API} provider implementation that encapsulates all of the available
@@ -163,8 +162,8 @@ public class EncryptionProviderImpl implements EncryptionProvider {
      */
     private static byte[] deriveCounterIv(@Positive final int blockSize, @Positive final int counterLength,
                                           @NotEmpty final byte[] iv) {
-        Validators.throwIfArgIsNotPositive(blockSize, BLOCK_SIZE_PARAM);
-        Validators.throwIfArgIsNotPositive(counterLength, COUNTER_LENGTH_PARAM);
+        throwIfArgIsNotPositive(blockSize, BLOCK_SIZE_PARAM);
+        throwIfArgIsNotPositive(counterLength, COUNTER_LENGTH_PARAM);
         throwIfArgumentIsEmpty(iv, IV_PARAM);
 
         final int supportedIvLength = blockSize - counterLength;

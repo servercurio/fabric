@@ -16,7 +16,6 @@
 
 package com.servercurio.fabric.security.impl;
 
-import com.servercurio.fabric.lang.Validators;
 import com.servercurio.fabric.security.CipherTransformation;
 import com.servercurio.fabric.security.Cryptography;
 import com.servercurio.fabric.security.CryptographyException;
@@ -197,7 +196,7 @@ public class DefaultCryptographyImpl implements Cryptography {
                                                                                               IOException,
                                                                                               GeneralSecurityException {
         throwIfArgIsNull(stream, STREAM_PARAM);
-        Validators.throwIfArgIsNotPositive(blockSize, BLOCK_SIZE_PARAM);
+        throwIfArgIsNotPositive(blockSize, BLOCK_SIZE_PARAM);
         throwIfArgIsNull(fn, FN_PARAM);
 
         final byte[] buffer = new byte[blockSize];
