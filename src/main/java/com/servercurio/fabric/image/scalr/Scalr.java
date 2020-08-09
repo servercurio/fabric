@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.servercurio.fabric.image.scalr;
 
 import java.awt.Color;
@@ -445,8 +446,7 @@ public class Scalr {
      *         imgscalr takes detailed steps to avoid the most common pitfalls that will cause {@link BufferedImageOp}s
      *         to fail, even when using straight forward JDK-image operations.
      */
-    public static BufferedImage apply(BufferedImage src, BufferedImageOp... ops)
-            throws IllegalArgumentException, ImagingOpException {
+    public static BufferedImage apply(BufferedImage src, BufferedImageOp... ops) {
         long t = -1;
         if (DEBUG) {
             t = System.currentTimeMillis();
@@ -619,9 +619,7 @@ public class Scalr {
      *         imgscalr takes detailed steps to avoid the most common pitfalls that will cause {@link BufferedImageOp}s
      *         to fail, even when using straight forward JDK-image operations.
      */
-    public static BufferedImage crop(BufferedImage src, int width, int height,
-                                     BufferedImageOp... ops) throws IllegalArgumentException,
-                                                                    ImagingOpException {
+    public static BufferedImage crop(BufferedImage src, int width, int height, BufferedImageOp... ops) {
         return crop(src, 0, 0, width, height, ops);
     }
 
@@ -663,9 +661,7 @@ public class Scalr {
      *         imgscalr takes detailed steps to avoid the most common pitfalls that will cause {@link BufferedImageOp}s
      *         to fail, even when using straight forward JDK-image operations.
      */
-    public static BufferedImage crop(BufferedImage src, int x, int y,
-                                     int width, int height, BufferedImageOp... ops)
-            throws IllegalArgumentException, ImagingOpException {
+    public static BufferedImage crop(BufferedImage src, int x, int y, int width, int height, BufferedImageOp... ops) {
         long t = -1;
         if (DEBUG) {
             t = System.currentTimeMillis();
@@ -748,10 +744,6 @@ public class Scalr {
      *         The number of pixels of padding to add to each side in the resulting image. If this value is
      *         <code>0</code> then
      *         <code>src</code> is returned unmodified.
-     * @param ops
-     *         <code>0</code> or more ops to apply to the image. If
-     *         <code>null</code> or empty then <code>src</code> is return
-     *         unmodified.
      * @return a new {@link BufferedImage} representing <code>src</code> with the given padding applied to it.
      * @throws IllegalArgumentException
      *         if <code>src</code> is <code>null</code>.
@@ -764,9 +756,7 @@ public class Scalr {
      *         imgscalr takes detailed steps to avoid the most common pitfalls that will cause {@link BufferedImageOp}s
      *         to fail, even when using straight forward JDK-image operations.
      */
-    public static BufferedImage pad(BufferedImage src, int padding,
-                                    BufferedImageOp... ops) throws IllegalArgumentException,
-                                                                   ImagingOpException {
+    public static BufferedImage pad(BufferedImage src, int padding) {
         return pad(src, padding, Color.BLACK);
     }
 
@@ -813,9 +803,7 @@ public class Scalr {
      *         imgscalr takes detailed steps to avoid the most common pitfalls that will cause {@link BufferedImageOp}s
      *         to fail, even when using straight forward JDK-image operations.
      */
-    public static BufferedImage pad(BufferedImage src, int padding,
-                                    Color color, BufferedImageOp... ops)
-            throws IllegalArgumentException, ImagingOpException {
+    public static BufferedImage pad(BufferedImage src, int padding, Color color, BufferedImageOp... ops) {
         long t = -1;
         if (DEBUG) {
             t = System.currentTimeMillis();
@@ -937,11 +925,8 @@ public class Scalr {
      *         imgscalr takes detailed steps to avoid the most common pitfalls that will cause {@link BufferedImageOp}s
      *         to fail, even when using straight forward JDK-image operations.
      */
-    public static BufferedImage resize(BufferedImage src, int targetSize,
-                                       BufferedImageOp... ops) throws IllegalArgumentException,
-                                                                      ImagingOpException {
-        return resize(src, Method.AUTOMATIC, Mode.AUTOMATIC, targetSize,
-                      targetSize, ops);
+    public static BufferedImage resize(BufferedImage src, int targetSize, BufferedImageOp... ops) {
+        return resize(src, Method.AUTOMATIC, Mode.AUTOMATIC, targetSize, targetSize, ops);
     }
 
     /**
@@ -983,11 +968,9 @@ public class Scalr {
      *         to fail, even when using straight forward JDK-image operations.
      * @see Method
      */
-    public static BufferedImage resize(BufferedImage src, Method scalingMethod,
-                                       int targetSize, BufferedImageOp... ops)
-            throws IllegalArgumentException, ImagingOpException {
-        return resize(src, scalingMethod, Mode.AUTOMATIC, targetSize,
-                      targetSize, ops);
+    public static BufferedImage resize(BufferedImage src, Method scalingMethod, int targetSize,
+                                       BufferedImageOp... ops) {
+        return resize(src, scalingMethod, Mode.AUTOMATIC, targetSize, targetSize, ops);
     }
 
     /**
@@ -1034,11 +1017,8 @@ public class Scalr {
      *         to fail, even when using straight forward JDK-image operations.
      * @see Mode
      */
-    public static BufferedImage resize(BufferedImage src, Mode resizeMode,
-                                       int targetSize, BufferedImageOp... ops)
-            throws IllegalArgumentException, ImagingOpException {
-        return resize(src, Method.AUTOMATIC, resizeMode, targetSize,
-                      targetSize, ops);
+    public static BufferedImage resize(BufferedImage src, Mode resizeMode, int targetSize, BufferedImageOp... ops) {
+        return resize(src, Method.AUTOMATIC, resizeMode, targetSize, targetSize, ops);
     }
 
     /**
@@ -1088,11 +1068,9 @@ public class Scalr {
      * @see Method
      * @see Mode
      */
-    public static BufferedImage resize(BufferedImage src, Method scalingMethod,
-                                       Mode resizeMode, int targetSize, BufferedImageOp... ops)
-            throws IllegalArgumentException, ImagingOpException {
-        return resize(src, scalingMethod, resizeMode, targetSize, targetSize,
-                      ops);
+    public static BufferedImage resize(BufferedImage src, Method scalingMethod, Mode resizeMode, int targetSize,
+                                       BufferedImageOp... ops) {
+        return resize(src, scalingMethod, resizeMode, targetSize, targetSize, ops);
     }
 
     /**
@@ -1137,11 +1115,8 @@ public class Scalr {
      *         imgscalr takes detailed steps to avoid the most common pitfalls that will cause {@link BufferedImageOp}s
      *         to fail, even when using straight forward JDK-image operations.
      */
-    public static BufferedImage resize(BufferedImage src, int targetWidth,
-                                       int targetHeight, BufferedImageOp... ops)
-            throws IllegalArgumentException, ImagingOpException {
-        return resize(src, Method.AUTOMATIC, Mode.AUTOMATIC, targetWidth,
-                      targetHeight, ops);
+    public static BufferedImage resize(BufferedImage src, int targetWidth, int targetHeight, BufferedImageOp... ops) {
+        return resize(src, Method.AUTOMATIC, Mode.AUTOMATIC, targetWidth, targetHeight, ops);
     }
 
     /**
@@ -1191,10 +1166,9 @@ public class Scalr {
      *         to fail, even when using straight forward JDK-image operations.
      * @see Method
      */
-    public static BufferedImage resize(BufferedImage src, Method scalingMethod,
-                                       int targetWidth, int targetHeight, BufferedImageOp... ops) {
-        return resize(src, scalingMethod, Mode.AUTOMATIC, targetWidth,
-                      targetHeight, ops);
+    public static BufferedImage resize(BufferedImage src, Method scalingMethod, int targetWidth, int targetHeight,
+                                       BufferedImageOp... ops) {
+        return resize(src, scalingMethod, Mode.AUTOMATIC, targetWidth, targetHeight, ops);
     }
 
     /**
@@ -1250,11 +1224,9 @@ public class Scalr {
      *         to fail, even when using straight forward JDK-image operations.
      * @see Mode
      */
-    public static BufferedImage resize(BufferedImage src, Mode resizeMode,
-                                       int targetWidth, int targetHeight, BufferedImageOp... ops)
-            throws IllegalArgumentException, ImagingOpException {
-        return resize(src, Method.AUTOMATIC, resizeMode, targetWidth,
-                      targetHeight, ops);
+    public static BufferedImage resize(BufferedImage src, Mode resizeMode, int targetWidth, int targetHeight,
+                                       BufferedImageOp... ops) {
+        return resize(src, Method.AUTOMATIC, resizeMode, targetWidth, targetHeight, ops);
     }
 
     /**
@@ -1312,10 +1284,8 @@ public class Scalr {
      * @see Method
      * @see Mode
      */
-    public static BufferedImage resize(BufferedImage src, Method scalingMethod,
-                                       Mode resizeMode, int targetWidth, int targetHeight,
-                                       BufferedImageOp... ops) throws IllegalArgumentException,
-                                                                      ImagingOpException {
+    public static BufferedImage resize(BufferedImage src, Method scalingMethod, Mode resizeMode, int targetWidth,
+                                       int targetHeight, BufferedImageOp... ops) {
         long t = -1;
         if (DEBUG) {
             t = System.currentTimeMillis();
@@ -1548,9 +1518,7 @@ public class Scalr {
      *         to fail, even when using straight forward JDK-image operations.
      * @see Rotation
      */
-    public static BufferedImage rotate(BufferedImage src, Rotation rotation,
-                                       BufferedImageOp... ops) throws IllegalArgumentException,
-                                                                      ImagingOpException {
+    public static BufferedImage rotate(BufferedImage src, Rotation rotation, BufferedImageOp... ops) {
         long t = -1;
         if (DEBUG) {
             t = System.currentTimeMillis();
@@ -1701,8 +1669,7 @@ public class Scalr {
      * @throws IllegalArgumentException
      *         if <code>src</code> is <code>null</code>.
      */
-    protected static BufferedImage copyToOptimalImage(BufferedImage src)
-            throws IllegalArgumentException {
+    protected static BufferedImage copyToOptimalImage(BufferedImage src) {
         if (src == null) {
             throw new IllegalArgumentException("src cannot be null");
         }
@@ -1753,8 +1720,7 @@ public class Scalr {
      * @see <a href="http://code.google.com/p/java-image-scaling/source/browse/trunk/src/main/java/com/mortennobel/imagescaling/MultiStepRescaleOp.java">Thanks
      *         to Morten Nobel for implementation hint</a>
      */
-    protected static BufferedImage createOptimalImage(BufferedImage src,
-                                                      int width, int height) throws IllegalArgumentException {
+    protected static BufferedImage createOptimalImage(BufferedImage src, int width, int height) {
         if (width <= 0 || height <= 0) {
             throw new IllegalArgumentException("width [" + width
                                                + "] and height [" + height + "] must be > 0");
@@ -1940,9 +1906,8 @@ public class Scalr {
      *         use when scaling the image.
      * @return an image scaled to the given dimensions using the given rendering hint.
      */
-    protected static BufferedImage scaleImageIncrementally(BufferedImage src,
-                                                           int targetWidth, int targetHeight, Method scalingMethod,
-                                                           Object interpolationHintValue) {
+    protected static BufferedImage scaleImageIncrementally(BufferedImage src, int targetWidth, int targetHeight,
+                                                           Method scalingMethod, Object interpolationHintValue) {
         boolean hasReassignedSrc = false;
         int incrementCount = 0;
         int currentWidth = src.getWidth();
