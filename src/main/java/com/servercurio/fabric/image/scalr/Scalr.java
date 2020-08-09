@@ -1217,7 +1217,7 @@ public class Scalr {
          * just specify the dimensions they would like the image to roughly fit
          * within and it will do the right thing without mangling the result.
          */
-        if (resizeMode == Mode.FIT_EXACT) {
+        if (resizeMode == Mode.FIT_EXACT) { //NOPMD
             // Resize Mode FIT_EXACT used, no width/height checking or re-calculation will be done.
 
         } else if (resizeMode == Mode.BEST_FIT_BOTH) {
@@ -1232,7 +1232,7 @@ public class Scalr {
                 return src;
             }
         } else {
-            if ((ratio <= 1 && resizeMode == Mode.AUTOMATIC) || resizeMode == Mode.FIT_TO_WIDTH) {
+            if ((ratio <= 1 && resizeMode == Mode.AUTOMATIC) || resizeMode == Mode.FIT_TO_WIDTH) { //NOPMD
                 // First make sure we need to do any work in the first place
                 if (targetWidth == src.getWidth()) {
                     return src;
