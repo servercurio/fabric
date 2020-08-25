@@ -37,6 +37,7 @@ import java.security.SecureRandom;
 import java.security.Security;
 import java.security.Signature;
 import java.util.HashMap;
+import java.util.ServiceLoader;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -279,7 +280,9 @@ public class DefaultCryptographyImpl implements Cryptography {
      */
     @Override
     public DigestProvider digest() {
-        return new DigestProviderImpl(this);
+        return ServiceLoader.load(DigestProvider.class)
+                            .findFirst()
+                            .orElseGet(() -> new DigestProviderImpl(this));
     }
 
     /**
@@ -287,7 +290,9 @@ public class DefaultCryptographyImpl implements Cryptography {
      */
     @Override
     public EncryptionProvider encryption() {
-        return new EncryptionProviderImpl(this);
+        return ServiceLoader.load(EncryptionProvider.class)
+                            .findFirst()
+                            .orElseGet(() -> new EncryptionProviderImpl(this));
     }
 
     /**
@@ -295,7 +300,9 @@ public class DefaultCryptographyImpl implements Cryptography {
      */
     @Override
     public MacProvider mac() {
-        return new MacProviderImpl(this);
+        return ServiceLoader.load(MacProvider.class)
+                            .findFirst()
+                            .orElseGet(() -> new MacProviderImpl(this));
     }
 
     /**
@@ -303,7 +310,9 @@ public class DefaultCryptographyImpl implements Cryptography {
      */
     @Override
     public SignatureProvider signature() {
-        return new SignatureProviderImpl(this);
+        return ServiceLoader.load(SignatureProvider.class)
+                            .findFirst()
+                            .orElseGet(() -> new SignatureProviderImpl(this));
     }
 
     /**

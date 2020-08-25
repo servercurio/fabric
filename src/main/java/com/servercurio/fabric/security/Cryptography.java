@@ -22,6 +22,7 @@ import com.servercurio.fabric.security.spi.EncryptionProvider;
 import com.servercurio.fabric.security.spi.MacProvider;
 import com.servercurio.fabric.security.spi.PrimitiveProvider;
 import com.servercurio.fabric.security.spi.SignatureProvider;
+import java.util.ServiceLoader;
 
 /**
  * Provides the {@code Fabric Unified Cryptography API} primary entry-point. The core API is broken down into multiple
@@ -49,7 +50,7 @@ public interface Cryptography extends PrimitiveProvider, AutoCloseable {
      * @return a new {@link Cryptography} instance using the default implementation, not null
      */
     static Cryptography newDefaultInstance() {
-        return DefaultCryptographyImpl.newInstance();
+        return ServiceLoader.load(Cryptography.class).findFirst().orElseGet(DefaultCryptographyImpl::newInstance);
     }
 
     /**

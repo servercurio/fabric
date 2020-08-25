@@ -40,4 +40,14 @@ module com.servercurio.fabric {
 
     // JDK Components
     requires java.desktop;
+
+    // Service Providers
+    uses com.servercurio.fabric.security.Cryptography;
+    uses com.servercurio.fabric.security.spi.PrimitiveProvider;
+    uses com.servercurio.fabric.security.spi.SignatureProvider;
+    uses com.servercurio.fabric.security.spi.EncryptionProvider;
+    uses com.servercurio.fabric.security.spi.MacProvider;
+    uses com.servercurio.fabric.security.spi.DigestProvider;
+    uses com.servercurio.fabric.security.spi.CryptoPrimitiveSupplier;
+
 }
