@@ -70,7 +70,7 @@ public class DefaultCryptographyImpl implements Cryptography {
     /**
      * The {@link PrimitiveProvider} implementation to be used by this instance.
      */
-    private PrimitiveProvider primitiveProvider;
+    private final PrimitiveProvider primitiveProvider;
 
 
     /**
@@ -204,7 +204,7 @@ public class DefaultCryptographyImpl implements Cryptography {
      */
     @Override
     public void close() {
-
+        primitiveProvider.close();
     }
 
 

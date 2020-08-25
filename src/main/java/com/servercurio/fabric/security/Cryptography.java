@@ -75,18 +75,18 @@ public interface Cryptography extends AutoCloseable {
     MacProvider mac();
 
     /**
-     * Provides all the cryptographic digital signature functionality.
-     *
-     * @return the provider associated with this {@link Cryptography} instance, not null
-     */
-    SignatureProvider signature();
-
-    /**
      * Provides all the cryptographic primitive functionality.
      *
      * @return the provider associated with this {@link Cryptography} instance, not null
      */
     PrimitiveProvider primitives();
+
+    /**
+     * Provides all the cryptographic digital signature functionality.
+     *
+     * @return the provider associated with this {@link Cryptography} instance, not null
+     */
+    SignatureProvider signature();
 
     /**
      * {@inheritDoc}

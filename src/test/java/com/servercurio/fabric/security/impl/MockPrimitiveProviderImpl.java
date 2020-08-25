@@ -26,7 +26,7 @@ public class MockPrimitiveProviderImpl extends PrimitiveProviderImpl {
      * The default {@link SecureRandom} implementation to use for all instances.
      */
     private static final String SECURE_RANDOM_ALGORITHM = "NativePRNGNonBlocking";
-    
+
     private static final ThreadLocal<SecureRandom> secureRandomCache =
             ThreadLocal.withInitial(MockPrimitiveProviderImpl::acquireRandom);
 

@@ -209,4 +209,10 @@ public interface PrimitiveProvider extends AutoCloseable {
         }
         return diff == 0;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    void close();
 }

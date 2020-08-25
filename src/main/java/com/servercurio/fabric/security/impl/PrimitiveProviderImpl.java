@@ -17,7 +17,6 @@
 package com.servercurio.fabric.security.impl;
 
 import com.servercurio.fabric.security.CipherTransformation;
-import com.servercurio.fabric.security.Cryptography;
 import com.servercurio.fabric.security.CryptographyException;
 import com.servercurio.fabric.security.HashAlgorithm;
 import com.servercurio.fabric.security.MacAlgorithm;
@@ -168,19 +167,6 @@ public class PrimitiveProviderImpl implements PrimitiveProvider {
      * {@inheritDoc}
      */
     @Override
-    public void close() throws Exception {
-        executorService.shutdownNow();
-        hashAlgorithmCache.remove();
-        macAlgorithmCache.remove();
-        cipherAlgorithmCache.remove();
-        signatureAlgorithmCache.remove();
-        secureRandomCache.remove();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Cipher primitive(@NotNull final CipherTransformation algorithm) {
         return acquireAlgorithm(algorithm, cipherAlgorithmCache);
     }
@@ -226,5 +212,18 @@ public class PrimitiveProviderImpl implements PrimitiveProvider {
         }
 
         return random;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() {
+        executorService.shutdownNow();
+        hashAlgorithmCache.remove();
+        macAlgorithmCache.remove();
+        cipherAlgorithmCache.remove();
+        signatureAlgorithmCache.remove();
+        secureRandomCache.remove();
     }
 }
