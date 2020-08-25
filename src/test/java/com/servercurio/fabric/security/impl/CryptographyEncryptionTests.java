@@ -118,7 +118,7 @@ public class CryptographyEncryptionTests {
             final byte[] sourceData = new byte[bufferSize];
 
             // Acquire random and generate random source data
-            final SecureRandom random = provider.random();
+            final SecureRandom random = provider.primitives().random();
             random.nextBytes(sourceData);
 
             // Compute source hash
@@ -165,7 +165,7 @@ public class CryptographyEncryptionTests {
             final byte[] sourceData = new byte[bufferSize];
 
             // Acquire random and generate random source data
-            final SecureRandom random = provider.random();
+            final SecureRandom random = provider.primitives().random();
             random.nextBytes(sourceData);
 
             // Compute source hash
@@ -215,7 +215,7 @@ public class CryptographyEncryptionTests {
             final byte[] sourceData = new byte[100];
             final byte[] zeroLengthIv = new byte[0];
 
-            final SecureRandom random = provider.random();
+            final SecureRandom random = provider.primitives().random();
             random.nextBytes(sourceData);
 
             final KeyGenerator keyGenerator = KeyGenerator.getInstance(CipherAlgorithm.AES.keyAlgorithmName());
@@ -293,7 +293,7 @@ public class CryptographyEncryptionTests {
             assertNotNull(sourceStream);
 
             // Find a secure random source
-            final SecureRandom random = provider.random();
+            final SecureRandom random = provider.primitives().random();
 
             // Setup OTP structures
             final Future<byte[]> nonceFuture = provider.encryption().nonceAsync(transformation);
@@ -366,7 +366,7 @@ public class CryptographyEncryptionTests {
             final byte[] sourceData = new byte[bufferSize];
 
             // Acquire random and generate random source data
-            final SecureRandom random = provider.random();
+            final SecureRandom random = provider.primitives().random();
             random.nextBytes(sourceData);
 
             // Compute source hash
@@ -411,7 +411,7 @@ public class CryptographyEncryptionTests {
             final byte[] sourceData = new byte[bufferSize];
 
             // Acquire random and generate random source data
-            final SecureRandom random = provider.random();
+            final SecureRandom random = provider.primitives().random();
             random.nextBytes(sourceData);
 
             // Compute source hash
@@ -456,7 +456,7 @@ public class CryptographyEncryptionTests {
             final byte[] sourceData = new byte[100];
             final byte[] zeroLengthIv = new byte[0];
 
-            final SecureRandom random = provider.random();
+            final SecureRandom random = provider.primitives().random();
             random.nextBytes(sourceData);
 
             final KeyGenerator keyGenerator = KeyGenerator.getInstance(CipherAlgorithm.AES.keyAlgorithmName());
@@ -527,7 +527,7 @@ public class CryptographyEncryptionTests {
             assertNotNull(sourceStream);
 
             // Find a secure random source
-            final SecureRandom random = provider.random();
+            final SecureRandom random = provider.primitives().random();
 
             // Setup OTP structures
             final byte[] iv = provider.encryption().nonceSync(transformation);

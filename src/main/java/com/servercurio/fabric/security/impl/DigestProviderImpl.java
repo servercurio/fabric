@@ -21,6 +21,7 @@ import com.servercurio.fabric.security.CryptographyException;
 import com.servercurio.fabric.security.Hash;
 import com.servercurio.fabric.security.HashAlgorithm;
 import com.servercurio.fabric.security.spi.DigestProvider;
+import com.servercurio.fabric.security.spi.PrimitiveProvider;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -46,9 +47,9 @@ import static com.servercurio.fabric.security.impl.DefaultCryptographyImpl.apply
 public class DigestProviderImpl implements DigestProvider {
 
     /**
-     * The {@code crypto} field name represented as a string value.
+     * The {@code primitiveProvider} field name represented as a string value.
      */
-    private static final String CRYPTO_FIELD = "crypto";
+    private static final String PRIMITIVE_PROVIDER_FIELD = "primitiveProvider";
 
     /**
      * The {@code algorithm} parameter name represented as a string value.
@@ -76,21 +77,21 @@ public class DigestProviderImpl implements DigestProvider {
     private static final String BUFFER_PARAM = "buffer";
 
     /**
-     * The {@link Cryptography} implementation to which this provider is bound.
+     * The {@link PrimitiveProvider} implementation to which this provider is bound.
      */
     @NotNull
-    private final DefaultCryptographyImpl crypto;
+    private final PrimitiveProvider primitiveProvider;
 
     /**
      * Constructs a new provider instance bound to the given {@link Cryptography} implementation.
      *
-     * @param crypto
-     *         the {@link DefaultCryptographyImpl} to which this provider is bound, not null
+     * @param primitiveProvider
+     *         the {@link PrimitiveProvider} to which this provider is bound, not null
      */
-    public DigestProviderImpl(@NotNull final DefaultCryptographyImpl crypto) {
-        throwIfArgIsNull(crypto, CRYPTO_FIELD);
+    public DigestProviderImpl(@NotNull final PrimitiveProvider primitiveProvider) {
+        throwIfArgIsNull(primitiveProvider, PRIMITIVE_PROVIDER_FIELD);
 
-        this.crypto = crypto;
+        this.primitiveProvider = primitiveProvider;
     }
 
     /**
@@ -98,7 +99,7 @@ public class DigestProviderImpl implements DigestProvider {
      */
     @Override
     public Future<Hash> digestAsync(@NotNull final HashAlgorithm algorithm, @NotNull final InputStream stream) {
-        return crypto.executorService().submit(() -> digestSync(algorithm, stream));
+        return primitiveProvider.executorService().submit(() -> digestSync(algorithm, stream));
     }
 
     /**
@@ -106,7 +107,7 @@ public class DigestProviderImpl implements DigestProvider {
      */
     @Override
     public Future<Hash> digestAsync(@NotNull final HashAlgorithm algorithm, @NotNull final byte[] data) {
-        return crypto.executorService().submit(() -> digestSync(algorithm, data));
+        return primitiveProvider.executorService().submit(() -> digestSync(algorithm, data));
     }
 
     /**
@@ -114,7 +115,7 @@ public class DigestProviderImpl implements DigestProvider {
      */
     @Override
     public Future<Hash> digestAsync(@NotNull final HashAlgorithm algorithm, @NotEmpty final Hash... hashes) {
-        return crypto.executorService().submit(() -> digestSync(algorithm, hashes));
+        return primitiveProvider.executorService().submit(() -> digestSync(algorithm, hashes));
     }
 
     /**
@@ -122,7 +123,7 @@ public class DigestProviderImpl implements DigestProvider {
      */
     @Override
     public Future<Hash> digestAsync(@NotNull final HashAlgorithm algorithm, @NotNull final ByteBuffer buffer) {
-        return crypto.executorService().submit(() -> digestSync(algorithm, buffer));
+        return primitiveProvider.executorService().submit(() -> digestSync(algorithm, buffer));
     }
 
     /**
@@ -133,7 +134,7 @@ public class DigestProviderImpl implements DigestProvider {
         throwIfArgIsNull(algorithm, ALGORITHM_PARAM);
         throwIfArgIsNull(stream, STREAM_PARAM);
 
-        final MessageDigest digest = crypto.primitive(algorithm);
+        final MessageDigest digest = primitiveProvider.primitive(algorithm);
 
         try {
             applyToStream(stream, digest::update);
@@ -152,7 +153,7 @@ public class DigestProviderImpl implements DigestProvider {
         throwIfArgIsNull(algorithm, ALGORITHM_PARAM);
         throwIfArgIsNull(data, DATA_PARAM);
 
-        final MessageDigest digest = crypto.primitive(algorithm);
+        final MessageDigest digest = primitiveProvider.primitive(algorithm);
 
         digest.update(data);
         return new Hash(algorithm, digest.digest());
@@ -166,7 +167,7 @@ public class DigestProviderImpl implements DigestProvider {
         throwIfArgIsNull(algorithm, ALGORITHM_PARAM);
         throwIfArgumentIsEmpty(hashes, HASHES_PARAM);
 
-        final MessageDigest digest = crypto.primitive(algorithm);
+        final MessageDigest digest = primitiveProvider.primitive(algorithm);
 
         for (final Hash hash : hashes) {
             if (hash != null) {
@@ -187,7 +188,7 @@ public class DigestProviderImpl implements DigestProvider {
         throwIfArgIsNull(algorithm, ALGORITHM_PARAM);
         throwIfArgIsNull(buffer, BUFFER_PARAM);
 
-        final MessageDigest digest = crypto.primitive(algorithm);
+        final MessageDigest digest = primitiveProvider.primitive(algorithm);
 
         digest.update(buffer);
         return new Hash(algorithm, digest.digest());

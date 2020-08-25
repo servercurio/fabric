@@ -42,7 +42,7 @@ import java.util.ServiceLoader;
  * @see <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/crypto/CryptoSpec.html">Java
  *         Cryptography Architecture</a>
  */
-public interface Cryptography extends PrimitiveProvider, AutoCloseable {
+public interface Cryptography extends AutoCloseable {
 
     /**
      * Factory method for new instances of the default cryptography implementation.
@@ -80,6 +80,13 @@ public interface Cryptography extends PrimitiveProvider, AutoCloseable {
      * @return the provider associated with this {@link Cryptography} instance, not null
      */
     SignatureProvider signature();
+
+    /**
+     * Provides all the cryptographic primitive functionality.
+     *
+     * @return the provider associated with this {@link Cryptography} instance, not null
+     */
+    PrimitiveProvider primitives();
 
     /**
      * {@inheritDoc}

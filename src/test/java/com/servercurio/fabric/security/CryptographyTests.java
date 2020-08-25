@@ -41,7 +41,7 @@ public class CryptographyTests {
         assertDoesNotThrow(() -> {
             try (final Cryptography crypto = Cryptography.newDefaultInstance()) {
                 for (int i = 0; i < 101; i++) {
-                    crypto.random();
+                    crypto.primitives().random();
                 }
             }
         });
@@ -61,8 +61,8 @@ public class CryptographyTests {
             final byte[] copiedValue = Arrays.copyOf(originalValue, originalValue.length);
             final byte[] extraSizedValue = Arrays.copyOf(originalValue, originalValue.length + random.nextInt(10) + 1);
 
-            assertTrue(crypto.secureEquals(originalValue, copiedValue));
-            assertFalse(crypto.secureEquals(originalValue, extraSizedValue));
+            assertTrue(crypto.primitives().secureEquals(originalValue, copiedValue));
+            assertFalse(crypto.primitives().secureEquals(originalValue, extraSizedValue));
         }
     }
 
@@ -83,8 +83,8 @@ public class CryptographyTests {
             final char[] copiedValue = Arrays.copyOf(originalValue, originalValue.length);
             final char[] extraSizedValue = Arrays.copyOf(originalValue, originalValue.length + random.nextInt(10) + 1);
 
-            assertTrue(crypto.secureEquals(originalValue, copiedValue));
-            assertFalse(crypto.secureEquals(originalValue, extraSizedValue));
+            assertTrue(crypto.primitives().secureEquals(originalValue, copiedValue));
+            assertFalse(crypto.primitives().secureEquals(originalValue, extraSizedValue));
         }
     }
 
@@ -105,8 +105,8 @@ public class CryptographyTests {
             final int[] copiedValue = Arrays.copyOf(originalValue, originalValue.length);
             final int[] extraSizedValue = Arrays.copyOf(originalValue, originalValue.length + random.nextInt(10) + 1);
 
-            assertTrue(crypto.secureEquals(originalValue, copiedValue));
-            assertFalse(crypto.secureEquals(originalValue, extraSizedValue));
+            assertTrue(crypto.primitives().secureEquals(originalValue, copiedValue));
+            assertFalse(crypto.primitives().secureEquals(originalValue, extraSizedValue));
         }
     }
 
@@ -127,8 +127,8 @@ public class CryptographyTests {
             final long[] copiedValue = Arrays.copyOf(originalValue, originalValue.length);
             final long[] extraSizedValue = Arrays.copyOf(originalValue, originalValue.length + random.nextInt(10) + 1);
 
-            assertTrue(crypto.secureEquals(originalValue, copiedValue));
-            assertFalse(crypto.secureEquals(originalValue, extraSizedValue));
+            assertTrue(crypto.primitives().secureEquals(originalValue, copiedValue));
+            assertFalse(crypto.primitives().secureEquals(originalValue, extraSizedValue));
         }
     }
 }

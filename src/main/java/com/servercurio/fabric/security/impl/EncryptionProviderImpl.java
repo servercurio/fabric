@@ -23,6 +23,7 @@ import com.servercurio.fabric.security.CipherTransformation;
 import com.servercurio.fabric.security.Cryptography;
 import com.servercurio.fabric.security.CryptographyException;
 import com.servercurio.fabric.security.spi.EncryptionProvider;
+import com.servercurio.fabric.security.spi.PrimitiveProvider;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,9 +63,9 @@ import static com.servercurio.fabric.lang.Validators.throwIfArgumentIsEmpty;
 public class EncryptionProviderImpl implements EncryptionProvider {
 
     /**
-     * The {@code crypto} field name represented as a string value.
+     * The {@code primitiveProvider} field name represented as a string value.
      */
-    private static final String CRYPTO_FIELD = "crypto";
+    private static final String PRIMITIVE_PROVIDER_FIELD = "primitiveProvider";
 
     /**
      * The {@code blockSize} parameter name represented as a string value.
@@ -129,21 +130,21 @@ public class EncryptionProviderImpl implements EncryptionProvider {
     private static final int CTR_COUNTER_SIZE = 4;
 
     /**
-     * The {@link Cryptography} implementation to which this provider is bound.
+     * The {@link PrimitiveProvider} implementation to which this provider is bound.
      */
     @NotNull
-    private final DefaultCryptographyImpl crypto;
+    private final PrimitiveProvider primitiveProvider;
 
     /**
      * Constructs a new provider instance bound to the given {@link Cryptography} implementation.
      *
-     * @param crypto
-     *         the {@link DefaultCryptographyImpl} to which this provider is bound, not null
+     * @param primitiveProvider
+     *         the {@link PrimitiveProvider} to which this provider is bound, not null
      */
-    public EncryptionProviderImpl(@NotNull final DefaultCryptographyImpl crypto) {
-        throwIfArgIsNull(crypto, CRYPTO_FIELD);
+    public EncryptionProviderImpl(@NotNull final PrimitiveProvider primitiveProvider) {
+        throwIfArgIsNull(primitiveProvider, PRIMITIVE_PROVIDER_FIELD);
 
-        this.crypto = crypto;
+        this.primitiveProvider = primitiveProvider;
     }
 
     /**
@@ -183,7 +184,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
     private int deriveNonceSize(@NotNull final CipherTransformation algorithm) {
         throwIfArgIsNull(algorithm, ALGORITHM_PARAM);
 
-        final Cipher cipher = crypto.primitive(algorithm);
+        final Cipher cipher = primitiveProvider.primitive(algorithm);
 
         //CHECKSTYLE.OFF: IndentationCheck
         switch (algorithm.getMode()) {
@@ -212,7 +213,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
         throwIfArgIsNull(algorithm, ALGORITHM_PARAM);
         throwIfArgumentIsEmpty(iv, IV_PARAM);
 
-        final Cipher cipher = crypto.primitive(algorithm);
+        final Cipher cipher = primitiveProvider.primitive(algorithm);
 
         //CHECKSTYLE.OFF: IndentationCheck
         switch (algorithm.getMode()) {
@@ -233,7 +234,8 @@ public class EncryptionProviderImpl implements EncryptionProvider {
     public Future<?> decryptAsync(@NotNull final CipherTransformation algorithm, @NotNull final Key key,
                                   @NotEmpty final byte[] iv, @NotNull final InputStream cipherStream,
                                   @NotNull final OutputStream clearStream) {
-        return crypto.executorService().submit(() -> decryptSync(algorithm, key, iv, cipherStream, clearStream));
+        return primitiveProvider.executorService()
+                                .submit(() -> decryptSync(algorithm, key, iv, cipherStream, clearStream));
     }
 
     /**
@@ -242,7 +244,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
     @Override
     public Future<byte[]> decryptAsync(@NotNull final CipherTransformation algorithm, @NotNull final Key key,
                                        @NotEmpty final byte[] iv, @NotEmpty final byte[] data) {
-        return crypto.executorService().submit(() -> decryptSync(algorithm, key, iv, data));
+        return primitiveProvider.executorService().submit(() -> decryptSync(algorithm, key, iv, data));
     }
 
     /**
@@ -251,7 +253,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
     @Override
     public Future<ByteBuffer> decryptAsync(@NotNull final CipherTransformation algorithm, @NotNull final Key key,
                                            @NotEmpty final byte[] iv, @NotNull final ByteBuffer buffer) {
-        return crypto.executorService().submit(() -> decryptSync(algorithm, key, iv, buffer));
+        return primitiveProvider.executorService().submit(() -> decryptSync(algorithm, key, iv, buffer));
     }
 
     /**
@@ -267,11 +269,11 @@ public class EncryptionProviderImpl implements EncryptionProvider {
         throwIfArgIsNull(cipherStream, CIPHER_STREAM_PARAM);
         throwIfArgIsNull(clearStream, CLEAR_STREAM_PARAM);
 
-        final Cipher cipher = crypto.primitive(algorithm);
+        final Cipher cipher = primitiveProvider.primitive(algorithm);
 
         try {
             final AlgorithmParameterSpec parameterSpec = deriveParameters(algorithm, iv);
-            cipher.init(Cipher.DECRYPT_MODE, key, parameterSpec, crypto.random());
+            cipher.init(Cipher.DECRYPT_MODE, key, parameterSpec, primitiveProvider.random());
 
             final CipherInputStream iStream = new CipherInputStream(cipherStream, cipher);
             iStream.transferTo(clearStream);
@@ -298,11 +300,11 @@ public class EncryptionProviderImpl implements EncryptionProvider {
         throwIfArgumentIsEmpty(iv, IV_PARAM);
         throwIfArgumentIsEmpty(data, DATA_PARAM);
 
-        final Cipher cipher = crypto.primitive(algorithm);
+        final Cipher cipher = primitiveProvider.primitive(algorithm);
 
         try {
             final AlgorithmParameterSpec parameterSpec = deriveParameters(algorithm, iv);
-            cipher.init(Cipher.DECRYPT_MODE, key, parameterSpec, crypto.random());
+            cipher.init(Cipher.DECRYPT_MODE, key, parameterSpec, primitiveProvider.random());
 
             return cipher.doFinal(data);
         } catch (GeneralSecurityException ex) {
@@ -321,11 +323,11 @@ public class EncryptionProviderImpl implements EncryptionProvider {
         throwIfArgumentIsEmpty(iv, IV_PARAM);
         throwIfArgIsNull(buffer, BUFFER_PARAM);
 
-        final Cipher cipher = crypto.primitive(algorithm);
+        final Cipher cipher = primitiveProvider.primitive(algorithm);
 
         try {
             final AlgorithmParameterSpec parameterSpec = deriveParameters(algorithm, iv);
-            cipher.init(Cipher.DECRYPT_MODE, key, parameterSpec, crypto.random());
+            cipher.init(Cipher.DECRYPT_MODE, key, parameterSpec, primitiveProvider.random());
 
             final ByteBuffer clearText = ByteBuffer.allocate(cipher.getOutputSize(buffer.capacity()));
             cipher.doFinal(buffer, clearText);
@@ -343,7 +345,8 @@ public class EncryptionProviderImpl implements EncryptionProvider {
     public Future<?> encryptAsync(@NotNull final CipherTransformation algorithm, @NotNull final Key key,
                                   @NotEmpty final byte[] iv, @NotNull final InputStream clearStream,
                                   @NotNull final OutputStream cipherStream) {
-        return crypto.executorService().submit(() -> encryptSync(algorithm, key, iv, clearStream, cipherStream));
+        return primitiveProvider.executorService()
+                                .submit(() -> encryptSync(algorithm, key, iv, clearStream, cipherStream));
     }
 
     /**
@@ -352,7 +355,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
     @Override
     public Future<byte[]> encryptAsync(@NotNull final CipherTransformation algorithm, @NotNull final Key key,
                                        @NotEmpty final byte[] iv, @NotEmpty final byte[] data) {
-        return crypto.executorService().submit(() -> encryptSync(algorithm, key, iv, data));
+        return primitiveProvider.executorService().submit(() -> encryptSync(algorithm, key, iv, data));
     }
 
     /**
@@ -361,7 +364,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
     @Override
     public Future<ByteBuffer> encryptAsync(@NotNull final CipherTransformation algorithm, @NotNull final Key key,
                                            @NotEmpty final byte[] iv, @NotNull final ByteBuffer buffer) {
-        return crypto.executorService().submit(() -> encryptSync(algorithm, key, iv, buffer));
+        return primitiveProvider.executorService().submit(() -> encryptSync(algorithm, key, iv, buffer));
     }
 
     /**
@@ -377,11 +380,11 @@ public class EncryptionProviderImpl implements EncryptionProvider {
         throwIfArgIsNull(clearStream, CLEAR_STREAM_PARAM);
         throwIfArgIsNull(cipherStream, CIPHER_STREAM_PARAM);
 
-        final Cipher cipher = crypto.primitive(algorithm);
+        final Cipher cipher = primitiveProvider.primitive(algorithm);
 
         try {
             final AlgorithmParameterSpec parameterSpec = deriveParameters(algorithm, iv);
-            cipher.init(Cipher.ENCRYPT_MODE, key, parameterSpec, crypto.random());
+            cipher.init(Cipher.ENCRYPT_MODE, key, parameterSpec, primitiveProvider.random());
 
             try (CipherOutputStream oStream = new CipherOutputStream(cipherStream, cipher)) {
 
@@ -411,11 +414,11 @@ public class EncryptionProviderImpl implements EncryptionProvider {
         throwIfArgumentIsEmpty(iv, IV_PARAM);
         throwIfArgumentIsEmpty(data, DATA_PARAM);
 
-        final Cipher cipher = crypto.primitive(algorithm);
+        final Cipher cipher = primitiveProvider.primitive(algorithm);
 
         try {
             final AlgorithmParameterSpec parameterSpec = deriveParameters(algorithm, iv);
-            cipher.init(Cipher.ENCRYPT_MODE, key, parameterSpec, crypto.random());
+            cipher.init(Cipher.ENCRYPT_MODE, key, parameterSpec, primitiveProvider.random());
 
             return cipher.doFinal(data);
         } catch (GeneralSecurityException ex) {
@@ -434,11 +437,11 @@ public class EncryptionProviderImpl implements EncryptionProvider {
         throwIfArgumentIsEmpty(iv, IV_PARAM);
         throwIfArgIsNull(buffer, BUFFER_PARAM);
 
-        final Cipher cipher = crypto.primitive(algorithm);
+        final Cipher cipher = primitiveProvider.primitive(algorithm);
 
         try {
             final AlgorithmParameterSpec parameterSpec = deriveParameters(algorithm, iv);
-            cipher.init(Cipher.ENCRYPT_MODE, key, parameterSpec, crypto.random());
+            cipher.init(Cipher.ENCRYPT_MODE, key, parameterSpec, primitiveProvider.random());
 
             final ByteBuffer cipherText = ByteBuffer.allocate(cipher.getOutputSize(buffer.capacity()));
             cipher.doFinal(buffer, cipherText);
@@ -454,7 +457,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
      */
     @Override
     public Future<byte[]> nonceAsync(@NotNull final CipherTransformation algorithm) {
-        return crypto.executorService().submit(() -> nonceSync(algorithm));
+        return primitiveProvider.executorService().submit(() -> nonceSync(algorithm));
     }
 
     /**
@@ -466,7 +469,7 @@ public class EncryptionProviderImpl implements EncryptionProvider {
 
         final int nonceSize = deriveNonceSize(algorithm);
         final byte[] nonce = new byte[nonceSize];
-        final SecureRandom random = crypto.random();
+        final SecureRandom random = primitiveProvider.random();
 
         random.nextBytes(nonce);
         return nonce;

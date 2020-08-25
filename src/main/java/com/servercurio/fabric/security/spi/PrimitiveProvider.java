@@ -17,12 +17,14 @@
 package com.servercurio.fabric.security.spi;
 
 import com.servercurio.fabric.security.CipherTransformation;
+import com.servercurio.fabric.security.Cryptography;
 import com.servercurio.fabric.security.HashAlgorithm;
 import com.servercurio.fabric.security.MacAlgorithm;
 import com.servercurio.fabric.security.SignatureAlgorithm;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.security.Signature;
+import java.util.concurrent.ExecutorService;
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
 import javax.validation.constraints.NotNull;
@@ -36,7 +38,14 @@ import static com.servercurio.fabric.lang.Validators.throwIfArgIsNull;
  *
  * @author Nathan Klick
  */
-public interface PrimitiveProvider {
+public interface PrimitiveProvider extends AutoCloseable {
+
+    /**
+     * Gets the configured {@link ExecutorService} for this {@linkplain Cryptography} instance.
+     *
+     * @return the executor service, not null
+     */
+    ExecutorService executorService();
 
     /**
      * Acquires a cryptographic primitive from the underlying Java Cryptography Architecture provider. Implementations

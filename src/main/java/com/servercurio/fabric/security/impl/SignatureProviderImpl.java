@@ -21,6 +21,7 @@ import com.servercurio.fabric.security.CryptographyException;
 import com.servercurio.fabric.security.Hash;
 import com.servercurio.fabric.security.Seal;
 import com.servercurio.fabric.security.SignatureAlgorithm;
+import com.servercurio.fabric.security.spi.PrimitiveProvider;
 import com.servercurio.fabric.security.spi.SignatureProvider;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,9 +52,9 @@ import static com.servercurio.fabric.security.impl.DefaultCryptographyImpl.apply
 public class SignatureProviderImpl implements SignatureProvider {
 
     /**
-     * The {@code crypto} field name represented as a string value.
+     * The {@code primitiveProvider} field name represented as a string value.
      */
-    private static final String CRYPTO_FIELD = "crypto";
+    private static final String PRIMITIVE_PROVIDER_FIELD = "primitiveProvider";
 
     /**
      * The {@code algorithm} parameter name represented as a string value.
@@ -91,21 +92,21 @@ public class SignatureProviderImpl implements SignatureProvider {
     private static final String BUFFER_PARAM = "buffer";
 
     /**
-     * The {@linkplain Cryptography} implementation to which this provider is bound.
+     * The {@link PrimitiveProvider} implementation to which this provider is bound.
      */
     @NotNull
-    private final DefaultCryptographyImpl crypto;
+    private final PrimitiveProvider primitiveProvider;
 
     /**
      * Constructs a new provider instance bound to the given {@link Cryptography} implementation.
      *
-     * @param crypto
-     *         the {@link DefaultCryptographyImpl} to which this provider is bound, not null
+     * @param primitiveProvider
+     *         the {@link PrimitiveProvider} to which this provider is bound, not null
      */
-    public SignatureProviderImpl(@NotNull final DefaultCryptographyImpl crypto) {
-        throwIfArgIsNull(crypto, CRYPTO_FIELD);
+    public SignatureProviderImpl(@NotNull final PrimitiveProvider primitiveProvider) {
+        throwIfArgIsNull(primitiveProvider, PRIMITIVE_PROVIDER_FIELD);
 
-        this.crypto = crypto;
+        this.primitiveProvider = primitiveProvider;
     }
 
     /**
@@ -114,7 +115,7 @@ public class SignatureProviderImpl implements SignatureProvider {
     @Override
     public Future<Seal> signAsync(@NotNull final SignatureAlgorithm algorithm, @NotNull final PrivateKey key,
                                   @NotNull final InputStream stream) {
-        return crypto.executorService().submit(() -> signSync(algorithm, key, stream));
+        return primitiveProvider.executorService().submit(() -> signSync(algorithm, key, stream));
     }
 
     /**
@@ -123,7 +124,7 @@ public class SignatureProviderImpl implements SignatureProvider {
     @Override
     public Future<Seal> signAsync(@NotNull final SignatureAlgorithm algorithm, @NotNull final PrivateKey key,
                                   @NotNull final byte[] data) {
-        return crypto.executorService().submit(() -> signSync(algorithm, key, data));
+        return primitiveProvider.executorService().submit(() -> signSync(algorithm, key, data));
     }
 
     /**
@@ -132,7 +133,7 @@ public class SignatureProviderImpl implements SignatureProvider {
     @Override
     public Future<Seal> signAsync(@NotNull final SignatureAlgorithm algorithm, @NotNull final PrivateKey key,
                                   @NotEmpty final Hash... hashes) {
-        return crypto.executorService().submit(() -> signSync(algorithm, key, hashes));
+        return primitiveProvider.executorService().submit(() -> signSync(algorithm, key, hashes));
     }
 
     /**
@@ -141,7 +142,7 @@ public class SignatureProviderImpl implements SignatureProvider {
     @Override
     public Future<Seal> signAsync(@NotNull final SignatureAlgorithm algorithm, @NotNull final PrivateKey key,
                                   @NotNull final ByteBuffer buffer) {
-        return crypto.executorService().submit(() -> signSync(algorithm, key, buffer));
+        return primitiveProvider.executorService().submit(() -> signSync(algorithm, key, buffer));
     }
 
     /**
@@ -154,10 +155,10 @@ public class SignatureProviderImpl implements SignatureProvider {
         throwIfArgIsNull(key, KEY_PARAM);
         throwIfArgIsNull(stream, STREAM_PARAM);
 
-        final Signature signature = crypto.primitive(algorithm);
+        final Signature signature = primitiveProvider.primitive(algorithm);
 
         try {
-            signature.initSign(key, crypto.random());
+            signature.initSign(key, primitiveProvider.random());
             applyToStream(stream, signature::update);
 
             return new Seal(algorithm, signature.sign());
@@ -176,10 +177,10 @@ public class SignatureProviderImpl implements SignatureProvider {
         throwIfArgIsNull(key, KEY_PARAM);
         throwIfArgIsNull(data, DATA_PARAM);
 
-        final Signature signature = crypto.primitive(algorithm);
+        final Signature signature = primitiveProvider.primitive(algorithm);
 
         try {
-            signature.initSign(key, crypto.random());
+            signature.initSign(key, primitiveProvider.random());
             signature.update(data);
             return new Seal(algorithm, signature.sign());
         } catch (SignatureException | InvalidKeyException ex) {
@@ -197,10 +198,10 @@ public class SignatureProviderImpl implements SignatureProvider {
         throwIfArgIsNull(key, KEY_PARAM);
         throwIfArgumentIsEmpty(hashes, HASHES_PARAM);
 
-        final Signature signature = crypto.primitive(algorithm);
+        final Signature signature = primitiveProvider.primitive(algorithm);
 
         try {
-            signature.initSign(key, crypto.random());
+            signature.initSign(key, primitiveProvider.random());
 
             for (final Hash hash : hashes) {
                 if (hash != null) {
@@ -226,10 +227,10 @@ public class SignatureProviderImpl implements SignatureProvider {
         throwIfArgIsNull(key, KEY_PARAM);
         throwIfArgIsNull(buffer, BUFFER_PARAM);
 
-        final Signature signature = crypto.primitive(algorithm);
+        final Signature signature = primitiveProvider.primitive(algorithm);
 
         try {
-            signature.initSign(key, crypto.random());
+            signature.initSign(key, primitiveProvider.random());
             signature.update(buffer);
             return new Seal(algorithm, signature.sign());
         } catch (SignatureException | InvalidKeyException ex) {
@@ -243,7 +244,7 @@ public class SignatureProviderImpl implements SignatureProvider {
     @Override
     public Future<Boolean> verifyAsync(@NotNull final Seal seal, @NotNull final PublicKey key,
                                        @NotNull final InputStream stream) {
-        return crypto.executorService().submit(() -> verifySync(seal, key, stream));
+        return primitiveProvider.executorService().submit(() -> verifySync(seal, key, stream));
     }
 
     /**
@@ -252,7 +253,7 @@ public class SignatureProviderImpl implements SignatureProvider {
     @Override
     public Future<Boolean> verifyAsync(@NotNull final Seal seal, @NotNull final PublicKey key,
                                        @NotNull final byte[] data) {
-        return crypto.executorService().submit(() -> verifySync(seal, key, data));
+        return primitiveProvider.executorService().submit(() -> verifySync(seal, key, data));
     }
 
     /**
@@ -261,7 +262,7 @@ public class SignatureProviderImpl implements SignatureProvider {
     @Override
     public Future<Boolean> verifyAsync(@NotNull final Seal seal, @NotNull final PublicKey key,
                                        @NotEmpty final Hash... hashes) {
-        return crypto.executorService().submit(() -> verifySync(seal, key, hashes));
+        return primitiveProvider.executorService().submit(() -> verifySync(seal, key, hashes));
     }
 
     /**
@@ -270,7 +271,7 @@ public class SignatureProviderImpl implements SignatureProvider {
     @Override
     public Future<Boolean> verifyAsync(@NotNull final Seal seal, @NotNull final PublicKey key,
                                        @NotNull final ByteBuffer buffer) {
-        return crypto.executorService().submit(() -> verifySync(seal, key, buffer));
+        return primitiveProvider.executorService().submit(() -> verifySync(seal, key, buffer));
     }
 
     /**
@@ -283,7 +284,7 @@ public class SignatureProviderImpl implements SignatureProvider {
         throwIfArgIsNull(key, KEY_PARAM);
         throwIfArgIsNull(stream, STREAM_PARAM);
 
-        final Signature signature = crypto.primitive(seal.getAlgorithm());
+        final Signature signature = primitiveProvider.primitive(seal.getAlgorithm());
 
         try {
             signature.initVerify(key);
@@ -304,7 +305,7 @@ public class SignatureProviderImpl implements SignatureProvider {
         throwIfArgIsNull(key, KEY_PARAM);
         throwIfArgIsNull(data, DATA_PARAM);
 
-        final Signature signature = crypto.primitive(seal.getAlgorithm());
+        final Signature signature = primitiveProvider.primitive(seal.getAlgorithm());
 
         try {
             signature.initVerify(key);
@@ -324,7 +325,7 @@ public class SignatureProviderImpl implements SignatureProvider {
         throwIfArgIsNull(key, KEY_PARAM);
         throwIfArgumentIsEmpty(hashes, HASHES_PARAM);
 
-        final Signature signature = crypto.primitive(seal.getAlgorithm());
+        final Signature signature = primitiveProvider.primitive(seal.getAlgorithm());
 
         try {
             signature.initVerify(key);
@@ -353,7 +354,7 @@ public class SignatureProviderImpl implements SignatureProvider {
         throwIfArgIsNull(key, KEY_PARAM);
         throwIfArgIsNull(buffer, BUFFER_PARAM);
 
-        final Signature signature = crypto.primitive(seal.getAlgorithm());
+        final Signature signature = primitiveProvider.primitive(seal.getAlgorithm());
 
         try {
             signature.initVerify(key);

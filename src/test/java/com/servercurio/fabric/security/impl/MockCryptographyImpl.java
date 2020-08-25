@@ -16,43 +16,23 @@
 
 package com.servercurio.fabric.security.impl;
 
-import com.servercurio.fabric.security.CryptographyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
+import com.servercurio.fabric.security.spi.PrimitiveProvider;
 
 public class MockCryptographyImpl extends DefaultCryptographyImpl {
 
-    /**
-     * The default {@link SecureRandom} implementation to use for all instances.
-     */
-    private static final String SECURE_RANDOM_ALGORITHM = "NativePRNGNonBlocking";
-
-    private static final ThreadLocal<SecureRandom> secureRandomCache =
-            ThreadLocal.withInitial(MockCryptographyImpl::acquireRandom);
-
+    private final PrimitiveProvider primitiveProvider;
 
     public MockCryptographyImpl() {
         super();
+        this.primitiveProvider = new MockPrimitiveProviderImpl();
     }
 
     /**
-     * Factory method to create a new {@link SecureRandom} instance using the default algorithm specified by the {@link
-     * #SECURE_RANDOM_ALGORITHM} constant.
-     *
-     * @return a new {@link SecureRandom} instance, not null
+     * {@inheritDoc}
      */
-    private static SecureRandom acquireRandom() {
-
-        try {
-            return SecureRandom.getInstance(SECURE_RANDOM_ALGORITHM);
-        } catch (NoSuchAlgorithmException ex) {
-            throw new CryptographyException(ex);
-        }
-    }
-
     @Override
-    public SecureRandom random() {
-        return secureRandomCache.get();
+    public PrimitiveProvider primitives() {
+        return primitiveProvider;
     }
 
 }
